@@ -1,4 +1,4 @@
-package com.goev.partner.constants;
+package com.goev.partner.constant;
 
 import com.google.gson.annotations.SerializedName;
 import lombok.Builder;
