@@ -2,6 +2,8 @@ package com.goev.partner.utilities;
 
 import com.goev.partner.constant.ApplicationConstants;
 import com.goev.lib.exceptions.ResponseException;
+import jakarta.annotation.PostConstruct;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,11 +19,9 @@ import java.nio.file.StandardCopyOption;
 
 @Service
 @Slf4j
+@AllArgsConstructor
 public class StorageUtils {
     private final Path rootLocation = Paths.get("/tmp/partner/");
-
-    @Autowired
-    private S3Utils s3;
 
     public String store(MultipartFile file) {
         try {
@@ -41,7 +41,7 @@ public class StorageUtils {
             try (InputStream inputStream = file.getInputStream()) {
                 Files.copy(inputStream, destinationFile, StandardCopyOption.REPLACE_EXISTING);
             }
-            return s3.uploadFileOnS3(destinationFile.toFile().getAbsolutePath(), ApplicationConstants.S3_BUCKET_NAME);
+            return destinationFile.toFile().getAbsolutePath();
         } catch (IOException e) {
             log.error("Error in storing file : {}", file.getName(), e);
             throw new ResponseException("Failed to store file.");
@@ -52,6 +52,7 @@ public class StorageUtils {
         FileSystemUtils.deleteRecursively(rootLocation.toFile());
     }
 
+    @PostConstruct
     public void init() {
         try {
             Files.createDirectories(rootLocation);

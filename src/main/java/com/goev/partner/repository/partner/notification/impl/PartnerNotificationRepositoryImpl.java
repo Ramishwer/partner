@@ -1,0 +1,1 @@
+package com.goev.partner.repository.partner.notification.impl;

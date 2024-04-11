@@ -1,6 +1,6 @@
 package com.goev.partner.config;
 
-import com.goev.partner.constant.Credentials;
+import com.goev.partner.dto.SystemCredentialDto;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -16,9 +16,9 @@ import java.util.Base64;
 @Slf4j
 public class SecretsManager {
     @Bean
-    public Credentials getSecret() {
-        if ("local".equals(System.getenv("ENV"))|| System.getenv("ENV")==null ) {
-            return Credentials
+    public SystemCredentialDto getSecret() {
+        if ("local".equals(System.getenv("ENV")) || System.getenv("ENV") == null) {
+            return SystemCredentialDto
                     .builder()
                     .mysqlPoolSize("5")
                     .mysqlDatabase("goevPartnerLocal")
@@ -28,13 +28,13 @@ public class SecretsManager {
                     .mysqlPort("3307")
                     .build();
         }
-        log.info("Env : {}",System.getenv("ENV"));
-        String secretName = System.getenv("ENV")+"/partner/mysql";
+        log.info("Env : {}", System.getenv("ENV"));
+        String secretName = System.getenv("ENV") + "/partner/mysql";
         Region region = Region.of("ap-south-1");
         SecretsManagerClient client = SecretsManagerClient.builder()
                 .region(region)
                 .build();
-        String secret=null, decodedBinarySecret = null;
+        String secret = null, decodedBinarySecret = null;
         GetSecretValueRequest getSecretValueRequest = GetSecretValueRequest.builder()
                 .secretId(secretName)
                 .build();
@@ -50,7 +50,7 @@ public class SecretsManager {
         } else {
             decodedBinarySecret = new String(Base64.getDecoder().decode(getSecretValueResponse.secretBinary().asByteBuffer()).array());
         }
-        return  new Gson().fromJson(secret,Credentials.class);
+        return new Gson().fromJson(secret, SystemCredentialDto.class);
     }
 }
 
