@@ -38,14 +38,14 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         String token = request.getHeader("Authorization");
 
         if (token == null) {
-            throw new ResponseException("Invalid Access Token");
+            throw new ResponseException(401,"Invalid Access Token");
         }
         /** Code to Authenticate */
 
         PartnerSessionDao partnerSessionDao = partnerSessionRepository.findByUUID(RequestContext.getSessionUUID());
 
         if (partnerSessionDao == null)
-            throw new ResponseException("Invalid Session UUID");
+            throw new ResponseException(401,"Invalid Session UUID");
 
         try {
             String url = ApplicationConstants.AUTH_URL + "/api/v1/session-management/sessions/" + partnerSessionDao.getAuthSessionUuid();
@@ -56,14 +56,14 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
             }.getType());
             SessionDetailsDto sessionDto = session.getData();
             if (sessionDto == null || sessionDto.getDetails() == null) {
-                throw new ResponseException("Token Expired");
+                throw new ResponseException(401,"Token Expired");
             }
             request.setAttribute("authSessionUUID", sessionDto.getDetails().getUuid());
             request.setAttribute("authUUID", sessionDto.getDetails().getAuthUUID());
             request.setAttribute("partnerSession",partnerSessionDao);
         } catch (Exception e) {
             log.error("Error in checking token :",e);
-            throw new ResponseException("Invalid Token");
+            throw new ResponseException(401,"Invalid Token");
         }
         return true;
     }
