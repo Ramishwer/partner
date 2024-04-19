@@ -21,4 +21,5 @@ public class SessionDto {
     private String firstName;
     private String lastName;
     private String state;
+    private String organizationUUID;
 }

@@ -60,6 +60,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
             }
             request.setAttribute("authSessionUUID", sessionDto.getDetails().getUuid());
             request.setAttribute("authUUID", sessionDto.getDetails().getAuthUUID());
+            request.setAttribute("organizationUUID",sessionDto.getDetails().getOrganizationUUID());
             request.setAttribute("partnerSession",partnerSessionDao);
         } catch (Exception e) {
             log.error("Error in checking token :",e);
