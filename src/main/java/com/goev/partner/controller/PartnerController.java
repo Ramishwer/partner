@@ -2,6 +2,7 @@ package com.goev.partner.controller;
 
 import com.goev.lib.dto.ResponseDto;
 import com.goev.lib.dto.StatusDto;
+import com.goev.partner.dto.common.PaginatedResponseDto;
 import com.goev.partner.dto.partner.detail.PartnerDetailsDto;
 import com.goev.partner.dto.partner.document.PartnerDocumentDto;
 import com.goev.partner.service.partner.PartnerService;
@@ -24,5 +25,10 @@ public class PartnerController {
     @PostMapping("/partners/{partner-uuid}/documents")
     public ResponseDto<PartnerDocumentDto> createDocument(@PathVariable(value = "partner-uuid")String partnerUUID, @RequestBody PartnerDocumentDto partnerDocumentDto){
         return new ResponseDto<>(StatusDto.builder().message("SUCCESS").build(),200, partnerService.createDocument(partnerUUID,partnerDocumentDto));
+    }
+
+    @GetMapping("{partner-uuid}/documents")
+    public ResponseDto<PaginatedResponseDto<PartnerDocumentDto>> getDocuments(@PathVariable(value = "partner-uuid")String partnerUUID){
+        return new ResponseDto<>(StatusDto.builder().message("SUCCESS").build(),200, partnerService.getDocuments(partnerUUID));
     }
 }

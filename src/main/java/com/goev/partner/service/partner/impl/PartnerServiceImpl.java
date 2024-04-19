@@ -7,6 +7,8 @@ import com.goev.partner.dao.partner.detail.PartnerDao;
 import com.goev.partner.dao.partner.detail.PartnerDetailDao;
 import com.goev.partner.dao.partner.document.PartnerDocumentDao;
 import com.goev.partner.dao.partner.document.PartnerDocumentTypeDao;
+import com.goev.partner.dto.common.PageDto;
+import com.goev.partner.dto.common.PaginatedResponseDto;
 import com.goev.partner.dto.location.LocationDto;
 import com.goev.partner.dto.partner.detail.PartnerDetailsDto;
 import com.goev.partner.dto.partner.detail.PartnerDto;
@@ -24,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -97,6 +100,25 @@ public class PartnerServiceImpl implements PartnerService {
                 .status(partnerDocumentDao.getStatus())
                 .url(partnerDocumentDao.getUrl())
                 .build();
+    }
+
+    @Override
+    public PaginatedResponseDto<PartnerDocumentDto> getDocuments(String partnerUUID) {
+        PartnerDao partnerDao = partnerRepository.findByUUID(partnerUUID);
+        if (partnerDao == null)
+            throw new ResponseException("No partner found for id :" + partnerUUID);
+
+        List<PartnerDocumentTypeDao> activeDocumentTypes = partnerDocumentTypeRepository.findAll();
+        if (CollectionUtils.isEmpty(activeDocumentTypes))
+            return PaginatedResponseDto.<PartnerDocumentDto>builder().pagination(PageDto.builder().currentPage(0).totalPages(0).build()).elements(new ArrayList<>()).build();
+
+        Map<Integer, PartnerDocumentTypeDao> documentTypeIdToDocumentTypeMap = activeDocumentTypes.stream()
+                .collect(Collectors.toMap(PartnerDocumentTypeDao::getId, Function.identity()));
+        List<Integer> activeDocumentTypeIds = activeDocumentTypes.stream().map(PartnerDocumentTypeDao::getId).toList();
+
+        Map<Integer, PartnerDocumentDao> existingDocumentMap = partnerDocumentRepository.getExistingDocumentMap(partnerDao.getId(), activeDocumentTypeIds);
+        List<PartnerDocumentDto> documentList = PartnerDetailsDto.getPartnerDocumentDtoList(documentTypeIdToDocumentTypeMap, existingDocumentMap);
+        return PaginatedResponseDto.<PartnerDocumentDto>builder().elements(documentList).build();
     }
 
     private void setPartnerDetails(PartnerDetailsDto result, PartnerDao partnerDao, PartnerDetailDao partnerDetails) {
