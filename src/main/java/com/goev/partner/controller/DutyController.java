@@ -16,8 +16,6 @@ public class DutyController {
 
     @GetMapping("/{partner-uuid}/duties")
     public ResponseDto<PaginatedResponseDto<PartnerDutyDto>> getDutiesForPartner(@PathVariable("partner-uuid")String partnerUUID,
-                                                                                 @RequestParam("from") DateTime from,
-                                                                                 @RequestParam("to")DateTime to,
                                                                                  @RequestParam("count")Integer count,
                                                                                  @RequestParam("start")Integer start){
         return null;

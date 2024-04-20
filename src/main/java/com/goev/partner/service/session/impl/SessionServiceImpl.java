@@ -125,7 +125,7 @@ public class SessionServiceImpl implements SessionService {
         SessionDto sessionDto = session.getData();
         PartnerSessionDao sessionDao = new PartnerSessionDao();
         sessionDao.setAuthSessionUuid(sessionDto.getUuid());
-        sessionDao.setPartnerId(sessionDao.getPartnerId());
+        sessionDao.setPartnerId(partnerSessionDao.getPartnerId());
         sessionDao.setLastActiveTime(DateTime.now());
         sessionDao = partnerSessionRepository.save(sessionDao);
         partnerSessionRepository.delete(partnerSessionDao.getId());

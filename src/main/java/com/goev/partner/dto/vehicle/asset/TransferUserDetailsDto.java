@@ -8,8 +8,7 @@ import lombok.*;
 @Setter
 @ToString
 @Builder
-public class VehicleAssetTransferDetailDto {
+public class TransferUserDetailsDto {
     private String uuid;
-    private VehicleAssetDto asset;
-    private String status;
+    private String name;
 }

@@ -1,10 +1,9 @@
-package com.goev.partner.dto.partner.attendance;
+package com.goev.partner.dto.partner.payout;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.joda.deser.DateTimeDeserializer;
 import com.fasterxml.jackson.datatype.joda.ser.DateTimeSerializer;
-import com.goev.partner.dto.location.LocationDto;
 import lombok.*;
 import org.joda.time.DateTime;
 
@@ -14,16 +13,19 @@ import org.joda.time.DateTime;
 @Setter
 @ToString
 @Builder
-public class PartnerDutyDto {
+public class PartnerPayoutSummaryDto {
+    private Integer totalPayoutAmount;
+    private Integer totalCreditAmount;
+    private Integer totalDebitAmount;
+    private Integer totalBookingAmount;
+    private Integer totalDeductionAmount;
+    private Integer totalCashbookAmount;
+    private Integer totalGstAmount;
     @JsonSerialize(using = DateTimeSerializer.class)
     @JsonDeserialize(using = DateTimeDeserializer.class)
-    private DateTime dutyStartTime;
+    private DateTime payoutStartDate;
     @JsonSerialize(using = DateTimeSerializer.class)
     @JsonDeserialize(using = DateTimeDeserializer.class)
-    private DateTime dutyEndTime;
-    private LocationDto dutyStartLocation;
-    private LocationDto dutyEndLocation;
-    private Long actualTotalOnlineTimeInMillis;
-    private Long actualTotalPauseTimeInMillis;
-    private String uuid;
+    private DateTime payoutEndDate;
+    private String payoutUUID;
 }

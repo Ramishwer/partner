@@ -1,4 +1,4 @@
-package com.goev.partner.dto.vehicle.asset;
+package com.goev.partner.dto.booking;
 
 import lombok.*;
 
@@ -8,7 +8,7 @@ import lombok.*;
 @Setter
 @ToString
 @Builder
-public class VehicleAssetDto {
+public class BookingTypeDto {
     private String uuid;
     private String name;
 }
