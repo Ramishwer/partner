@@ -1,5 +1,6 @@
 package com.goev.partner.dto.partner.status;
 
+import com.goev.partner.dto.location.LocationDto;
 import lombok.*;
 
 @AllArgsConstructor
@@ -9,6 +10,7 @@ import lombok.*;
 @ToString
 @Builder
 public class ActionDto {
-    protected String action;
+    protected String action;//UPLOAD_DOCUMENT,CHECKIN,ASSIGN_VEHICLE,
     protected Object data;
+    protected LocationDto location;
 }

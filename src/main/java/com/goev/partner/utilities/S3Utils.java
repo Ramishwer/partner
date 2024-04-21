@@ -29,7 +29,7 @@ public class S3Utils {
 
         File tmpFile = new File(fileName);
         try {
-            if (!tmpFile.exists() && !tmpFile.createNewFile()) {
+            if (!tmpFile.exists()) {
                 log.error(" unable to create new file");
                 throw new IOException("Not able to create file");
             }

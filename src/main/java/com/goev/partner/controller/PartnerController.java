@@ -10,6 +10,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping(value = "/api/v1/partner-management/")
@@ -23,7 +25,7 @@ public class PartnerController {
     }
 
     @PostMapping("/partners/{partner-uuid}/documents")
-    public ResponseDto<PartnerDocumentDto> createDocument(@PathVariable(value = "partner-uuid")String partnerUUID, @RequestBody PartnerDocumentDto partnerDocumentDto){
+    public ResponseDto<List<PartnerDocumentDto>> createDocument(@PathVariable(value = "partner-uuid")String partnerUUID, @RequestBody List<PartnerDocumentDto> partnerDocumentDto){
         return new ResponseDto<>(StatusDto.builder().message("SUCCESS").build(),200, partnerService.createDocument(partnerUUID,partnerDocumentDto));
     }
 

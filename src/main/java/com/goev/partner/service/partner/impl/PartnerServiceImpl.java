@@ -14,6 +14,7 @@ import com.goev.partner.dto.partner.detail.PartnerDetailsDto;
 import com.goev.partner.dto.partner.detail.PartnerDto;
 import com.goev.partner.dto.partner.document.PartnerDocumentDto;
 import com.goev.partner.dto.partner.document.PartnerDocumentTypeDto;
+import com.goev.partner.enums.DocumentStatus;
 import com.goev.partner.repository.location.LocationRepository;
 import com.goev.partner.repository.partner.detail.PartnerDetailRepository;
 import com.goev.partner.repository.partner.detail.PartnerRepository;
@@ -65,41 +66,50 @@ public class PartnerServiceImpl implements PartnerService {
     }
 
     @Override
-    public PartnerDocumentDto createDocument(String partnerUUID, PartnerDocumentDto partnerDocumentDto) {
+    public List<PartnerDocumentDto> createDocument(String partnerUUID, List<PartnerDocumentDto> partnerDocuments) {
         PartnerDao partnerDao = partnerRepository.findByUUID(partnerUUID);
         if (partnerDao == null)
             throw new ResponseException("No partner found for id :" + partnerUUID);
 
-        PartnerDocumentDao partnerDocumentDao = new PartnerDocumentDao();
+        if (CollectionUtils.isEmpty(partnerDocuments))
+            throw new ResponseException("No Document present");
 
-        if (partnerDocumentDto.getType() == null || partnerDocumentDto.getType().getUuid() == null)
-            throw new ResponseException("Error in saving partner model: Invalid Manufacturer");
-        PartnerDocumentTypeDao partnerDocumentTypeDao = partnerDocumentTypeRepository.findByUUID(partnerDocumentDto.getType().getUuid());
+        List<PartnerDocumentDto> result = new ArrayList<>();
+        for (PartnerDocumentDto partnerDocumentDto : partnerDocuments) {
+            PartnerDocumentDao partnerDocumentDao = new PartnerDocumentDao();
 
-        if (partnerDocumentTypeDao == null || partnerDocumentTypeDao.getId() == null)
-            throw new ResponseException("Error in saving partner document: Invalid Document Type");
+            if (partnerDocumentDto.getType() == null || partnerDocumentDto.getType().getUuid() == null)
+                throw new ResponseException("Error in saving partner model: Invalid Manufacturer");
+            PartnerDocumentTypeDao partnerDocumentTypeDao = partnerDocumentTypeRepository.findByUUID(partnerDocumentDto.getType().getUuid());
 
-        partnerDocumentDao.setUrl(s3.getUrlForPath(partnerDocumentDto.getUrl(),partnerDocumentTypeDao.getS3Key()));
-        partnerDocumentDao.setStatus(partnerDocumentDto.getStatus());
-        partnerDocumentDao.setDescription(partnerDocumentDto.getDescription());
-        partnerDocumentDao.setFileName(partnerDocumentDto.getFileName());
-        partnerDocumentDao.setPartnerId(partnerDao.getId());
-        partnerDocumentDao.setPartnerDocumentTypeId(partnerDocumentTypeDao.getId());
-        partnerDocumentDao = partnerDocumentRepository.save(partnerDocumentDao);
-        if (partnerDocumentDao == null)
-            throw new ResponseException("Error in saving partner document");
-        return PartnerDocumentDto.builder()
-                .uuid(partnerDocumentDto.getUuid())
-                .type(PartnerDocumentTypeDto.builder()
-                        .uuid(partnerDocumentTypeDao.getUuid())
-                        .label(partnerDocumentTypeDao.getLabel())
-                        .name(partnerDocumentTypeDao.getName())
-                        .build())
-                .fileName(partnerDocumentTypeDao.getName())
-                .description(partnerDocumentDao.getDescription())
-                .status(partnerDocumentDao.getStatus())
-                .url(partnerDocumentDao.getUrl())
-                .build();
+            if (partnerDocumentTypeDao == null || partnerDocumentTypeDao.getId() == null)
+                throw new ResponseException("Error in saving partner document: Invalid Document Type");
+
+            partnerDocumentDao.setUrl(s3.getUrlForPath(partnerDocumentDto.getUrl(), partnerDocumentTypeDao.getS3Key()));
+            partnerDocumentDao.setStatus(DocumentStatus.UPLOADED.name());
+            partnerDocumentDao.setDescription(partnerDocumentDto.getDescription());
+            partnerDocumentDao.setFileName(partnerDocumentDto.getFileName());
+            partnerDocumentDao.setPartnerId(partnerDao.getId());
+            partnerDocumentDao.setPartnerDocumentTypeId(partnerDocumentTypeDao.getId());
+            partnerDocumentDao = partnerDocumentRepository.save(partnerDocumentDao);
+            if (partnerDocumentDao == null)
+                throw new ResponseException("Error in saving partner document");
+            result.add(PartnerDocumentDto.builder()
+                    .uuid(partnerDocumentDto.getUuid())
+                    .type(PartnerDocumentTypeDto.builder()
+                            .uuid(partnerDocumentTypeDao.getUuid())
+                            .label(partnerDocumentTypeDao.getLabel())
+                            .name(partnerDocumentTypeDao.getName())
+                            .groupKey(partnerDocumentTypeDao.getGroupKey())
+                            .groupDescription(partnerDocumentTypeDao.getGroupDescription())
+                            .build())
+                    .fileName(partnerDocumentTypeDao.getName())
+                    .description(partnerDocumentDao.getDescription())
+                    .status(partnerDocumentDao.getStatus())
+                    .url(partnerDocumentDao.getUrl())
+                    .build());
+        }
+        return result;
     }
 
     @Override
@@ -132,7 +142,7 @@ public class PartnerServiceImpl implements PartnerService {
         result.setDetails(partnerDto);
 
 
-        if(partnerDetails == null)
+        if (partnerDetails == null)
             return;
 
         result.setJoiningDate(partnerDetails.getJoiningDate());
@@ -182,7 +192,6 @@ public class PartnerServiceImpl implements PartnerService {
         List<PartnerDocumentDto> documentList = PartnerDetailsDto.getPartnerDocumentDtoList(documentTypeIdToDocumentTypeMap, existingDocumentMap);
         result.setDocuments(documentList);
     }
-
 
 
 }

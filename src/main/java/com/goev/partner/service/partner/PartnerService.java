@@ -4,8 +4,10 @@ import com.goev.partner.dto.common.PaginatedResponseDto;
 import com.goev.partner.dto.partner.detail.PartnerDetailsDto;
 import com.goev.partner.dto.partner.document.PartnerDocumentDto;
 
+import java.util.List;
+
 public interface PartnerService {
     PartnerDetailsDto getPartnerDetails(String partnerUUID);
-    PartnerDocumentDto createDocument(String partnerUUID, PartnerDocumentDto partnerDocumentDto);
+    List<PartnerDocumentDto> createDocument(String partnerUUID, List<PartnerDocumentDto> partnerDocumentDto);
     PaginatedResponseDto<PartnerDocumentDto> getDocuments(String partnerUUID);
 }

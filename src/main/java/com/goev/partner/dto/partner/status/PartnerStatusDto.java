@@ -11,6 +11,6 @@ import java.util.List;
 @ToString
 @Builder
 public class PartnerStatusDto {
-    private String status;
+    private String status; // VERIFICATION_PENDING->LOGGED_IN->CHECKED_IN->VEHICLE_ASSIGNED->
     private List<ActionDto> nextActions;
 }
