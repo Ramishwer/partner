@@ -1,5 +1,6 @@
 package com.goev.partner.dto.partner;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import org.joda.time.DateTime;
 
@@ -9,6 +10,7 @@ import org.joda.time.DateTime;
 @Setter
 @ToString
 @Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class PartnerViewDto {
     private String firstName;
     private String lastName;

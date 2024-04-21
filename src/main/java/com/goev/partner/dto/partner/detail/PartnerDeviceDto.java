@@ -1,5 +1,6 @@
 package com.goev.partner.dto.partner.detail;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 @AllArgsConstructor
@@ -8,6 +9,7 @@ import lombok.*;
 @Setter
 @ToString
 @Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class PartnerDeviceDto {
     private String fcmToken;
     private String imei1;
