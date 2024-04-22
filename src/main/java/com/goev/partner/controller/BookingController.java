@@ -1,6 +1,7 @@
 package com.goev.partner.controller;
 
 import com.goev.lib.dto.ResponseDto;
+import com.goev.lib.dto.StatusDto;
 import com.goev.partner.dto.booking.BookingDto;
 import com.goev.partner.dto.common.PaginatedResponseDto;
 import com.goev.partner.service.booking.PartnerBookingService;
@@ -21,13 +22,13 @@ public class BookingController {
     public ResponseDto<PaginatedResponseDto<BookingDto>> getBookings(@PathVariable("partner-uuid")String partnerUUID,
                                                                      @RequestParam("count")Integer count,
                                                                      @RequestParam("start")Integer start){
-        return null;
+        return new ResponseDto<>(StatusDto.builder().message("SUCCESS").build(),200, new PaginatedResponseDto<>());
     }
 
 
     @GetMapping("/{partner-uuid}/bookings/{booking-uuid}")
     public ResponseDto<BookingDto> getBookingDetails(@PathVariable("partner-uuid")String partnerUUID,
                                                                      @PathVariable("booking-uuid")String bookingUUID){
-        return null;
+        return new ResponseDto<>(StatusDto.builder().message("SUCCESS").build(),200, new BookingDto());
     }
 }

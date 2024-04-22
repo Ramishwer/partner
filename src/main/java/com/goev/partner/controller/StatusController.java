@@ -2,6 +2,7 @@ package com.goev.partner.controller;
 
 import com.goev.lib.dto.ResponseDto;
 import com.goev.lib.dto.StatusDto;
+import com.goev.partner.dto.partner.payout.PartnerPayoutSummaryDto;
 import com.goev.partner.dto.partner.status.ActionDto;
 import com.goev.partner.dto.partner.status.PartnerStatusDto;
 import lombok.extern.slf4j.Slf4j;
@@ -14,14 +15,12 @@ public class StatusController {
 
     @GetMapping("/{partner-uuid}/status")
     public ResponseDto<PartnerStatusDto> getPartnerStatus(@PathVariable("partner-uuid")String partnerUUID){
-
-        return null;
+        return new ResponseDto<>(StatusDto.builder().message("SUCCESS").build(),200, new PartnerStatusDto());
     }
 
     @PostMapping("/{partner-uuid}/status")
     public ResponseDto<PartnerStatusDto> savePartnerStatus(@PathVariable("partner-uuid")String partnerUUID, @RequestBody ActionDto actionDto){
-
-        return null;
+        return new ResponseDto<>(StatusDto.builder().message("SUCCESS").build(),200, new PartnerStatusDto());
     }
 
 }

@@ -1,6 +1,7 @@
 package com.goev.partner.controller;
 
 import com.goev.lib.dto.ResponseDto;
+import com.goev.lib.dto.StatusDto;
 import com.goev.partner.dto.common.PaginatedResponseDto;
 import com.goev.partner.dto.partner.attendance.PartnerDutyDto;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,6 @@ public class DutyController {
     public ResponseDto<PaginatedResponseDto<PartnerDutyDto>> getDutiesForPartner(@PathVariable("partner-uuid")String partnerUUID,
                                                                                  @RequestParam("count")Integer count,
                                                                                  @RequestParam("start")Integer start){
-        return null;
+        return new ResponseDto<>(StatusDto.builder().message("SUCCESS").build(),200, new PaginatedResponseDto<>());
     }
 }

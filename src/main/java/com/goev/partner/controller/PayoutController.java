@@ -1,6 +1,7 @@
 package com.goev.partner.controller;
 
 import com.goev.lib.dto.ResponseDto;
+import com.goev.lib.dto.StatusDto;
 import com.goev.partner.dto.common.PaginatedResponseDto;
 import com.goev.partner.dto.partner.payout.PartnerPayoutDto;
 import com.goev.partner.dto.partner.payout.PartnerPayoutSummaryDto;
@@ -22,19 +23,19 @@ public class PayoutController {
     public ResponseDto<PaginatedResponseDto<PartnerPayoutDto>> getPayoutsForPartner(@PathVariable("partner-uuid")String partnerUUID,
                                                                                     @RequestParam("count")Integer count,
                                                                                     @RequestParam("start")Integer start){
-        return null;
+        return new ResponseDto<>(StatusDto.builder().message("SUCCESS").build(),200, new PaginatedResponseDto<>());
     }
 
     @GetMapping("/{partner-uuid}/payouts/{payout-uuid}/summary")
     public ResponseDto<PartnerPayoutSummaryDto> getPayoutSummaryForPartnerAndPayout(@PathVariable("partner-uuid")String partnerUUID,
                                                                                     @PathVariable("payout-uuid")String payoutUUID){
-        return null;
+        return new ResponseDto<>(StatusDto.builder().message("SUCCESS").build(),200, new PartnerPayoutSummaryDto());
     }
 
     @GetMapping("/{partner-uuid}/payouts/{payout-uuid}/transactions")
-    public ResponseDto<PartnerPayoutTransactionDto> getPayoutTransactionsForPartnerAndPayout(@PathVariable("partner-uuid")String partnerUUID,
+    public ResponseDto<PaginatedResponseDto<PartnerPayoutTransactionDto>> getPayoutTransactionsForPartnerAndPayout(@PathVariable("partner-uuid")String partnerUUID,
                                                                                              @PathVariable("payout-uuid")String payoutUUID){
-        return null;
+        return new ResponseDto<>(StatusDto.builder().message("SUCCESS").build(),200, new PaginatedResponseDto<>());
     }
 
 }
