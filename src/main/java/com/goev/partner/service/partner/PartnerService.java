@@ -8,6 +8,5 @@ import java.util.List;
 
 public interface PartnerService {
     PartnerDetailsDto getPartnerDetails(String partnerUUID);
-    List<PartnerDocumentDto> createDocument(String partnerUUID, List<PartnerDocumentDto> partnerDocumentDto);
-    PaginatedResponseDto<PartnerDocumentDto> getDocuments(String partnerUUID);
+
 }

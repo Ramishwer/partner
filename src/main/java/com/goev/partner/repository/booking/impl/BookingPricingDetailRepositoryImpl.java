@@ -1,1 +1,64 @@
 package com.goev.partner.repository.booking.impl;
+
+
+import com.goev.partner.dao.booking.BookingPricingDetailDao;
+import com.goev.partner.repository.booking.BookingPricingDetailRepository;
+import com.goev.lib.enums.RecordState;
+import com.goev.record.partner.tables.records.BookingPricingDetailsRecord;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.jooq.DSLContext;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+import static com.goev.record.partner.tables.BookingPricingDetails.BOOKING_PRICING_DETAILS;
+
+@Slf4j
+@Repository
+@AllArgsConstructor
+public class BookingPricingDetailRepositoryImpl implements BookingPricingDetailRepository {
+
+    private final DSLContext context;
+
+    @Override
+    public BookingPricingDetailDao save(BookingPricingDetailDao client) {
+        BookingPricingDetailsRecord bookingPricingDetailsRecord = context.newRecord(BOOKING_PRICING_DETAILS, client);
+        bookingPricingDetailsRecord.store();
+        client.setId(bookingPricingDetailsRecord.getId());
+        client.setUuid(bookingPricingDetailsRecord.getUuid());
+        return client;
+    }
+
+    @Override
+    public BookingPricingDetailDao update(BookingPricingDetailDao client) {
+        BookingPricingDetailsRecord bookingPricingDetailsRecord = context.newRecord(BOOKING_PRICING_DETAILS, client);
+        bookingPricingDetailsRecord.update();
+        return client;
+    }
+
+    @Override
+    public void delete(Integer id) {
+        context.update(BOOKING_PRICING_DETAILS).set(BOOKING_PRICING_DETAILS.STATE, RecordState.DELETED.name()).where(BOOKING_PRICING_DETAILS.ID.eq(id)).execute();
+    }
+
+    @Override
+    public BookingPricingDetailDao findByUUID(String uuid) {
+        return context.selectFrom(BOOKING_PRICING_DETAILS).where(BOOKING_PRICING_DETAILS.UUID.eq(uuid)).fetchAnyInto(BookingPricingDetailDao.class);
+    }
+
+    @Override
+    public BookingPricingDetailDao findById(Integer id) {
+        return context.selectFrom(BOOKING_PRICING_DETAILS).where(BOOKING_PRICING_DETAILS.ID.eq(id)).fetchAnyInto(BookingPricingDetailDao.class);
+    }
+
+    @Override
+    public List<BookingPricingDetailDao> findAllByIds(List<Integer> ids) {
+        return context.selectFrom(BOOKING_PRICING_DETAILS).where(BOOKING_PRICING_DETAILS.ID.in(ids)).fetchInto(BookingPricingDetailDao.class);
+    }
+
+    @Override
+    public List<BookingPricingDetailDao> findAll() {
+        return context.selectFrom(BOOKING_PRICING_DETAILS).fetchInto(BookingPricingDetailDao.class);
+    }
+}
