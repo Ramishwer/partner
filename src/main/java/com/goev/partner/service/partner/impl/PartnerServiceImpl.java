@@ -1,20 +1,15 @@
 package com.goev.partner.service.partner.impl;
 
+import com.goev.lib.dto.LatLongDto;
 import com.goev.lib.exceptions.ResponseException;
 import com.goev.lib.utilities.ApplicationContext;
 import com.goev.partner.dao.location.LocationDao;
 import com.goev.partner.dao.partner.detail.PartnerDao;
 import com.goev.partner.dao.partner.detail.PartnerDetailDao;
-import com.goev.partner.dao.partner.document.PartnerDocumentDao;
-import com.goev.partner.dao.partner.document.PartnerDocumentTypeDao;
-import com.goev.partner.dto.common.PageDto;
-import com.goev.partner.dto.common.PaginatedResponseDto;
 import com.goev.partner.dto.location.LocationDto;
-import com.goev.partner.dto.partner.detail.PartnerDetailsDto;
+import com.goev.partner.dto.partner.PartnerViewDto;
+import com.goev.partner.dto.partner.detail.PartnerDetailDto;
 import com.goev.partner.dto.partner.detail.PartnerDto;
-import com.goev.partner.dto.partner.document.PartnerDocumentDto;
-import com.goev.partner.dto.partner.document.PartnerDocumentTypeDto;
-import com.goev.partner.enums.DocumentStatus;
 import com.goev.partner.repository.location.LocationRepository;
 import com.goev.partner.repository.partner.detail.PartnerDetailRepository;
 import com.goev.partner.repository.partner.detail.PartnerRepository;
@@ -25,13 +20,6 @@ import com.goev.partner.utilities.S3Utils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -46,7 +34,7 @@ public class PartnerServiceImpl implements PartnerService {
     private final S3Utils s3;
 
     @Override
-    public PartnerDetailsDto getPartnerDetails(String partnerUUID) {
+    public PartnerDetailDto getPartnerDetails(String partnerUUID) {
         PartnerDao partner = partnerRepository.findByAuthUUID(ApplicationContext.getAuthUUID());
         if (partner == null)
             throw new ResponseException("No partner found for Id :" + partnerUUID);
@@ -57,25 +45,28 @@ public class PartnerServiceImpl implements PartnerService {
             throw new ResponseException("No partner details found for Id :" + partnerUUID);
 
 
-        PartnerDetailsDto result = PartnerDetailsDto.builder().build();
+        PartnerDetailDto result = PartnerDetailDto.builder().build();
         setPartnerDetails(result, partner, partnerDetailDao);
         setPartnerHomeLocation(result, partnerDetailDao.getHomeLocationId());
-        setPartnerDocuments(result, partner.getId());
 
         return result;
     }
 
+    @Override
+    public PartnerDetailDto updatePartnerDetails(String partnerUUID, PartnerDto partnerDto) {
+        return null;
+    }
 
 
-    private void setPartnerDetails(PartnerDetailsDto result, PartnerDao partnerDao, PartnerDetailDao partnerDetails) {
-        PartnerDto partnerDto = new PartnerDto();
+    private void setPartnerDetails(PartnerDetailDto result, PartnerDao partnerDao, PartnerDetailDao partnerDetails) {
+        PartnerViewDto partnerDto = new PartnerViewDto();
         partnerDto.setPunchId(partnerDao.getPunchId());
         partnerDto.setState(partnerDao.getState());
         partnerDto.setUuid(partnerDao.getUuid());
         partnerDto.setPhoneNumber(partnerDao.getPhoneNumber());
-        partnerDto.setAuthUUID(partnerDao.getAuthUuid());
-
-        result.setDetails(partnerDto);
+        partnerDto.setFirstName(partnerDetails.getFirstName());
+        partnerDto.setLastName(partnerDetails.getLastName());
+        result.setPartner(partnerDto);
 
 
         if (partnerDetails == null)
@@ -83,51 +74,36 @@ public class PartnerServiceImpl implements PartnerService {
 
         result.setJoiningDate(partnerDetails.getJoiningDate());
         result.setDlNumber(partnerDetails.getDlNumber());
-        result.setDlExpiry(partnerDetails.getDlExpiry());
+        result.setDlExpiryDate(partnerDetails.getDlExpiryDate());
         result.setRemark(partnerDetails.getRemark());
         result.setOnboardingDate(partnerDetails.getOnboardingDate());
         result.setDeboardingDate(partnerDetails.getDeboardingDate());
         result.setUuid(partnerDao.getUuid());
-        result.setDriverTestStatus(partnerDetails.getDriverTestStatus());
+        result.setDrivingTestStatus(partnerDetails.getDrivingTestStatus());
         result.setInterviewDate(partnerDetails.getInterviewDate());
         result.setSelectionStatus(partnerDetails.getSelectionStatus());
         result.setIsVerified(partnerDetails.getIsVerified());
         result.setSourceOfLead(partnerDetails.getSourceOfLead());
         result.setSourceOfLeadType(partnerDetails.getSourceOfLeadType());
-        result.getDetails().setFirstName(partnerDetails.getFirstName());
-        result.getDetails().setLastName(partnerDetails.getLastName());
-        result.getDetails().setFathersName(partnerDetails.getFathersName());
-        result.getDetails().setLocalAddress(partnerDetails.getLocalAddress());
-        result.getDetails().setPermanentAddress(partnerDetails.getPermanentAddress());
+        result.setFathersName(partnerDetails.getFathersName());
+        result.setLocalAddress(partnerDetails.getLocalAddress());
+        result.setPermanentAddress(partnerDetails.getPermanentAddress());
     }
 
 
-    private void setPartnerHomeLocation(PartnerDetailsDto result, Integer homeLocationId) {
+    private void setPartnerHomeLocation(PartnerDetailDto result, Integer homeLocationId) {
         LocationDao locationDao = locationRepository.findById(homeLocationId);
         if (locationDao == null)
             return;
         result.setHomeLocation(LocationDto.builder()
-                .latitude(locationDao.getLatitude())
-                .longitude(locationDao.getLongitude())
+                .coordinates(LatLongDto.builder()
+                        .longitude(locationDao.getLongitude().doubleValue())
+                        .latitude(locationDao.getLatitude().doubleValue())
+                        .build())
                 .name(locationDao.getName())
                 .type(locationDao.getType())
                 .uuid(locationDao.getUuid())
                 .build());
     }
-
-    private void setPartnerDocuments(PartnerDetailsDto result, Integer partnerId) {
-        List<PartnerDocumentTypeDao> activeDocumentTypes = partnerDocumentTypeRepository.findAll();
-        if (CollectionUtils.isEmpty(activeDocumentTypes))
-            return;
-        Map<Integer, PartnerDocumentTypeDao> documentTypeIdToDocumentTypeMap = activeDocumentTypes.stream()
-                .collect(Collectors.toMap(PartnerDocumentTypeDao::getId, Function.identity()));
-        List<Integer> activeDocumentTypeIds = activeDocumentTypes.stream().map(PartnerDocumentTypeDao::getId).toList();
-
-
-        Map<Integer, PartnerDocumentDao> existingDocumentMap = partnerDocumentRepository.getExistingDocumentMap(partnerId, activeDocumentTypeIds);
-        List<PartnerDocumentDto> documentList = PartnerDetailsDto.getPartnerDocumentDtoList(documentTypeIdToDocumentTypeMap, existingDocumentMap);
-        result.setDocuments(documentList);
-    }
-
 
 }

@@ -1,5 +1,6 @@
 package com.goev.partner.repository.vehicle.document;
 
+import com.goev.partner.dao.vehicle.document.VehicleDocumentDao;
 import com.goev.partner.dao.vehicle.document.VehicleDocumentTypeDao;
 
 import java.util.List;

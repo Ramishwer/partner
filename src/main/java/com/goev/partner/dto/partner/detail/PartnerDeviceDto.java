@@ -11,9 +11,8 @@ import lombok.*;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PartnerDeviceDto {
+    private String uuid;
     private String fcmToken;
-    private String imei1;
-    private String imei2;
     private String screenHeight;
     private String screenWidth;
     private String screenDpi;
@@ -27,5 +26,5 @@ public class PartnerDeviceDto {
     private String manufacturer;
     private String city;
     private String distinctId;
-    private String uuid;
+    private PartnerSessionDto partnerSession;
 }

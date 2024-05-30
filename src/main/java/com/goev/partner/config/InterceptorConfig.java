@@ -32,7 +32,8 @@ public class InterceptorConfig implements WebMvcConfigurer {
                         "/api/v1/partner-management/sessions/otp",
                         "/api/v1/partner-management/sessions",
                         "/api/v1/partner-management/sessions/**/token",
-                        "/api/v1/partner-management/app-properties"
+                        "/api/v1/partner-management/app-properties",
+                        "/api/v1/internal/events"
 
                 );
     }

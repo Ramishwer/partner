@@ -1,9 +1,9 @@
 package com.goev.partner.repository.booking.impl;
 
 
+import com.goev.lib.enums.RecordState;
 import com.goev.partner.dao.booking.BookingDetailDao;
 import com.goev.partner.repository.booking.BookingDetailRepository;
-import com.goev.lib.enums.RecordState;
 import com.goev.record.partner.tables.records.BookingDetailsRecord;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,19 +22,19 @@ public class BookingDetailRepositoryImpl implements BookingDetailRepository {
     private final DSLContext context;
 
     @Override
-    public BookingDetailDao save(BookingDetailDao client) {
-        BookingDetailsRecord bookingDetailsRecord = context.newRecord(BOOKING_DETAILS, client);
+    public BookingDetailDao save(BookingDetailDao bookingDetailDao) {
+        BookingDetailsRecord bookingDetailsRecord = context.newRecord(BOOKING_DETAILS, bookingDetailDao);
         bookingDetailsRecord.store();
-        client.setId(bookingDetailsRecord.getId());
-        client.setUuid(bookingDetailsRecord.getUuid());
-        return client;
+        bookingDetailDao.setId(bookingDetailsRecord.getId());
+        bookingDetailDao.setUuid(bookingDetailsRecord.getUuid());
+        return bookingDetailDao;
     }
 
     @Override
-    public BookingDetailDao update(BookingDetailDao client) {
-        BookingDetailsRecord bookingDetailsRecord = context.newRecord(BOOKING_DETAILS, client);
+    public BookingDetailDao update(BookingDetailDao bookingDetailDao) {
+        BookingDetailsRecord bookingDetailsRecord = context.newRecord(BOOKING_DETAILS, bookingDetailDao);
         bookingDetailsRecord.update();
-        return client;
+        return bookingDetailDao;
     }
 
     @Override

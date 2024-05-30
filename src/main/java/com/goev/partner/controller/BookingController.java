@@ -18,17 +18,17 @@ public class BookingController {
 
     private final PartnerBookingService partnerBookingService;
 
-    @GetMapping("/{partner-uuid}/bookings")
+    @GetMapping("/partners/{partner-uuid}/bookings")
     public ResponseDto<PaginatedResponseDto<BookingDto>> getBookings(@PathVariable("partner-uuid")String partnerUUID,
                                                                      @RequestParam("count")Integer count,
                                                                      @RequestParam("start")Integer start){
-        return new ResponseDto<>(StatusDto.builder().message("SUCCESS").build(),200, new PaginatedResponseDto<>());
+        return new ResponseDto<>(StatusDto.builder().message("SUCCESS").build(),200, partnerBookingService.getBookings(partnerUUID,count,start));
     }
 
 
-    @GetMapping("/{partner-uuid}/bookings/{booking-uuid}")
+    @GetMapping("/partners/{partner-uuid}/bookings/{booking-uuid}")
     public ResponseDto<BookingDto> getBookingDetails(@PathVariable("partner-uuid")String partnerUUID,
                                                                      @PathVariable("booking-uuid")String bookingUUID){
-        return new ResponseDto<>(StatusDto.builder().message("SUCCESS").build(),200, new BookingDto());
+        return new ResponseDto<>(StatusDto.builder().message("SUCCESS").build(),200, partnerBookingService.getBookingDetails(partnerUUID,bookingUUID));
     }
 }

@@ -24,6 +24,7 @@ public class ApplicationConstants {
     public static String USER_PASSWORD;
     public static String S3_BUCKET_NAME;
     public static String AUTH_URL;
+    public static String CENTRAL_URL;
     public static String CREDENTIAL_TYPE_NAME;
     public static String CREDENTIAL_TYPE_UUID;
 

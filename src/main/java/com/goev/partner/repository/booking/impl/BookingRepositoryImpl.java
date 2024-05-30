@@ -1,9 +1,9 @@
 package com.goev.partner.repository.booking.impl;
 
 
+import com.goev.lib.enums.RecordState;
 import com.goev.partner.dao.booking.BookingDao;
 import com.goev.partner.repository.booking.BookingRepository;
-import com.goev.lib.enums.RecordState;
 import com.goev.record.partner.tables.records.BookingsRecord;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,19 +22,19 @@ public class BookingRepositoryImpl implements BookingRepository {
     private final DSLContext context;
 
     @Override
-    public BookingDao save(BookingDao client) {
-        BookingsRecord bookingsRecord = context.newRecord(BOOKINGS, client);
+    public BookingDao save(BookingDao bookingDao) {
+        BookingsRecord bookingsRecord = context.newRecord(BOOKINGS, bookingDao);
         bookingsRecord.store();
-        client.setId(bookingsRecord.getId());
-        client.setUuid(bookingsRecord.getUuid());
-        return client;
+        bookingDao.setId(bookingsRecord.getId());
+        bookingDao.setUuid(bookingsRecord.getUuid());
+        return bookingDao;
     }
 
     @Override
-    public BookingDao update(BookingDao client) {
-        BookingsRecord bookingsRecord = context.newRecord(BOOKINGS, client);
+    public BookingDao update(BookingDao bookingDao) {
+        BookingsRecord bookingsRecord = context.newRecord(BOOKINGS, bookingDao);
         bookingsRecord.update();
-        return client;
+        return bookingDao;
     }
 
     @Override

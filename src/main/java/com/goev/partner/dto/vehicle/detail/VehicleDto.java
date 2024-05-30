@@ -6,10 +6,11 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.joda.deser.DateTimeDeserializer;
 import com.fasterxml.jackson.datatype.joda.ser.DateTimeSerializer;
+import com.goev.partner.dto.location.LocationDto;
+import com.goev.partner.dto.partner.PartnerViewDto;
+import com.goev.partner.dto.vehicle.asset.VehicleTransferDto;
 import lombok.*;
 import org.joda.time.DateTime;
-
-import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -19,13 +20,20 @@ import java.util.List;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class VehicleDto {
+    private String imageUrl;
+    private String uuid;
     private String plateNumber;
-    private String vinNumber;
-    private String motorNumber;
+    private String status;
+    private PartnerViewDto partnerDetails;
+    private VehicleTransferDto vehicleTransferDetails;
+    private Integer soc;
+    private String subStatus ;
     @JsonSerialize(using = DateTimeSerializer.class)
     @JsonDeserialize(using = DateTimeDeserializer.class)
-    private DateTime registrationDate;
-    private String uuid;
-    private String state;
-    private List<VehicleAttributeDto> attributes;
+    private DateTime computedAvailableTime ;
+    @JsonSerialize(using = DateTimeSerializer.class)
+    @JsonDeserialize(using = DateTimeDeserializer.class)
+    private DateTime computedChargingTime ;
+    private String locationStatus ;
+    private LocationDto locationId ;
 }

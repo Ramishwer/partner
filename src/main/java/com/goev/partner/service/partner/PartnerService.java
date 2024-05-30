@@ -1,12 +1,10 @@
 package com.goev.partner.service.partner;
 
-import com.goev.partner.dto.common.PaginatedResponseDto;
-import com.goev.partner.dto.partner.detail.PartnerDetailsDto;
-import com.goev.partner.dto.partner.document.PartnerDocumentDto;
-
-import java.util.List;
+import com.goev.partner.dto.partner.detail.PartnerDetailDto;
+import com.goev.partner.dto.partner.detail.PartnerDto;
 
 public interface PartnerService {
-    PartnerDetailsDto getPartnerDetails(String partnerUUID);
+    PartnerDetailDto getPartnerDetails(String partnerUUID);
 
+    PartnerDetailDto updatePartnerDetails(String partnerUUID, PartnerDto partnerDto);
 }

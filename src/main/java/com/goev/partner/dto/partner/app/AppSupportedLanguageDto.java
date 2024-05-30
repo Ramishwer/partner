@@ -11,7 +11,7 @@ import lombok.*;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AppSupportedLanguageDto {
-    private String code;
+    private String languageCode;
     private String name;
     private String url;
 }

@@ -7,8 +7,8 @@ import com.goev.lib.dto.ResponseDto;
 import com.goev.lib.exceptions.ResponseException;
 import com.goev.lib.services.RestClient;
 import com.goev.partner.constant.ApplicationConstants;
-import com.goev.partner.dao.partner.auth.AuthCredentialDto;
-import com.goev.partner.dao.partner.auth.AuthCredentialTypeDto;
+import com.goev.partner.dao.partner.authentication.AuthCredentialDto;
+import com.goev.partner.dao.partner.authentication.AuthCredentialTypeDto;
 import com.goev.partner.dao.partner.detail.PartnerDao;
 import com.goev.partner.dao.partner.detail.PartnerDeviceDao;
 import com.goev.partner.dao.partner.detail.PartnerSessionDao;
@@ -67,7 +67,7 @@ public class SessionServiceImpl implements SessionService {
         partnerSessionDao.setPartnerId(partner.getId());
         partnerSessionDao.setLastActiveTime(DateTime.now());
         partnerSessionDao = partnerSessionRepository.save(partnerSessionDao);
-        PartnerDeviceDao partnerDeviceDao = getPartnerDeviceDao(sessionRequestDto.getDeviceDetais());
+        PartnerDeviceDao partnerDeviceDao = getPartnerDeviceDao(sessionRequestDto.getDeviceDetails());
         partnerDeviceDao.setPartnerId(partner.getId());
         partnerDeviceDao.setPartnerSessionId(partnerSessionDao.getId());
         partnerDeviceDao = partnerDeviceRepository.save(partnerDeviceDao);
@@ -85,8 +85,6 @@ public class SessionServiceImpl implements SessionService {
     private PartnerDeviceDao getPartnerDeviceDao(PartnerDeviceDto deviceDetais) {
         PartnerDeviceDao partnerDeviceDao = new PartnerDeviceDao();
         partnerDeviceDao.setFcmToken(deviceDetais.getFcmToken());
-        partnerDeviceDao.setImei1(deviceDetais.getImei1());
-        partnerDeviceDao.setImei2(deviceDetais.getImei2());
         partnerDeviceDao.setScreenHeight(deviceDetais.getScreenHeight());
         partnerDeviceDao.setScreenWidth(deviceDetais.getScreenWidth());
         partnerDeviceDao.setScreenDpi(deviceDetais.getScreenDpi());

@@ -12,6 +12,13 @@ import lombok.*;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class BookingPricingDetailDto {
     private String uuid;
-    private Integer estimatedAmount;
-    private Integer actualAmount;
+    private Integer plannedTotalAmount;
+    private Integer plannedTotalAmountExcludingTax;
+    private Integer plannedTaxAmount;
+    private Integer plannedTaxPercentage;
+    private Integer actualTotalAmount;
+    private Integer actualTotalAmountExcludingTax;
+    private Integer actualTaxAmount;
+    private Integer actualTaxPercentage;
+    private String status;
 }

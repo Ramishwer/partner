@@ -5,8 +5,12 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.joda.deser.DateTimeDeserializer;
 import com.fasterxml.jackson.datatype.joda.ser.DateTimeSerializer;
+
+import com.goev.partner.dto.payout.PayoutElementDto;
 import lombok.*;
 import org.joda.time.DateTime;
+
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -23,11 +27,11 @@ public class PartnerPayoutSummaryDto {
     private Integer totalDeductionAmount;
     private Integer totalCashbookAmount;
     private Integer totalGstAmount;
+    private List<PayoutElementDto> elements;
     @JsonSerialize(using = DateTimeSerializer.class)
     @JsonDeserialize(using = DateTimeDeserializer.class)
     private DateTime payoutStartDate;
     @JsonSerialize(using = DateTimeSerializer.class)
     @JsonDeserialize(using = DateTimeDeserializer.class)
     private DateTime payoutEndDate;
-    private String payoutUUID;
 }

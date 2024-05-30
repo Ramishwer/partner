@@ -1,14 +1,12 @@
 package com.goev.partner.dto.booking;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.joda.deser.DateTimeDeserializer;
-import com.fasterxml.jackson.datatype.joda.ser.DateTimeSerializer;
-import com.goev.partner.dto.location.LocationDto;
-import com.goev.partner.dto.vehicle.detail.VehicleDto;
+import com.goev.lib.dto.LatLongDto;
+import com.goev.partner.dao.booking.BookingDao;
+import com.goev.partner.dto.customer.CustomerViewDto;
+import com.goev.partner.dto.partner.PartnerViewDto;
+import com.goev.partner.dto.vehicle.VehicleViewDto;
 import lombok.*;
-import org.joda.time.DateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,28 +16,17 @@ import org.joda.time.DateTime;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class BookingDto {
-    private String partnerUUID;
-    private VehicleDto vehicle;
-    private String customerUUID;
+    private String uuid;
+    private BookingTypeDto bookingTypeDetails;
     private String status;
-    private LocationDto startLocation;
-    private LocationDto endLocation;
-    private BookingTypeDto bookingType;
-    private BookingPricingDetailDto pricingDetail;
-    @JsonSerialize(using = DateTimeSerializer.class)
-    @JsonDeserialize(using = DateTimeDeserializer.class)
-    private DateTime startTime;
-    @JsonSerialize(using = DateTimeSerializer.class)
-    @JsonDeserialize(using = DateTimeDeserializer.class)
-    private DateTime arriveTime;
-    @JsonSerialize(using = DateTimeSerializer.class)
-    @JsonDeserialize(using = DateTimeDeserializer.class)
-    private DateTime enrouteTime;
-    @JsonSerialize(using = DateTimeSerializer.class)
-    @JsonDeserialize(using = DateTimeDeserializer.class)
-    private DateTime endTime;
-    private Integer arrivalToStartDistance;
-    private Integer startToEndDistance;
-    private Integer assignmentToEnrouteDistance;
-    private Integer enrouteToArrivalDistance;
+    private String subStatus;
+    private LatLongDto startLocationDetails;
+    private LatLongDto endLocationDetails;
+    private PartnerViewDto partnerDetails;
+    private VehicleViewDto vehicleDetails;
+    private CustomerViewDto customerDetails;
+
+    public static BookingDto fromDao(BookingDao bookingDao) {
+        return BookingDto.builder().uuid(bookingDao.getUuid()).build();
+    }
 }

@@ -23,4 +23,7 @@ public class VehicleDetailDao extends BaseDao {
     private Integer homeLocationId;
     private DateTime insuranceExpiry ;
     private String insurancePolicyNumber;
+    private String batteryNumber;
+    private String hasDuplicateKeys;
+    private String plateNumber;
 }

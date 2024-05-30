@@ -29,7 +29,7 @@ public class PartnerAppServiceImpl implements PartnerAppService {
         List<AppSupportedLanguageDto> supportedLanguages = new ArrayList<>();
         languageDaos.forEach(x -> {
             supportedLanguages.add(AppSupportedLanguageDto.builder()
-                    .code(x.getLanguageCode())
+                    .languageCode(x.getLanguageCode())
                     .name(x.getName())
                     .url(x.getS3Key())
                     .build());

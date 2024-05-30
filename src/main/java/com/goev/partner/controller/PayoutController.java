@@ -19,22 +19,22 @@ import org.springframework.web.bind.annotation.*;
 public class PayoutController {
 
     private final PartnerPayoutService partnerPayoutService;
-    @GetMapping("/{partner-uuid}/payouts")
+    @GetMapping("/partners/{partner-uuid}/payouts")
     public ResponseDto<PaginatedResponseDto<PartnerPayoutDto>> getPayoutsForPartner(@PathVariable("partner-uuid")String partnerUUID,
                                                                                     @RequestParam("count")Integer count,
                                                                                     @RequestParam("start")Integer start){
         return new ResponseDto<>(StatusDto.builder().message("SUCCESS").build(),200, new PaginatedResponseDto<>());
     }
 
-    @GetMapping("/{partner-uuid}/payouts/{payout-uuid}/summary")
+    @GetMapping("/partners/{partner-uuid}/payouts/{partner-payout-uuid}/summary")
     public ResponseDto<PartnerPayoutSummaryDto> getPayoutSummaryForPartnerAndPayout(@PathVariable("partner-uuid")String partnerUUID,
-                                                                                    @PathVariable("payout-uuid")String payoutUUID){
+                                                                                    @PathVariable("partner-payout-uuid")String partnerPayoutUUID){
         return new ResponseDto<>(StatusDto.builder().message("SUCCESS").build(),200, new PartnerPayoutSummaryDto());
     }
 
-    @GetMapping("/{partner-uuid}/payouts/{payout-uuid}/transactions")
+    @GetMapping("/partners/{partner-uuid}/payouts/{partner-payout-uuid}/transactions")
     public ResponseDto<PaginatedResponseDto<PartnerPayoutTransactionDto>> getPayoutTransactionsForPartnerAndPayout(@PathVariable("partner-uuid")String partnerUUID,
-                                                                                             @PathVariable("payout-uuid")String payoutUUID){
+                                                                                             @PathVariable("partner-payout-uuid")String partnerPayoutUUID){
         return new ResponseDto<>(StatusDto.builder().message("SUCCESS").build(),200, new PaginatedResponseDto<>());
     }
 

@@ -6,7 +6,7 @@ import com.goev.partner.dao.partner.document.PartnerDocumentDao;
 import com.goev.partner.dao.partner.document.PartnerDocumentTypeDao;
 import com.goev.partner.dto.common.PageDto;
 import com.goev.partner.dto.common.PaginatedResponseDto;
-import com.goev.partner.dto.partner.detail.PartnerDetailsDto;
+import com.goev.partner.dto.partner.detail.PartnerDetailDto;
 import com.goev.partner.dto.partner.document.PartnerDocumentDto;
 import com.goev.partner.dto.partner.document.PartnerDocumentTypeDto;
 import com.goev.partner.enums.DocumentStatus;
@@ -96,7 +96,7 @@ public class PartnerDocumentServiceImpl implements PartnerDocumentService {
         List<Integer> activeDocumentTypeIds = activeDocumentTypes.stream().map(PartnerDocumentTypeDao::getId).toList();
 
         Map<Integer, PartnerDocumentDao> existingDocumentMap = partnerDocumentRepository.getExistingDocumentMap(partnerDao.getId(), activeDocumentTypeIds);
-        List<PartnerDocumentDto> documentList = PartnerDetailsDto.getPartnerDocumentDtoList(documentTypeIdToDocumentTypeMap, existingDocumentMap);
+        List<PartnerDocumentDto> documentList = PartnerDetailDto.getPartnerDocumentDtoList(documentTypeIdToDocumentTypeMap, existingDocumentMap);
         return PaginatedResponseDto.<PartnerDocumentDto>builder().elements(documentList).build();
     }
 }

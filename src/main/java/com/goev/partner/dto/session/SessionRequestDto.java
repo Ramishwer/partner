@@ -14,5 +14,5 @@ import lombok.*;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SessionRequestDto {
     private OtpCredentialsDto credentials;
-    private PartnerDeviceDto deviceDetais;
+    private PartnerDeviceDto deviceDetails;
 }

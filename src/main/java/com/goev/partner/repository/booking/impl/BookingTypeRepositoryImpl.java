@@ -1,9 +1,9 @@
 package com.goev.partner.repository.booking.impl;
 
 
+import com.goev.lib.enums.RecordState;
 import com.goev.partner.dao.booking.BookingTypeDao;
 import com.goev.partner.repository.booking.BookingTypeRepository;
-import com.goev.lib.enums.RecordState;
 import com.goev.record.partner.tables.records.BookingTypesRecord;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,19 +22,19 @@ public class BookingTypeRepositoryImpl implements BookingTypeRepository {
     private final DSLContext context;
 
     @Override
-    public BookingTypeDao save(BookingTypeDao client) {
-        BookingTypesRecord bookingTypesRecord = context.newRecord(BOOKING_TYPES, client);
+    public BookingTypeDao save(BookingTypeDao bookingTypeDao) {
+        BookingTypesRecord bookingTypesRecord = context.newRecord(BOOKING_TYPES, bookingTypeDao);
         bookingTypesRecord.store();
-        client.setId(bookingTypesRecord.getId());
-        client.setUuid(bookingTypesRecord.getUuid());
-        return client;
+        bookingTypeDao.setId(bookingTypesRecord.getId());
+        bookingTypeDao.setUuid(bookingTypesRecord.getUuid());
+        return bookingTypeDao;
     }
 
     @Override
-    public BookingTypeDao update(BookingTypeDao client) {
-        BookingTypesRecord bookingTypesRecord = context.newRecord(BOOKING_TYPES, client);
+    public BookingTypeDao update(BookingTypeDao bookingTypeDao) {
+        BookingTypesRecord bookingTypesRecord = context.newRecord(BOOKING_TYPES, bookingTypeDao);
         bookingTypesRecord.update();
-        return client;
+        return bookingTypeDao;
     }
 
     @Override

@@ -1,1 +1,0 @@
-package com.goev.partner.repository.partner.attendance.impl;
