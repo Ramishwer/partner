@@ -31,4 +31,5 @@ public class PartnerDao extends BaseDao {
     private String locationStatus;
     private Integer locationId;
     private String viewInfo;
+    private String onboardingStatus;
 }

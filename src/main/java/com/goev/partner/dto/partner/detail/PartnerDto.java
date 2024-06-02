@@ -41,5 +41,6 @@ public class PartnerDto {
     private PartnerDutyDto dutyDetails ;
     private PartnerShiftDto shiftDetails;
     private String locationStatus;
+    private String onboardingStatus;
 
 }

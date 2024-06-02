@@ -18,5 +18,6 @@ public class PartnerStatusDto {
     private String subStatus;
     private List<ActionDto> nextActions;
     private LocationDto location;
+    private String onboardingStatus;
 
 }

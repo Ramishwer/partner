@@ -35,5 +35,6 @@ public class VehicleDto {
     @JsonDeserialize(using = DateTimeDeserializer.class)
     private DateTime computedChargingTime ;
     private String locationStatus ;
-    private LocationDto locationId ;
+    private LocationDto locationDetails ;
+    private String onboardingStatus;
 }
