@@ -17,5 +17,4 @@ public class LocationDto {
     private String type;
     private LatLongDto coordinates;
     private String address;
-    private OwnerDetailDto ownerDetail;
 }

@@ -5,10 +5,10 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.joda.deser.DateTimeDeserializer;
 import com.fasterxml.jackson.datatype.joda.ser.DateTimeSerializer;
-import com.goev.lib.dto.LatLongDto;
 import com.goev.partner.dto.customer.CustomerViewDto;
 import com.goev.partner.dto.partner.PartnerViewDto;
 import com.goev.partner.dto.vehicle.VehicleViewDto;
+import com.goev.lib.dto.LatLongDto;
 import lombok.*;
 import org.joda.time.DateTime;
 
@@ -31,10 +31,17 @@ public class BookingViewDto {
     private VehicleViewDto vehicleDetails;
     private CustomerViewDto customerDetails;
     private BookingPricingDetailDto pricingDetails;
+    private BookingPaymentDto payment;
     @JsonSerialize(using = DateTimeSerializer.class)
     @JsonDeserialize(using = DateTimeDeserializer.class)
     private DateTime actualStartTime;
     @JsonSerialize(using = DateTimeSerializer.class)
     @JsonDeserialize(using = DateTimeDeserializer.class)
     private DateTime actualEndTime;
+    @JsonSerialize(using = DateTimeSerializer.class)
+    @JsonDeserialize(using = DateTimeDeserializer.class)
+    private DateTime plannedStartTime;
+    @JsonSerialize(using = DateTimeSerializer.class)
+    @JsonDeserialize(using = DateTimeDeserializer.class)
+    private DateTime plannedEndTime;
 }

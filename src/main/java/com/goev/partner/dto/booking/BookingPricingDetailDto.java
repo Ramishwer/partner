@@ -12,6 +12,7 @@ import lombok.*;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class BookingPricingDetailDto {
     private String uuid;
+    private BookingViewDto booking;
     private Integer plannedTotalAmount;
     private Integer plannedTotalAmountExcludingTax;
     private Integer plannedTaxAmount;

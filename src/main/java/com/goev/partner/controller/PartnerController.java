@@ -37,8 +37,4 @@ public class PartnerController {
         return new ResponseDto<>(StatusDto.builder().message("SUCCESS").build(),200, partnerDocumentService.getDocuments(partnerUUID));
     }
 
-    @PutMapping("/partners/{partner-uuid}")
-    public ResponseDto<PartnerDetailDto> updatePartnerDetails(@PathVariable(value = "partner-uuid")String partnerUUID, PartnerDto partnerDto){
-        return new ResponseDto<>(StatusDto.builder().message("SUCCESS").build(),200, partnerService.updatePartnerDetails(partnerUUID,partnerDto));
-    }
 }

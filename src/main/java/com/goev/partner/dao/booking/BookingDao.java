@@ -1,6 +1,5 @@
 package com.goev.partner.dao.booking;
 
-import com.goev.partner.dto.booking.BookingDto;
 import com.goev.lib.dao.BaseDao;
 import lombok.*;
 
