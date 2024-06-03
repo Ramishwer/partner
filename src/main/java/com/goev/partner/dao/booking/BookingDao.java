@@ -21,9 +21,4 @@ public class BookingDao extends BaseDao {
     private String customerDetails;
     private String viewInfo;
 
-    public static BookingDao fromDto(BookingDto bookingDto) {
-        BookingDao bookingDao = new BookingDao();
-        bookingDao.setUuid(bookingDto.getUuid());
-        return bookingDao;
-    }
 }
