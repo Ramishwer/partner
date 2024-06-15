@@ -1,8 +1,9 @@
 package com.goev.partner.repository.partner.payout.impl;
 
-import com.goev.partner.dao.partner.payout.PartnerPayoutTransactionDao;
-import com.goev.partner.repository.partner.payout.PartnerPayoutTransactionRepository;
 import com.goev.lib.enums.RecordState;
+import com.goev.partner.dao.partner.payout.PartnerPayoutTransactionDao;
+import com.goev.partner.dto.common.PageDto;
+import com.goev.partner.repository.partner.payout.PartnerPayoutTransactionRepository;
 import com.goev.record.partner.tables.records.PartnerPayoutTransactionsRecord;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,32 +38,40 @@ public class PartnerPayoutTransactionRepositoryImpl implements PartnerPayoutTran
     }
 
     @Override
-    public void delete(Integer id) {
-        context.update(PARTNER_PAYOUT_TRANSACTIONS).set(PARTNER_PAYOUT_TRANSACTIONS.STATE, RecordState.DELETED.name()).where(PARTNER_PAYOUT_TRANSACTIONS.ID.eq(id)).execute();
-    }
-
-    @Override
     public PartnerPayoutTransactionDao findByUUID(String uuid) {
-        return context.selectFrom(PARTNER_PAYOUT_TRANSACTIONS).where(PARTNER_PAYOUT_TRANSACTIONS.UUID.eq(uuid)).fetchAnyInto(PartnerPayoutTransactionDao.class);
+        return context.selectFrom(PARTNER_PAYOUT_TRANSACTIONS)
+                .where(PARTNER_PAYOUT_TRANSACTIONS.UUID.eq(uuid))
+                .and(PARTNER_PAYOUT_TRANSACTIONS.IS_ACTIVE.eq(true))
+                .fetchAnyInto(PartnerPayoutTransactionDao.class);
     }
 
     @Override
     public PartnerPayoutTransactionDao findById(Integer id) {
-        return context.selectFrom(PARTNER_PAYOUT_TRANSACTIONS).where(PARTNER_PAYOUT_TRANSACTIONS.ID.eq(id)).fetchAnyInto(PartnerPayoutTransactionDao.class);
+        return context.selectFrom(PARTNER_PAYOUT_TRANSACTIONS)
+                .where(PARTNER_PAYOUT_TRANSACTIONS.ID.eq(id))
+                .and(PARTNER_PAYOUT_TRANSACTIONS.IS_ACTIVE.eq(true))
+                .fetchAnyInto(PartnerPayoutTransactionDao.class);
     }
 
     @Override
     public List<PartnerPayoutTransactionDao> findAllByIds(List<Integer> ids) {
-        return context.selectFrom(PARTNER_PAYOUT_TRANSACTIONS).where(PARTNER_PAYOUT_TRANSACTIONS.ID.in(ids)).fetchInto(PartnerPayoutTransactionDao.class);
+        return context.selectFrom(PARTNER_PAYOUT_TRANSACTIONS)
+                .where(PARTNER_PAYOUT_TRANSACTIONS.ID.in(ids))
+                .and(PARTNER_PAYOUT_TRANSACTIONS.IS_ACTIVE.eq(true))
+                .fetchInto(PartnerPayoutTransactionDao.class);
     }
 
-    @Override
-    public List<PartnerPayoutTransactionDao> findAll() {
-        return context.selectFrom(PARTNER_PAYOUT_TRANSACTIONS).fetchInto(PartnerPayoutTransactionDao.class);
-    }
 
     @Override
-    public List<PartnerPayoutTransactionDao> findAllByPartnerPayoutId(Integer id) {
-        return context.selectFrom(PARTNER_PAYOUT_TRANSACTIONS).where(PARTNER_PAYOUT_TRANSACTIONS.PARTNER_PAYOUT_ID.eq(id)).fetchInto(PartnerPayoutTransactionDao.class);
+    public List<PartnerPayoutTransactionDao> findAllByPartnerPayoutId(Integer id, PageDto page) {
+        return context.selectFrom(PARTNER_PAYOUT_TRANSACTIONS)
+                .where(PARTNER_PAYOUT_TRANSACTIONS.PARTNER_PAYOUT_ID.eq(id))
+                .and(PARTNER_PAYOUT_TRANSACTIONS.STATE.eq(RecordState.ACTIVE.name()))
+                .and(PARTNER_PAYOUT_TRANSACTIONS.IS_ACTIVE.eq(true))
+                .offset(page.getStart())
+                .limit(page.getLimit())
+                .fetchInto(PartnerPayoutTransactionDao.class);
     }
+
+
 }

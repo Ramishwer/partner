@@ -3,6 +3,8 @@ package com.goev.partner.repository.booking.impl;
 
 import com.goev.lib.enums.RecordState;
 import com.goev.partner.dao.booking.BookingDao;
+import com.goev.partner.dto.common.PageDto;
+import com.goev.partner.enums.booking.BookingStatus;
 import com.goev.partner.repository.booking.BookingRepository;
 import com.goev.record.partner.tables.records.BookingsRecord;
 import lombok.AllArgsConstructor;
@@ -37,28 +39,55 @@ public class BookingRepositoryImpl implements BookingRepository {
         return bookingDao;
     }
 
-    @Override
-    public void delete(Integer id) {
-        context.update(BOOKINGS).set(BOOKINGS.STATE, RecordState.DELETED.name()).where(BOOKINGS.ID.eq(id)).execute();
-    }
 
     @Override
     public BookingDao findByUUID(String uuid) {
-        return context.selectFrom(BOOKINGS).where(BOOKINGS.UUID.eq(uuid)).fetchAnyInto(BookingDao.class);
+        return context.selectFrom(BOOKINGS)
+                .where(BOOKINGS.UUID.eq(uuid))
+                .and(BOOKINGS.STATE.eq(RecordState.ACTIVE.name()))
+                .and(BOOKINGS.IS_ACTIVE.eq(true))
+                .fetchAnyInto(BookingDao.class);
+    }
+
+    @Override
+    public BookingDao findByPartnerIdAndUUID(Integer partnerId,String uuid) {
+        return context.selectFrom(BOOKINGS)
+                .where(BOOKINGS.UUID.eq(uuid))
+                .and(BOOKINGS.PARTNER_ID.eq(partnerId))
+                .and(BOOKINGS.STATE.eq(RecordState.ACTIVE.name()))
+                .and(BOOKINGS.IS_ACTIVE.eq(true))
+                .fetchAnyInto(BookingDao.class);
     }
 
     @Override
     public BookingDao findById(Integer id) {
-        return context.selectFrom(BOOKINGS).where(BOOKINGS.ID.eq(id)).fetchAnyInto(BookingDao.class);
+        return context.selectFrom(BOOKINGS)
+                .where(BOOKINGS.ID.eq(id))
+                .and(BOOKINGS.STATE.eq(RecordState.ACTIVE.name()))
+                .and(BOOKINGS.IS_ACTIVE.eq(true))
+                .fetchAnyInto(BookingDao.class);
     }
 
     @Override
     public List<BookingDao> findAllByIds(List<Integer> ids) {
-        return context.selectFrom(BOOKINGS).where(BOOKINGS.ID.in(ids)).fetchInto(BookingDao.class);
+        return context.selectFrom(BOOKINGS)
+                .where(BOOKINGS.ID.in(ids))
+                .and(BOOKINGS.STATE.eq(RecordState.ACTIVE.name()))
+                .and(BOOKINGS.IS_ACTIVE.eq(true))
+                .fetchInto(BookingDao.class);
     }
 
+
     @Override
-    public List<BookingDao> findAll() {
-        return context.selectFrom(BOOKINGS).fetchInto(BookingDao.class);
+    public List<BookingDao> findAllByPartnerId(Integer partnerId, PageDto page) {
+        return context.selectFrom(BOOKINGS)
+                .where(BOOKINGS.PARTNER_ID.eq(partnerId))
+                .and(BOOKINGS.STATUS.in(BookingStatus.END.name(),BookingStatus.CANCELLED.name(),BookingStatus.NO_SHOW.name()))
+                .and(BOOKINGS.STATE.eq(RecordState.ACTIVE.name()))
+                .and(BOOKINGS.IS_ACTIVE.eq(true))
+                .orderBy(BOOKINGS.PLANNED_START_TIME.desc(),BOOKINGS.ID.asc())
+                .offset(page.getStart())
+                .limit(page.getLimit())
+                .fetchInto(BookingDao.class);
     }
 }

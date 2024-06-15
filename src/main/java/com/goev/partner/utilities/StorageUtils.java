@@ -16,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -33,7 +34,7 @@ public class StorageUtils {
             if (file.getOriginalFilename() == null) {
                 throw new ResponseException("No filename present");
             }
-            Path destinationFile = rootLocation.resolve(Paths.get(file.getOriginalFilename()))
+            Path destinationFile = rootLocation.resolve(UUID.randomUUID().toString()+"_"+Paths.get(file.getOriginalFilename()))
                     .normalize().toAbsolutePath();
             if (!destinationFile.getParent().equals(this.rootLocation.toAbsolutePath())) {
                 throw new ResponseException("Cannot store file outside current directory.");

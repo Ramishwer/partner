@@ -18,6 +18,11 @@ public class PartnerDocumentTypeDao extends BaseDao {
     private String label;
     private String groupKey;
     private String groupDescription;
+    private String fileTypes;
+    private String icon;
+    private Boolean needsVerification;
+    private Boolean isMandatory;
+
 }
 
 

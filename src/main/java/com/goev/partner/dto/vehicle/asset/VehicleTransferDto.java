@@ -1,6 +1,8 @@
 package com.goev.partner.dto.vehicle.asset;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.goev.partner.constant.ApplicationConstants;
+import com.goev.partner.dao.vehicle.asset.VehicleTransferDetailDao;
 import com.goev.partner.dto.location.LocationDto;
 import com.goev.partner.dto.vehicle.VehicleViewDto;
 import lombok.*;
@@ -22,4 +24,17 @@ public class VehicleTransferDto {
     private LocationDto transferLocationDetails;
     private Integer odometerReading;
     private Integer socReading;
+
+    public static VehicleTransferDto fromDao(VehicleTransferDetailDao detailDao, VehicleViewDto vehicleViewDto) {
+        return VehicleTransferDto.builder()
+                .odometerReading(detailDao.getOdometerReading())
+                .vehicle(vehicleViewDto)
+                .status(detailDao.getStatus())
+                .socReading(detailDao.getSocReading())
+                .transferFrom(ApplicationConstants.GSON.fromJson(detailDao.getTransferFrom(), TransferUserDetailsDto.class))
+                .transferTo(ApplicationConstants.GSON.fromJson(detailDao.getTransferTo(), TransferUserDetailsDto.class))
+                .transferLocationDetails(ApplicationConstants.GSON.fromJson(detailDao.getTransferLocationDetails(), LocationDto.class))
+                .transferType(detailDao.getTransferType())
+                .uuid(detailDao.getUuid()).build();
+    }
 }

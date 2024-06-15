@@ -12,5 +12,6 @@ import lombok.*;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class TransferUserDetailsDto {
     private String uuid;
-    private String name;
+    private String firstName;
+    private String lastName;
 }

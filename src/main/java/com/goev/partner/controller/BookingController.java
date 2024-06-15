@@ -3,6 +3,7 @@ package com.goev.partner.controller;
 import com.goev.lib.dto.ResponseDto;
 import com.goev.lib.dto.StatusDto;
 import com.goev.partner.dto.booking.BookingViewDto;
+import com.goev.partner.dto.common.PageDto;
 import com.goev.partner.dto.common.PaginatedResponseDto;
 import com.goev.partner.service.booking.PartnerBookingService;
 import lombok.AllArgsConstructor;
@@ -19,9 +20,8 @@ public class BookingController {
 
     @GetMapping("/partners/{partner-uuid}/bookings")
     public ResponseDto<PaginatedResponseDto<BookingViewDto>> getBookings(@PathVariable("partner-uuid")String partnerUUID,
-                                                                         @RequestParam("count")Integer count,
-                                                                         @RequestParam("start")Integer start){
-        return new ResponseDto<>(StatusDto.builder().message("SUCCESS").build(),200, partnerBookingService.getBookings(partnerUUID,count,start));
+                                                                         PageDto page){
+        return new ResponseDto<>(StatusDto.builder().message("SUCCESS").build(),200, partnerBookingService.getBookings(partnerUUID,page));
     }
 
 

@@ -2,6 +2,7 @@ package com.goev.partner.controller;
 
 import com.goev.lib.dto.ResponseDto;
 import com.goev.lib.dto.StatusDto;
+import com.goev.partner.dto.common.PageDto;
 import com.goev.partner.dto.common.PaginatedResponseDto;
 import com.goev.partner.dto.partner.duty.PartnerDutyDto;
 import com.goev.partner.service.duty.PartnerDutyService;
@@ -18,9 +19,8 @@ public class DutyController {
     private final PartnerDutyService partnerDutyService;
     @GetMapping("/partners/{partner-uuid}/duties")
     public ResponseDto<PaginatedResponseDto<PartnerDutyDto>> getDutiesForPartner(@PathVariable("partner-uuid")String partnerUUID,
-                                                                                 @RequestParam("count")Integer count,
-                                                                                 @RequestParam("start")Integer start){
-        return new ResponseDto<>(StatusDto.builder().message("SUCCESS").build(),200, partnerDutyService.getDutiesForPartner(partnerUUID,count,start));
+                                                                                 PageDto page){
+        return new ResponseDto<>(StatusDto.builder().message("SUCCESS").build(),200, partnerDutyService.getDutiesForPartner(partnerUUID,page));
     }
 
     @GetMapping("/partners/{partner-uuid}/duties/{partner-duty-uuid}")

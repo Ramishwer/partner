@@ -1,6 +1,7 @@
 package com.goev.partner.repository.partner.duty.impl;
 
 import com.goev.partner.dao.partner.duty.PartnerDutyDao;
+import com.goev.partner.dto.common.PageDto;
 import com.goev.partner.repository.partner.duty.PartnerDutyRepository;
 import com.goev.lib.enums.RecordState;
 import com.goev.record.partner.tables.records.PartnerDutiesRecord;
@@ -63,7 +64,7 @@ public class PartnerDutyRepositoryImpl implements PartnerDutyRepository {
 
 
     @Override
-    public List<PartnerDutyDao> findAllByPartnerId(Integer id) {
+    public List<PartnerDutyDao> findAllByPartnerId(Integer id, PageDto page) {
         return context.selectFrom(PARTNER_DUTIES).where(PARTNER_DUTIES.PARTNER_ID.eq(id)).fetchInto(PartnerDutyDao.class);
     }
 }

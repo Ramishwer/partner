@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.joda.deser.DateTimeDeserializer;
 import com.fasterxml.jackson.datatype.joda.ser.DateTimeSerializer;
+import com.goev.partner.constant.ApplicationConstants;
+import com.goev.partner.dao.partner.detail.PartnerDao;
 import com.goev.partner.dto.location.LocationDto;
 import lombok.*;
 import org.joda.time.DateTime;
@@ -26,4 +28,8 @@ public class PartnerViewDto {
     private String state;
     private String profileUrl;
     private LocationDto homeLocation;
+
+    public static PartnerViewDto fromDao(PartnerDao partnerDao){
+        return ApplicationConstants.GSON.fromJson(partnerDao.getViewInfo(), PartnerViewDto.class);
+    }
 }

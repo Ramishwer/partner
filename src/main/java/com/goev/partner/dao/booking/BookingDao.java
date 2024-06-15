@@ -20,5 +20,8 @@ public class BookingDao extends BaseDao {
     private String vehicleDetails;
     private String customerDetails;
     private String viewInfo;
+    private Integer customerId;
+    private Integer partnerId;
+    private Integer vehicleId;
 
 }

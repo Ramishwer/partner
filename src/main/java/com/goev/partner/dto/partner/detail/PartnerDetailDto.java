@@ -76,11 +76,15 @@ public class PartnerDetailDto {
             PartnerDocumentTypeDao type = entry.getValue();
             PartnerDocumentDto partnerDocumentDto = PartnerDocumentDto.builder()
                     .type(PartnerDocumentTypeDto.builder()
-                            .name(type.getName())
+                            .uuid(type.getUuid())
                             .label(type.getLabel())
+                            .name(type.getName())
                             .groupKey(type.getGroupKey())
                             .groupDescription(type.getGroupDescription())
-                            .uuid(type.getUuid())
+                            .fileTypes(type.getFileTypes())
+                            .icon(type.getIcon())
+                            .needsVerification(type.getNeedsVerification())
+                            .isMandatory(type.getIsMandatory())
                             .build())
                     .status(DocumentStatus.PENDING.name())
                     .build();

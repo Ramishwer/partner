@@ -17,4 +17,8 @@ public class PartnerDocumentTypeDto {
     private String label;
     private String groupKey;
     private String groupDescription;
+    private Boolean needsVerification;
+    private Boolean isMandatory;
+    private String icon;
+    private String fileTypes;
 }

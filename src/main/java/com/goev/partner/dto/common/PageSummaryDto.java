@@ -1,4 +1,4 @@
-package com.goev.partner.dto.vehicle.asset;
+package com.goev.partner.dto.common;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
@@ -10,7 +10,8 @@ import lombok.*;
 @ToString
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class VehicleAssetDto {
-    private String uuid;
-    private String name;
+public class PageSummaryDto {
+    private Integer totalPages;
+    private Integer currentPage;
+    private Integer totalElements;
 }

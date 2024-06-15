@@ -1,7 +1,8 @@
 package com.goev.partner.repository.partner.payout.impl;
 
 import com.goev.partner.dao.partner.payout.PartnerPayoutDao;
-import com.goev.partner.dto.partner.payout.PartnerPayoutDto;
+import com.goev.partner.dto.common.PageDto;
+import com.goev.partner.enums.payout.PartnerPayoutStatus;
 import com.goev.partner.repository.partner.payout.PartnerPayoutRepository;
 import com.goev.lib.enums.RecordState;
 import com.goev.record.partner.tables.records.PartnerPayoutsRecord;
@@ -63,7 +64,11 @@ public class PartnerPayoutRepositoryImpl implements PartnerPayoutRepository {
     }
 
     @Override
-    public List<PartnerPayoutDao> findAllByPartnerId(Integer id) {
-        return context.selectFrom(PARTNER_PAYOUTS).where(PARTNER_PAYOUTS.PARTNER_ID.eq(id)).fetchInto(PartnerPayoutDao.class);
+    public List<PartnerPayoutDao> findAllByPartnerId(Integer id, PageDto page) {
+        return context.selectFrom(PARTNER_PAYOUTS)
+                .where(PARTNER_PAYOUTS.PARTNER_ID.eq(id))
+                .and(PARTNER_PAYOUTS.STATUS.in(PartnerPayoutStatus.COMPLETED.name(),PartnerPayoutStatus.PENDING.name()))
+                .orderBy(PARTNER_PAYOUTS.FINALIZATION_DATE.desc(),PARTNER_PAYOUTS.ID.asc()).offset(page.getStart()).limit(page.getLimit())
+                .fetchInto(PartnerPayoutDao.class);
     }
 }

@@ -71,6 +71,10 @@ public class PartnerDocumentServiceImpl implements PartnerDocumentService {
                             .name(partnerDocumentTypeDao.getName())
                             .groupKey(partnerDocumentTypeDao.getGroupKey())
                             .groupDescription(partnerDocumentTypeDao.getGroupDescription())
+                            .fileTypes(partnerDocumentTypeDao.getFileTypes())
+                            .icon(partnerDocumentTypeDao.getIcon())
+                            .needsVerification(partnerDocumentTypeDao.getNeedsVerification())
+                            .isMandatory(partnerDocumentTypeDao.getIsMandatory())
                             .build())
                     .fileName(partnerDocumentTypeDao.getName())
                     .description(partnerDocumentDao.getDescription())
@@ -89,7 +93,7 @@ public class PartnerDocumentServiceImpl implements PartnerDocumentService {
 
         List<PartnerDocumentTypeDao> activeDocumentTypes = partnerDocumentTypeRepository.findAll();
         if (CollectionUtils.isEmpty(activeDocumentTypes))
-            return PaginatedResponseDto.<PartnerDocumentDto>builder().pagination(PageDto.builder().currentPage(0).totalPages(0).build()).elements(new ArrayList<>()).build();
+            return PaginatedResponseDto.<PartnerDocumentDto>builder().elements(new ArrayList<>()).build();
 
         Map<Integer, PartnerDocumentTypeDao> documentTypeIdToDocumentTypeMap = activeDocumentTypes.stream()
                 .collect(Collectors.toMap(PartnerDocumentTypeDao::getId, Function.identity()));
