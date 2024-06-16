@@ -3,6 +3,7 @@ package com.goev.partner.controller;
 import com.goev.lib.dto.ResponseDto;
 import com.goev.lib.dto.StatusDto;
 import com.goev.lib.event.service.EventProcessor;
+import com.goev.partner.utilities.RequestContext;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,7 +22,7 @@ public class InternalController {
     public ResponseDto<Boolean> receivedEvent(@RequestBody String event, @RequestParam("name") String name) {
 
         log.info("Received Event :{}", event);
-
+        RequestContext.setRequestSource("EVENT");
         return new ResponseDto<>(
                 StatusDto.builder().message("SUCCESS").build(), 200,
                 eventProcessor.receiveEvent(event, name));

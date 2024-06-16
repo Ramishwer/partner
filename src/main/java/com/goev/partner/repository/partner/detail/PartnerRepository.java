@@ -9,6 +9,8 @@ public interface PartnerRepository {
 
     PartnerDao update(PartnerDao partner);
 
+    PartnerDao updateWithOutEvent(PartnerDao partner);
+
     void delete(Integer id);
 
     PartnerDao findByUUID(String uuid);

@@ -27,14 +27,6 @@ public class PartnerDocumentTypeUpdateEventHandler extends EventHandler<PartnerD
         if (existing != null) {
             partnerDocumentTypeDao.setId(existing.getId());
             partnerDocumentTypeDao.setUuid(existing.getUuid());
-            partnerDocumentTypeDao.setCreatedBy(existing.getCreatedBy());
-            partnerDocumentTypeDao.setUpdatedBy(existing.getUpdatedBy());
-            partnerDocumentTypeDao.setCreatedOn(existing.getCreatedOn());
-            partnerDocumentTypeDao.setUpdatedOn(existing.getUpdatedOn());
-            partnerDocumentTypeDao.setIsActive(existing.getIsActive());
-            partnerDocumentTypeDao.setState(existing.getState());
-            partnerDocumentTypeDao.setApiSource(existing.getApiSource());
-            partnerDocumentTypeDao.setNotes(existing.getNotes());
             partnerDocumentTypeRepository.update(partnerDocumentTypeDao);
             return true;
         }

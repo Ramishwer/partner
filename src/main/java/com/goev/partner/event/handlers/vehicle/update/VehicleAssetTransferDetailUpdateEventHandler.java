@@ -27,14 +27,6 @@ public class VehicleAssetTransferDetailUpdateEventHandler extends EventHandler<V
         if (existing != null) {
             vehicleAssetTransferDetailDao.setId(existing.getId());
             vehicleAssetTransferDetailDao.setUuid(existing.getUuid());
-            vehicleAssetTransferDetailDao.setCreatedBy(existing.getCreatedBy());
-            vehicleAssetTransferDetailDao.setUpdatedBy(existing.getUpdatedBy());
-            vehicleAssetTransferDetailDao.setCreatedOn(existing.getCreatedOn());
-            vehicleAssetTransferDetailDao.setUpdatedOn(existing.getUpdatedOn());
-            vehicleAssetTransferDetailDao.setIsActive(existing.getIsActive());
-            vehicleAssetTransferDetailDao.setState(existing.getState());
-            vehicleAssetTransferDetailDao.setApiSource(existing.getApiSource());
-            vehicleAssetTransferDetailDao.setNotes(existing.getNotes());
             vehicleAssetTransferDetailRepository.update(vehicleAssetTransferDetailDao);
             return true;
         }

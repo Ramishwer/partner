@@ -4,6 +4,7 @@ import com.goev.lib.enums.RecordState;
 import com.goev.partner.dao.vehicle.transfer.VehicleTransferDetailDao;
 import com.goev.partner.repository.vehicle.transfer.VehicleTransferDetailRepository;
 import com.goev.partner.utilities.EventExecutorUtils;
+import com.goev.partner.utilities.RequestContext;
 import com.goev.record.partner.tables.records.VehicleTransferDetailsRecord;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +37,8 @@ public class VehicleTransferDetailRepositoryImpl implements VehicleTransferDetai
         transferDetail.setState(vehicleTransferDetailsRecord.getState());
         transferDetail.setApiSource(vehicleTransferDetailsRecord.getApiSource());
         transferDetail.setNotes(vehicleTransferDetailsRecord.getNotes());
-        eventExecutor.fireEvent("VehicleTransferDetailSaveEvent", transferDetail);
+        if("API".equals(RequestContext.getRequestSource()))
+            eventExecutor.fireEvent("VehicleTransferDetailSaveEvent", transferDetail);
         return transferDetail;
     }
 
@@ -55,7 +57,8 @@ public class VehicleTransferDetailRepositoryImpl implements VehicleTransferDetai
         transferDetail.setApiSource(vehicleTransferDetailsRecord.getApiSource());
         transferDetail.setNotes(vehicleTransferDetailsRecord.getNotes());
 
-        eventExecutor.fireEvent("VehicleTransferDetailUpdateEvent", transferDetail);
+        if("API".equals(RequestContext.getRequestSource()))
+            eventExecutor.fireEvent("VehicleTransferDetailUpdateEvent", transferDetail);
         return transferDetail;
     }
 

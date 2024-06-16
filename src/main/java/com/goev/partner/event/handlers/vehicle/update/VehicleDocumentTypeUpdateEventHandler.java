@@ -27,14 +27,6 @@ public class VehicleDocumentTypeUpdateEventHandler extends EventHandler<VehicleD
         if (existing != null) {
             vehicleDocumentTypeDao.setId(existing.getId());
             vehicleDocumentTypeDao.setUuid(existing.getUuid());
-            vehicleDocumentTypeDao.setCreatedBy(existing.getCreatedBy());
-            vehicleDocumentTypeDao.setUpdatedBy(existing.getUpdatedBy());
-            vehicleDocumentTypeDao.setCreatedOn(existing.getCreatedOn());
-            vehicleDocumentTypeDao.setUpdatedOn(existing.getUpdatedOn());
-            vehicleDocumentTypeDao.setIsActive(existing.getIsActive());
-            vehicleDocumentTypeDao.setState(existing.getState());
-            vehicleDocumentTypeDao.setApiSource(existing.getApiSource());
-            vehicleDocumentTypeDao.setNotes(existing.getNotes());
             vehicleDocumentTypeRepository.update(vehicleDocumentTypeDao);
             return true;
         }

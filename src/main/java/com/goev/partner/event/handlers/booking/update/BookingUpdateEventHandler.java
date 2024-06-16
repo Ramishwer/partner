@@ -27,14 +27,6 @@ public class BookingUpdateEventHandler extends EventHandler<BookingDao> {
         if (existing != null) {
             bookingDao.setId(existing.getId());
             bookingDao.setUuid(existing.getUuid());
-            bookingDao.setCreatedBy(existing.getCreatedBy());
-            bookingDao.setUpdatedBy(existing.getUpdatedBy());
-            bookingDao.setCreatedOn(existing.getCreatedOn());
-            bookingDao.setUpdatedOn(existing.getUpdatedOn());
-            bookingDao.setIsActive(existing.getIsActive());
-            bookingDao.setState(existing.getState());
-            bookingDao.setApiSource(existing.getApiSource());
-            bookingDao.setNotes(existing.getNotes());
             bookingRepository.update(bookingDao);
             return true;
         }

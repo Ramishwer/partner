@@ -27,14 +27,6 @@ public class VehicleDetailUpdateEventHandler extends EventHandler<VehicleDetailD
         if (existing != null) {
             vehicleDetailDao.setId(existing.getId());
             vehicleDetailDao.setUuid(existing.getUuid());
-            vehicleDetailDao.setCreatedBy(existing.getCreatedBy());
-            vehicleDetailDao.setUpdatedBy(existing.getUpdatedBy());
-            vehicleDetailDao.setCreatedOn(existing.getCreatedOn());
-            vehicleDetailDao.setUpdatedOn(existing.getUpdatedOn());
-            vehicleDetailDao.setIsActive(existing.getIsActive());
-            vehicleDetailDao.setState(existing.getState());
-            vehicleDetailDao.setApiSource(existing.getApiSource());
-            vehicleDetailDao.setNotes(existing.getNotes());
             vehicleDetailRepository.update(vehicleDetailDao);
             return true;
         }

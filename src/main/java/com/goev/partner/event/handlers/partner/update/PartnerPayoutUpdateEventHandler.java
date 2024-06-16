@@ -27,14 +27,6 @@ public class PartnerPayoutUpdateEventHandler extends EventHandler<PartnerPayoutD
         if (existing != null) {
             partnerPayoutDao.setId(existing.getId());
             partnerPayoutDao.setUuid(existing.getUuid());
-            partnerPayoutDao.setCreatedBy(existing.getCreatedBy());
-            partnerPayoutDao.setUpdatedBy(existing.getUpdatedBy());
-            partnerPayoutDao.setCreatedOn(existing.getCreatedOn());
-            partnerPayoutDao.setUpdatedOn(existing.getUpdatedOn());
-            partnerPayoutDao.setIsActive(existing.getIsActive());
-            partnerPayoutDao.setState(existing.getState());
-            partnerPayoutDao.setApiSource(existing.getApiSource());
-            partnerPayoutDao.setNotes(existing.getNotes());
             partnerPayoutRepository.update(partnerPayoutDao);
             return true;
         }

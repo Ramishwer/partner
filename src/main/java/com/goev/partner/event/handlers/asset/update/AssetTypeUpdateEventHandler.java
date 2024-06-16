@@ -27,14 +27,6 @@ public class AssetTypeUpdateEventHandler extends EventHandler<AssetTypeDao> {
         if (existing != null) {
             assetTypeDao.setId(existing.getId());
             assetTypeDao.setUuid(existing.getUuid());
-            assetTypeDao.setCreatedBy(existing.getCreatedBy());
-            assetTypeDao.setUpdatedBy(existing.getUpdatedBy());
-            assetTypeDao.setCreatedOn(existing.getCreatedOn());
-            assetTypeDao.setUpdatedOn(existing.getUpdatedOn());
-            assetTypeDao.setIsActive(existing.getIsActive());
-            assetTypeDao.setState(existing.getState());
-            assetTypeDao.setApiSource(existing.getApiSource());
-            assetTypeDao.setNotes(existing.getNotes());
             assetTypeRepository.update(assetTypeDao);
             return true;
         }

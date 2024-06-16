@@ -27,14 +27,6 @@ public class LocationUpdateEventHandler extends EventHandler<LocationDao> {
         if (existing != null) {
             locationDao.setId(existing.getId());
             locationDao.setUuid(existing.getUuid());
-            locationDao.setCreatedBy(existing.getCreatedBy());
-            locationDao.setUpdatedBy(existing.getUpdatedBy());
-            locationDao.setCreatedOn(existing.getCreatedOn());
-            locationDao.setUpdatedOn(existing.getUpdatedOn());
-            locationDao.setIsActive(existing.getIsActive());
-            locationDao.setState(existing.getState());
-            locationDao.setApiSource(existing.getApiSource());
-            locationDao.setNotes(existing.getNotes());
             locationRepository.update(locationDao);
             return true;
         }

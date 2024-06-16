@@ -4,6 +4,7 @@ import com.goev.lib.enums.RecordState;
 import com.goev.partner.dao.partner.detail.PartnerDetailDao;
 import com.goev.partner.repository.partner.detail.PartnerDetailRepository;
 import com.goev.partner.utilities.EventExecutorUtils;
+import com.goev.partner.utilities.RequestContext;
 import com.goev.record.partner.tables.records.PartnerDetailsRecord;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -54,7 +55,8 @@ public class PartnerDetailRepositoryImpl implements PartnerDetailRepository {
         detail.setApiSource(partnerDetailsRecord.getApiSource());
         detail.setNotes(partnerDetailsRecord.getNotes());
 
-        eventExecutor.fireEvent("PartnerDetailUpdateEvent", detail);
+        if ("API".equals(RequestContext.getRequestSource()))
+            eventExecutor.fireEvent("PartnerDetailUpdateEvent", detail);
         return detail;
     }
 

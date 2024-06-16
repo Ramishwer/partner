@@ -27,14 +27,6 @@ public class PartnerDutyUpdateEventHandler extends EventHandler<PartnerDutyDao> 
         if (existing != null) {
             partnerDutyDao.setId(existing.getId());
             partnerDutyDao.setUuid(existing.getUuid());
-            partnerDutyDao.setCreatedBy(existing.getCreatedBy());
-            partnerDutyDao.setUpdatedBy(existing.getUpdatedBy());
-            partnerDutyDao.setCreatedOn(existing.getCreatedOn());
-            partnerDutyDao.setUpdatedOn(existing.getUpdatedOn());
-            partnerDutyDao.setIsActive(existing.getIsActive());
-            partnerDutyDao.setState(existing.getState());
-            partnerDutyDao.setApiSource(existing.getApiSource());
-            partnerDutyDao.setNotes(existing.getNotes());
             partnerDutyRepository.update(partnerDutyDao);
             return true;
         }
