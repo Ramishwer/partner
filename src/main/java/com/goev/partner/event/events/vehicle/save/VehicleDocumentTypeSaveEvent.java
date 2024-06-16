@@ -1,7 +1,7 @@
 package com.goev.partner.event.events.vehicle.save;
 
 import com.goev.partner.dao.vehicle.document.VehicleDocumentTypeDao;
-import com.goev.partner.event.targets.PartnerTarget;
+import com.goev.partner.event.targets.CentralTarget;
 import com.goev.lib.event.core.Event;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
@@ -12,7 +12,7 @@ public class VehicleDocumentTypeSaveEvent extends Event<VehicleDocumentTypeDao> 
     @Override
     @PostConstruct
     public void init() {
-        registerEventTargets(PartnerTarget.getTargetName());
+        registerEventTargets(CentralTarget.getTargetName());
     }
 
     @Override
