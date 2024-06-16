@@ -1,5 +1,6 @@
 package com.goev.partner.utilities;
 
+import com.goev.lib.event.core.Event;
 import com.goev.lib.event.service.EventProcessor;
 import com.goev.partner.config.SpringContext;
 import com.goev.partner.dao.partner.detail.PartnerDao;
@@ -26,46 +27,22 @@ public class EventExecutorUtils {
 
         switch (event) {
             case "PartnerUpdateEvent" -> {
-                PartnerUpdateEvent partnerUpdateEvent = new PartnerUpdateEvent();
-                partnerUpdateEvent.setData((PartnerDao) data);
-                partnerUpdateEvent.setExecutionTime(DateTime.now().getMillis());
-                SpringContext.getBean(EventProcessor.class).sendEvent(partnerUpdateEvent);
-                return true;
+                return fireEvent(new PartnerUpdateEvent(),(PartnerDao) data);
             }
             case "PartnerDetailUpdateEvent" -> {
-                PartnerDetailUpdateEvent partnerDetailUpdateEvent = new PartnerDetailUpdateEvent();
-                partnerDetailUpdateEvent.setData((PartnerDetailDao) data);
-                partnerDetailUpdateEvent.setExecutionTime(DateTime.now().getMillis());
-                SpringContext.getBean(EventProcessor.class).sendEvent(partnerDetailUpdateEvent);
-                return true;
+                return fireEvent(new PartnerDetailUpdateEvent(),(PartnerDetailDao) data);
             }
             case "VehicleTransferDetailSaveEvent" -> {
-                VehicleTransferDetailSaveEvent vehicleTransferDetailSaveEvent = new VehicleTransferDetailSaveEvent();
-                vehicleTransferDetailSaveEvent.setData((VehicleTransferDetailDao) data);
-                vehicleTransferDetailSaveEvent.setExecutionTime(DateTime.now().getMillis());
-                SpringContext.getBean(EventProcessor.class).sendEvent(vehicleTransferDetailSaveEvent);
-                return true;
+                return fireEvent(new VehicleTransferDetailSaveEvent(),(VehicleTransferDetailDao) data);
             }
             case "VehicleTransferDetailUpdateEvent" -> {
-                VehicleTransferDetailUpdateEvent vehicleTransferDetailUpdateEvent = new VehicleTransferDetailUpdateEvent();
-                vehicleTransferDetailUpdateEvent.setData((VehicleTransferDetailDao) data);
-                vehicleTransferDetailUpdateEvent.setExecutionTime(DateTime.now().getMillis());
-                SpringContext.getBean(EventProcessor.class).sendEvent(vehicleTransferDetailUpdateEvent);
-                return true;
+                return fireEvent(new VehicleTransferDetailUpdateEvent(),(VehicleTransferDetailDao) data);
             }
             case "PartnerDocumentSaveEvent" -> {
-                PartnerDocumentSaveEvent partnerDocumentSaveEvent = new PartnerDocumentSaveEvent();
-                partnerDocumentSaveEvent.setData((PartnerDocumentDao) data);
-                partnerDocumentSaveEvent.setExecutionTime(DateTime.now().getMillis());
-                SpringContext.getBean(EventProcessor.class).sendEvent(partnerDocumentSaveEvent);
-                return true;
+                return fireEvent(new PartnerDocumentSaveEvent(),(PartnerDocumentDao) data);
             }
             case "PartnerDocumentUpdateEvent" -> {
-                PartnerDocumentUpdateEvent partnerDocumentUpdateEvent = new PartnerDocumentUpdateEvent();
-                partnerDocumentUpdateEvent.setData((PartnerDocumentDao) data);
-                partnerDocumentUpdateEvent.setExecutionTime(DateTime.now().getMillis());
-                SpringContext.getBean(EventProcessor.class).sendEvent(partnerDocumentUpdateEvent);
-                return true;
+                return fireEvent(new PartnerDocumentUpdateEvent(),(PartnerDocumentDao) data);
             }
 
             default -> {
@@ -73,5 +50,13 @@ public class EventExecutorUtils {
             }
         }
 
+    }
+
+
+    private static  <T>  boolean fireEvent(Event<T> eventObj, T data) {
+        eventObj.setData(data);
+        eventObj.setExecutionTime(DateTime.now().getMillis());
+        SpringContext.getBean(EventProcessor.class).sendEvent(eventObj);
+        return true;
     }
 }
