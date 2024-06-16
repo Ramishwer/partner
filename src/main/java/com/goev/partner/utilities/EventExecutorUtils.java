@@ -27,22 +27,22 @@ public class EventExecutorUtils {
 
         switch (event) {
             case "PartnerUpdateEvent" -> {
-                return fireEvent(new PartnerUpdateEvent(),(PartnerDao) data);
+                return fireEvent(SpringContext.getBean(PartnerUpdateEvent.class),(PartnerDao) data);
             }
             case "PartnerDetailUpdateEvent" -> {
-                return fireEvent(new PartnerDetailUpdateEvent(),(PartnerDetailDao) data);
+                return fireEvent(SpringContext.getBean(PartnerDetailUpdateEvent.class),(PartnerDetailDao) data);
             }
             case "VehicleTransferDetailSaveEvent" -> {
-                return fireEvent(new VehicleTransferDetailSaveEvent(),(VehicleTransferDetailDao) data);
+                return fireEvent(SpringContext.getBean(VehicleTransferDetailSaveEvent.class),(VehicleTransferDetailDao) data);
             }
             case "VehicleTransferDetailUpdateEvent" -> {
-                return fireEvent(new VehicleTransferDetailUpdateEvent(),(VehicleTransferDetailDao) data);
+                return fireEvent(SpringContext.getBean(VehicleTransferDetailUpdateEvent.class),(VehicleTransferDetailDao) data);
             }
             case "PartnerDocumentSaveEvent" -> {
-                return fireEvent(new PartnerDocumentSaveEvent(),(PartnerDocumentDao) data);
+                return fireEvent(SpringContext.getBean(PartnerDocumentSaveEvent.class),(PartnerDocumentDao) data);
             }
             case "PartnerDocumentUpdateEvent" -> {
-                return fireEvent(new PartnerDocumentUpdateEvent(),(PartnerDocumentDao) data);
+                return fireEvent(SpringContext.getBean(PartnerDocumentUpdateEvent.class),(PartnerDocumentDao) data);
             }
 
             default -> {
