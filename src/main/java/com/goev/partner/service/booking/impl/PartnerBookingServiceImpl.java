@@ -1,7 +1,6 @@
 package com.goev.partner.service.booking.impl;
 
 import com.goev.lib.exceptions.ResponseException;
-import com.goev.partner.constant.ApplicationConstants;
 import com.goev.partner.dao.booking.BookingDao;
 import com.goev.partner.dao.partner.detail.PartnerDao;
 import com.goev.partner.dto.booking.BookingViewDto;

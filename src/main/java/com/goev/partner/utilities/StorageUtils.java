@@ -1,11 +1,9 @@
 package com.goev.partner.utilities;
 
-import com.goev.partner.constant.ApplicationConstants;
 import com.goev.lib.exceptions.ResponseException;
 import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,7 +32,7 @@ public class StorageUtils {
             if (file.getOriginalFilename() == null) {
                 throw new ResponseException("No filename present");
             }
-            Path destinationFile = rootLocation.resolve(UUID.randomUUID().toString()+"_"+Paths.get(file.getOriginalFilename()))
+            Path destinationFile = rootLocation.resolve(UUID.randomUUID().toString() + "_" + Paths.get(file.getOriginalFilename()))
                     .normalize().toAbsolutePath();
             if (!destinationFile.getParent().equals(this.rootLocation.toAbsolutePath())) {
                 throw new ResponseException("Cannot store file outside current directory.");

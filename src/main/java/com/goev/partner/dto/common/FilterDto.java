@@ -27,5 +27,4 @@ public class FilterDto {
     private DateTime endTime;
 
 
-
 }

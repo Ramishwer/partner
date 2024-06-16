@@ -16,11 +16,11 @@ public class VehicleDao extends BaseDao {
     private String vehicleTransferDetails;
     private Integer soc;
     private Integer vehicleDetailsId;
-    private String subStatus ;
-    private DateTime computedAvailableTime ;
-    private DateTime computedChargingTime ;
-    private String locationStatus ;
-    private Integer locationId ;
+    private String subStatus;
+    private DateTime computedAvailableTime;
+    private DateTime computedChargingTime;
+    private String locationStatus;
+    private Integer locationId;
     private String viewInfo;
     private String imageUrl;
     private String onboardingStatus;

@@ -2,10 +2,8 @@ package com.goev.partner.service.vehicle.impl;
 
 
 import com.goev.lib.exceptions.ResponseException;
-import com.goev.partner.constant.ApplicationConstants;
 import com.goev.partner.dao.vehicle.detail.VehicleDao;
 import com.goev.partner.dto.vehicle.VehicleViewDto;
-import com.goev.partner.dto.vehicle.detail.VehicleDto;
 import com.goev.partner.repository.vehicle.detail.VehicleRepository;
 import com.goev.partner.service.vehicle.VehicleService;
 import lombok.AllArgsConstructor;
@@ -24,8 +22,8 @@ public class VehicleServiceImpl implements VehicleService {
     @Override
     public VehicleViewDto getVehicleDetails(String vehicleUUID) {
         VehicleDao vehicle = vehicleRepository.findByUUID(vehicleUUID);
-        if(vehicle == null)
-            throw new ResponseException("No vehicle found for uuid:"+vehicleUUID);
+        if (vehicle == null)
+            throw new ResponseException("No vehicle found for uuid:" + vehicleUUID);
         return VehicleViewDto.fromDao(vehicle);
 
     }

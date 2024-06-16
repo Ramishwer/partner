@@ -29,7 +29,7 @@ public class PartnerViewDto {
     private String profileUrl;
     private LocationDto homeLocation;
 
-    public static PartnerViewDto fromDao(PartnerDao partnerDao){
+    public static PartnerViewDto fromDao(PartnerDao partnerDao) {
         return ApplicationConstants.GSON.fromJson(partnerDao.getViewInfo(), PartnerViewDto.class);
     }
 }

@@ -19,8 +19,8 @@ public class AppController {
     private final PartnerAppService partnerAppService;
 
     @GetMapping("/app-properties")
-    public ResponseDto<AppPropertyDto> getAppProperties(){
-        return new ResponseDto<>(StatusDto.builder().message("SUCCESS").build(),200, partnerAppService.getAppProperties());
+    public ResponseDto<AppPropertyDto> getAppProperties() {
+        return new ResponseDto<>(StatusDto.builder().message("SUCCESS").build(), 200, partnerAppService.getAppProperties());
     }
 
 

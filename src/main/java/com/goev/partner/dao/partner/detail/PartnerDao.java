@@ -26,7 +26,7 @@ public class PartnerDao extends BaseDao {
     private String subStatus;
     private DateTime computedAvailableTime;
     private DateTime computedShiftEndTime;
-    private Integer partnerDutyId ;
+    private Integer partnerDutyId;
     private Integer partnerShiftId;
     private String locationStatus;
     private Integer locationId;

@@ -56,9 +56,9 @@ public class PartnerServiceImpl implements PartnerService {
         partnerDto.setPunchId(partnerDao.getPunchId());
         partnerDto.setState(partnerDao.getState());
         partnerDto.setUuid(partnerDao.getUuid());
+        partnerDto.setState(partnerDao.getState());
         partnerDto.setPhoneNumber(partnerDao.getPhoneNumber());
         partnerDto.setProfileUrl(partnerDao.getProfileUrl());
-
 
 
         if (partnerDetails == null)
@@ -76,6 +76,7 @@ public class PartnerServiceImpl implements PartnerService {
         result.setOnboardingDate(partnerDetails.getOnboardingDate());
         result.setDeboardingDate(partnerDetails.getDeboardingDate());
         result.setUuid(partnerDao.getUuid());
+        result.setState(partnerDao.getState());
         result.setDrivingTestStatus(partnerDetails.getDrivingTestStatus());
         result.setInterviewDate(partnerDetails.getInterviewDate());
         result.setSelectionStatus(partnerDetails.getSelectionStatus());
@@ -123,8 +124,11 @@ public class PartnerServiceImpl implements PartnerService {
             case CHECK_IN -> {
                 partner = checkin(partner, actionDto);
             }
-            case VEHICLE_SELECT -> {
+            case SELECT_VEHICLE -> {
                 partner = selectVehicle(partner, actionDto);
+            }
+            case RETURN_VEHICLE -> {
+                partner = returnVehicle(partner, actionDto);
             }
             case SUBMIT_CHECKLIST -> {
                 partner = submitChecklist(partner, actionDto);
@@ -185,7 +189,7 @@ public class PartnerServiceImpl implements PartnerService {
         PartnerDetailDto result = PartnerDetailDto.builder().build();
         setPartnerDetails(result, partner, partnerDetailDao);
         setPartnerHomeLocation(result, partnerDetailDao.getHomeLocationId());
-        return  result;
+        return result;
     }
 
     private PartnerDao checkOut(PartnerDao partner, ActionDto actionDto) {
@@ -233,6 +237,10 @@ public class PartnerServiceImpl implements PartnerService {
     }
 
     private PartnerDao selectVehicle(PartnerDao partner, ActionDto actionDto) {
+        return null;
+    }
+
+    private PartnerDao returnVehicle(PartnerDao partner, ActionDto actionDto) {
         return null;
     }
 

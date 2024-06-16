@@ -8,7 +8,10 @@ import com.goev.partner.dto.partner.duty.PartnerDutyDto;
 import com.goev.partner.service.duty.PartnerDutyService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
@@ -17,15 +20,16 @@ import org.springframework.web.bind.annotation.*;
 public class DutyController {
 
     private final PartnerDutyService partnerDutyService;
+
     @GetMapping("/partners/{partner-uuid}/duties")
-    public ResponseDto<PaginatedResponseDto<PartnerDutyDto>> getDutiesForPartner(@PathVariable("partner-uuid")String partnerUUID,
-                                                                                 PageDto page){
-        return new ResponseDto<>(StatusDto.builder().message("SUCCESS").build(),200, partnerDutyService.getDutiesForPartner(partnerUUID,page));
+    public ResponseDto<PaginatedResponseDto<PartnerDutyDto>> getDutiesForPartner(@PathVariable("partner-uuid") String partnerUUID,
+                                                                                 PageDto page) {
+        return new ResponseDto<>(StatusDto.builder().message("SUCCESS").build(), 200, partnerDutyService.getDutiesForPartner(partnerUUID, page));
     }
 
     @GetMapping("/partners/{partner-uuid}/duties/{partner-duty-uuid}")
-    public ResponseDto<PartnerDutyDto> getDutyDetailsForPartner(@PathVariable("partner-uuid")String partnerUUID,
-                                                                                 @PathVariable("partner-duty-uuid") String dutyUUID){
-        return new ResponseDto<>(StatusDto.builder().message("SUCCESS").build(),200, partnerDutyService.getDutyDetails(partnerUUID,dutyUUID));
+    public ResponseDto<PartnerDutyDto> getDutyDetailsForPartner(@PathVariable("partner-uuid") String partnerUUID,
+                                                                @PathVariable("partner-duty-uuid") String dutyUUID) {
+        return new ResponseDto<>(StatusDto.builder().message("SUCCESS").build(), 200, partnerDutyService.getDutyDetails(partnerUUID, dutyUUID));
     }
 }

@@ -1,8 +1,8 @@
 package com.goev.partner.repository.asset.impl;
 
+import com.goev.lib.enums.RecordState;
 import com.goev.partner.dao.asset.AssetTypeDao;
 import com.goev.partner.repository.asset.AssetTypeRepository;
-import com.goev.lib.enums.RecordState;
 import com.goev.record.partner.tables.records.AssetTypesRecord;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +26,14 @@ public class AssetTypeRepositoryImpl implements AssetTypeRepository {
         assetTypesRecord.store();
         client.setId(assetTypesRecord.getId());
         client.setUuid(assetTypesRecord.getUuid());
+        client.setCreatedBy(assetTypesRecord.getCreatedBy());
+        client.setUpdatedBy(assetTypesRecord.getUpdatedBy());
+        client.setCreatedOn(assetTypesRecord.getCreatedOn());
+        client.setUpdatedOn(assetTypesRecord.getUpdatedOn());
+        client.setIsActive(assetTypesRecord.getIsActive());
+        client.setState(assetTypesRecord.getState());
+        client.setApiSource(assetTypesRecord.getApiSource());
+        client.setNotes(assetTypesRecord.getNotes());
         return client;
     }
 
@@ -33,22 +41,41 @@ public class AssetTypeRepositoryImpl implements AssetTypeRepository {
     public AssetTypeDao update(AssetTypeDao client) {
         AssetTypesRecord assetTypesRecord = context.newRecord(ASSET_TYPES, client);
         assetTypesRecord.update();
+
+
+        client.setCreatedBy(assetTypesRecord.getCreatedBy());
+        client.setUpdatedBy(assetTypesRecord.getUpdatedBy());
+        client.setCreatedOn(assetTypesRecord.getCreatedOn());
+        client.setUpdatedOn(assetTypesRecord.getUpdatedOn());
+        client.setIsActive(assetTypesRecord.getIsActive());
+        client.setState(assetTypesRecord.getState());
+        client.setApiSource(assetTypesRecord.getApiSource());
+        client.setNotes(assetTypesRecord.getNotes());
         return client;
     }
 
     @Override
     public void delete(Integer id) {
-        context.update(ASSET_TYPES).set(ASSET_TYPES.STATE, RecordState.DELETED.name()).where(ASSET_TYPES.ID.eq(id)).execute();
-    }
+     context.update(ASSET_TYPES)
+     .set(ASSET_TYPES.STATE,RecordState.DELETED.name())
+     .where(ASSET_TYPES.ID.eq(id))
+     .and(ASSET_TYPES.STATE.eq(RecordState.ACTIVE.name()))
+     .and(ASSET_TYPES.IS_ACTIVE.eq(true))
+     .execute();
+    } 
 
     @Override
     public AssetTypeDao findByUUID(String uuid) {
-        return context.selectFrom(ASSET_TYPES).where(ASSET_TYPES.UUID.eq(uuid)).fetchAnyInto(AssetTypeDao.class);
+        return context.selectFrom(ASSET_TYPES).where(ASSET_TYPES.UUID.eq(uuid))
+                .and(ASSET_TYPES.IS_ACTIVE.eq(true))
+                .fetchAnyInto(AssetTypeDao.class);
     }
 
     @Override
     public AssetTypeDao findById(Integer id) {
-        return context.selectFrom(ASSET_TYPES).where(ASSET_TYPES.ID.eq(id)).fetchAnyInto(AssetTypeDao.class);
+        return context.selectFrom(ASSET_TYPES).where(ASSET_TYPES.ID.eq(id))
+                .and(ASSET_TYPES.IS_ACTIVE.eq(true))
+                .fetchAnyInto(AssetTypeDao.class);
     }
 
     @Override
@@ -57,7 +84,7 @@ public class AssetTypeRepositoryImpl implements AssetTypeRepository {
     }
 
     @Override
-    public List<AssetTypeDao> findAll() {
+    public List<AssetTypeDao> findAllActive() {
         return context.selectFrom(ASSET_TYPES).fetchInto(AssetTypeDao.class);
     }
 }

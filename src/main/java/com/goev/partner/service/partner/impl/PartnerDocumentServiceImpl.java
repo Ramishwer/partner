@@ -4,7 +4,6 @@ import com.goev.lib.exceptions.ResponseException;
 import com.goev.partner.dao.partner.detail.PartnerDao;
 import com.goev.partner.dao.partner.document.PartnerDocumentDao;
 import com.goev.partner.dao.partner.document.PartnerDocumentTypeDao;
-import com.goev.partner.dto.common.PageDto;
 import com.goev.partner.dto.common.PaginatedResponseDto;
 import com.goev.partner.dto.partner.detail.PartnerDetailDto;
 import com.goev.partner.dto.partner.document.PartnerDocumentDto;
@@ -34,6 +33,7 @@ public class PartnerDocumentServiceImpl implements PartnerDocumentService {
     private final PartnerDocumentRepository partnerDocumentRepository;
     private final PartnerDocumentTypeRepository partnerDocumentTypeRepository;
     private final S3Utils s3;
+
     @Override
     public List<PartnerDocumentDto> createDocument(String partnerUUID, List<PartnerDocumentDto> partnerDocuments) {
         PartnerDao partnerDao = partnerRepository.findByUUID(partnerUUID);
@@ -91,7 +91,7 @@ public class PartnerDocumentServiceImpl implements PartnerDocumentService {
         if (partnerDao == null)
             throw new ResponseException("No partner found for id :" + partnerUUID);
 
-        List<PartnerDocumentTypeDao> activeDocumentTypes = partnerDocumentTypeRepository.findAll();
+        List<PartnerDocumentTypeDao> activeDocumentTypes = partnerDocumentTypeRepository.findAllActive();
         if (CollectionUtils.isEmpty(activeDocumentTypes))
             return PaginatedResponseDto.<PartnerDocumentDto>builder().elements(new ArrayList<>()).build();
 

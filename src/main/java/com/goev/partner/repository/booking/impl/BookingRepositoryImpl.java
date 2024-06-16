@@ -29,6 +29,14 @@ public class BookingRepositoryImpl implements BookingRepository {
         bookingsRecord.store();
         bookingDao.setId(bookingsRecord.getId());
         bookingDao.setUuid(bookingsRecord.getUuid());
+        bookingDao.setCreatedBy(bookingsRecord.getCreatedBy());
+        bookingDao.setUpdatedBy(bookingsRecord.getUpdatedBy());
+        bookingDao.setCreatedOn(bookingsRecord.getCreatedOn());
+        bookingDao.setUpdatedOn(bookingsRecord.getUpdatedOn());
+        bookingDao.setIsActive(bookingsRecord.getIsActive());
+        bookingDao.setState(bookingsRecord.getState());
+        bookingDao.setApiSource(bookingsRecord.getApiSource());
+        bookingDao.setNotes(bookingsRecord.getNotes());
         return bookingDao;
     }
 
@@ -36,6 +44,16 @@ public class BookingRepositoryImpl implements BookingRepository {
     public BookingDao update(BookingDao bookingDao) {
         BookingsRecord bookingsRecord = context.newRecord(BOOKINGS, bookingDao);
         bookingsRecord.update();
+
+
+        bookingDao.setCreatedBy(bookingsRecord.getCreatedBy());
+        bookingDao.setUpdatedBy(bookingsRecord.getUpdatedBy());
+        bookingDao.setCreatedOn(bookingsRecord.getCreatedOn());
+        bookingDao.setUpdatedOn(bookingsRecord.getUpdatedOn());
+        bookingDao.setIsActive(bookingsRecord.getIsActive());
+        bookingDao.setState(bookingsRecord.getState());
+        bookingDao.setApiSource(bookingsRecord.getApiSource());
+        bookingDao.setNotes(bookingsRecord.getNotes());
         return bookingDao;
     }
 
@@ -50,7 +68,7 @@ public class BookingRepositoryImpl implements BookingRepository {
     }
 
     @Override
-    public BookingDao findByPartnerIdAndUUID(Integer partnerId,String uuid) {
+    public BookingDao findByPartnerIdAndUUID(Integer partnerId, String uuid) {
         return context.selectFrom(BOOKINGS)
                 .where(BOOKINGS.UUID.eq(uuid))
                 .and(BOOKINGS.PARTNER_ID.eq(partnerId))
@@ -82,10 +100,10 @@ public class BookingRepositoryImpl implements BookingRepository {
     public List<BookingDao> findAllByPartnerId(Integer partnerId, PageDto page) {
         return context.selectFrom(BOOKINGS)
                 .where(BOOKINGS.PARTNER_ID.eq(partnerId))
-                .and(BOOKINGS.STATUS.in(BookingStatus.END.name(),BookingStatus.CANCELLED.name(),BookingStatus.NO_SHOW.name()))
+                .and(BOOKINGS.STATUS.in(BookingStatus.END.name(), BookingStatus.CANCELLED.name(), BookingStatus.NO_SHOW.name()))
                 .and(BOOKINGS.STATE.eq(RecordState.ACTIVE.name()))
                 .and(BOOKINGS.IS_ACTIVE.eq(true))
-                .orderBy(BOOKINGS.PLANNED_START_TIME.desc(),BOOKINGS.ID.asc())
+                .orderBy(BOOKINGS.PLANNED_START_TIME.desc(), BOOKINGS.ID.asc())
                 .offset(page.getStart())
                 .limit(page.getLimit())
                 .fetchInto(BookingDao.class);

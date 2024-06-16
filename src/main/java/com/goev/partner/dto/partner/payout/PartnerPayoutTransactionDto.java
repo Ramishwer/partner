@@ -7,9 +7,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.joda.deser.DateTimeDeserializer;
 import com.fasterxml.jackson.datatype.joda.ser.DateTimeSerializer;
 import com.goev.partner.constant.ApplicationConstants;
-import com.goev.partner.dao.partner.payout.PartnerPayoutDao;
 import com.goev.partner.dao.partner.payout.PartnerPayoutTransactionDao;
-import com.goev.partner.dto.partner.PartnerViewDto;
 import com.goev.partner.dto.payout.PayoutElementDto;
 import com.google.gson.reflect.TypeToken;
 import lombok.*;
@@ -52,7 +50,8 @@ public class PartnerPayoutTransactionDto {
                 .message(transactionDao.getMessage())
                 .transactionTime(transactionDao.getTransactionTime())
                 .transactionType(transactionDao.getTransactionType())
-                .calculatedPayoutElements(ApplicationConstants.GSON.fromJson(transactionDao.getCalculatedPayoutElements(),new TypeToken<List<PayoutElementDto>>(){}.getType()))
+                .calculatedPayoutElements(ApplicationConstants.GSON.fromJson(transactionDao.getCalculatedPayoutElements(), new TypeToken<List<PayoutElementDto>>() {
+                }.getType()))
                 .status(transactionDao.getStatus())
                 .build();
 

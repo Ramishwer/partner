@@ -7,7 +7,7 @@ import com.goev.partner.dto.partner.payout.PartnerPayoutSummaryDto;
 import com.goev.partner.dto.partner.payout.PartnerPayoutTransactionDto;
 
 public interface PartnerPayoutService {
-    PaginatedResponseDto<PartnerPayoutDto> getPayouts(String partnerUUID ,PageDto page);
+    PaginatedResponseDto<PartnerPayoutDto> getPayouts(String partnerUUID, PageDto page);
 
     PartnerPayoutSummaryDto getPayoutSummaryForPayoutUUID(String partnerUUID, String partnerPayoutUUID);
 

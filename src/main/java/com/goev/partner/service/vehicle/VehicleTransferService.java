@@ -1,8 +1,8 @@
 package com.goev.partner.service.vehicle;
 
 import com.goev.partner.dto.common.PaginatedResponseDto;
-import com.goev.partner.dto.vehicle.asset.VehicleAssetTransferDetailDto;
-import com.goev.partner.dto.vehicle.asset.VehicleTransferDto;
+import com.goev.partner.dto.vehicle.transfer.VehicleAssetTransferDetailDto;
+import com.goev.partner.dto.vehicle.transfer.VehicleTransferDto;
 
 public interface VehicleTransferService {
 

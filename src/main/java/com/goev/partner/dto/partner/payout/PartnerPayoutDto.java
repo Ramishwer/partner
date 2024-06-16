@@ -41,7 +41,7 @@ public class PartnerPayoutDto {
     private Integer payoutTotalDebitAmount;
 
 
-    public static PartnerPayoutDto fromDao(PartnerPayoutDao partnerPayoutDao,PartnerViewDto partnerViewDto){
+    public static PartnerPayoutDto fromDao(PartnerPayoutDao partnerPayoutDao, PartnerViewDto partnerViewDto) {
         return PartnerPayoutDto.builder()
                 .partner(partnerViewDto)
                 .uuid(partnerPayoutDao.getUuid())
@@ -49,7 +49,7 @@ public class PartnerPayoutDto {
                 .payoutEndDate(partnerPayoutDao.getPayoutEndDate())
                 .status(partnerPayoutDao.getStatus())
                 .finalizationDate(partnerPayoutDao.getPayoutEndDate())
-                .payoutSummary(ApplicationConstants.GSON.fromJson(partnerPayoutDao.getPayoutSummary(),PartnerPayoutSummaryDto.class))
+                .payoutSummary(ApplicationConstants.GSON.fromJson(partnerPayoutDao.getPayoutSummary(), PartnerPayoutSummaryDto.class))
                 .payoutTotalBookingAmount(partnerPayoutDao.getPayoutTotalBookingAmount())
                 .payoutTotalAmount(partnerPayoutDao.getPayoutTotalAmount())
                 .payoutTotalDeductionAmount(partnerPayoutDao.getPayoutTotalDeductionAmount())

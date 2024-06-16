@@ -1,7 +1,6 @@
 package com.goev.partner.service.duty.impl;
 
 import com.goev.lib.exceptions.ResponseException;
-import com.goev.partner.constant.ApplicationConstants;
 import com.goev.partner.dao.partner.detail.PartnerDao;
 import com.goev.partner.dao.partner.duty.PartnerDutyDao;
 import com.goev.partner.dao.partner.duty.PartnerShiftDao;
@@ -52,7 +51,7 @@ public class PartnerDutyServiceImpl implements PartnerDutyService {
         if (dutyDao.getPartnerShiftId() != null)
             shift = partnerShiftRepository.findById(dutyDao.getPartnerShiftId());
 
-        return PartnerDutyDto.fromDao(dutyDao,PartnerViewDto.fromDao(partnerDao), shift);
+        return PartnerDutyDto.fromDao(dutyDao, PartnerViewDto.fromDao(partnerDao), shift);
     }
 
     @Override

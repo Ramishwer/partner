@@ -8,7 +8,10 @@ import com.goev.partner.dto.common.PaginatedResponseDto;
 import com.goev.partner.service.booking.PartnerBookingService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
@@ -19,15 +22,15 @@ public class BookingController {
     private final PartnerBookingService partnerBookingService;
 
     @GetMapping("/partners/{partner-uuid}/bookings")
-    public ResponseDto<PaginatedResponseDto<BookingViewDto>> getBookings(@PathVariable("partner-uuid")String partnerUUID,
-                                                                         PageDto page){
-        return new ResponseDto<>(StatusDto.builder().message("SUCCESS").build(),200, partnerBookingService.getBookings(partnerUUID,page));
+    public ResponseDto<PaginatedResponseDto<BookingViewDto>> getBookings(@PathVariable("partner-uuid") String partnerUUID,
+                                                                         PageDto page) {
+        return new ResponseDto<>(StatusDto.builder().message("SUCCESS").build(), 200, partnerBookingService.getBookings(partnerUUID, page));
     }
 
 
     @GetMapping("/partners/{partner-uuid}/bookings/{booking-uuid}")
-    public ResponseDto<BookingViewDto> getBookingDetails(@PathVariable("partner-uuid")String partnerUUID,
-                                                                     @PathVariable("booking-uuid")String bookingUUID){
-        return new ResponseDto<>(StatusDto.builder().message("SUCCESS").build(),200, partnerBookingService.getBookingDetails(partnerUUID,bookingUUID));
+    public ResponseDto<BookingViewDto> getBookingDetails(@PathVariable("partner-uuid") String partnerUUID,
+                                                         @PathVariable("booking-uuid") String bookingUUID) {
+        return new ResponseDto<>(StatusDto.builder().message("SUCCESS").build(), 200, partnerBookingService.getBookingDetails(partnerUUID, bookingUUID));
     }
 }

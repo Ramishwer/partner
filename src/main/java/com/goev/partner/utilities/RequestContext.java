@@ -93,7 +93,7 @@ public class RequestContext {
         if (requestAttributes != null) {
             HttpServletRequest request = requestAttributes.getRequest();
             if (request.getAttribute("partnerSession") != null)
-                partnerSessionDao =(PartnerSessionDao) request.getAttribute("partnerSession");
+                partnerSessionDao = (PartnerSessionDao) request.getAttribute("partnerSession");
         }
         return partnerSessionDao;
     }

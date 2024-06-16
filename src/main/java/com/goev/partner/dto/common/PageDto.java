@@ -2,7 +2,6 @@ package com.goev.partner.dto.common;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
-import org.joda.time.DateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor

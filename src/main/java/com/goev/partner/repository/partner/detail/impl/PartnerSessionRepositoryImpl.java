@@ -1,8 +1,8 @@
 package com.goev.partner.repository.partner.detail.impl;
 
+import com.goev.lib.enums.RecordState;
 import com.goev.partner.dao.partner.detail.PartnerSessionDao;
 import com.goev.partner.repository.partner.detail.PartnerSessionRepository;
-import com.goev.lib.enums.RecordState;
 import com.goev.record.partner.tables.records.PartnerSessionsRecord;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +26,14 @@ public class PartnerSessionRepositoryImpl implements PartnerSessionRepository {
         partnerSessionsRecord.store();
         session.setId(partnerSessionsRecord.getId());
         session.setUuid(partnerSessionsRecord.getUuid());
+        session.setCreatedBy(partnerSessionsRecord.getCreatedBy());
+        session.setUpdatedBy(partnerSessionsRecord.getUpdatedBy());
+        session.setCreatedOn(partnerSessionsRecord.getCreatedOn());
+        session.setUpdatedOn(partnerSessionsRecord.getUpdatedOn());
+        session.setIsActive(partnerSessionsRecord.getIsActive());
+        session.setState(partnerSessionsRecord.getState());
+        session.setApiSource(partnerSessionsRecord.getApiSource());
+        session.setNotes(partnerSessionsRecord.getNotes());
         return session;
     }
 
@@ -33,22 +41,41 @@ public class PartnerSessionRepositoryImpl implements PartnerSessionRepository {
     public PartnerSessionDao update(PartnerSessionDao session) {
         PartnerSessionsRecord partnerSessionsRecord = context.newRecord(PARTNER_SESSIONS, session);
         partnerSessionsRecord.update();
+
+
+        session.setCreatedBy(partnerSessionsRecord.getCreatedBy());
+        session.setUpdatedBy(partnerSessionsRecord.getUpdatedBy());
+        session.setCreatedOn(partnerSessionsRecord.getCreatedOn());
+        session.setUpdatedOn(partnerSessionsRecord.getUpdatedOn());
+        session.setIsActive(partnerSessionsRecord.getIsActive());
+        session.setState(partnerSessionsRecord.getState());
+        session.setApiSource(partnerSessionsRecord.getApiSource());
+        session.setNotes(partnerSessionsRecord.getNotes());
         return session;
     }
 
     @Override
     public void delete(Integer id) {
-        context.update(PARTNER_SESSIONS).set(PARTNER_SESSIONS.STATE, RecordState.DELETED.name()).where(PARTNER_SESSIONS.ID.eq(id)).execute();
-    }
+     context.update(PARTNER_SESSIONS)
+     .set(PARTNER_SESSIONS.STATE,RecordState.DELETED.name())
+     .where(PARTNER_SESSIONS.ID.eq(id))
+     .and(PARTNER_SESSIONS.STATE.eq(RecordState.ACTIVE.name()))
+     .and(PARTNER_SESSIONS.IS_ACTIVE.eq(true))
+     .execute();
+    } 
 
     @Override
     public PartnerSessionDao findByUUID(String uuid) {
-        return context.selectFrom(PARTNER_SESSIONS).where(PARTNER_SESSIONS.UUID.eq(uuid)).fetchAnyInto(PartnerSessionDao.class);
+        return context.selectFrom(PARTNER_SESSIONS).where(PARTNER_SESSIONS.UUID.eq(uuid))
+                .and(PARTNER_SESSIONS.IS_ACTIVE.eq(true))
+                .fetchAnyInto(PartnerSessionDao.class);
     }
 
     @Override
     public PartnerSessionDao findById(Integer id) {
-        return context.selectFrom(PARTNER_SESSIONS).where(PARTNER_SESSIONS.ID.eq(id)).fetchAnyInto(PartnerSessionDao.class);
+        return context.selectFrom(PARTNER_SESSIONS).where(PARTNER_SESSIONS.ID.eq(id))
+                .and(PARTNER_SESSIONS.IS_ACTIVE.eq(true))
+                .fetchAnyInto(PartnerSessionDao.class);
     }
 
     @Override
@@ -57,7 +84,7 @@ public class PartnerSessionRepositoryImpl implements PartnerSessionRepository {
     }
 
     @Override
-    public List<PartnerSessionDao> findAll() {
+    public List<PartnerSessionDao> findAllActive() {
         return context.selectFrom(PARTNER_SESSIONS).fetchInto(PartnerSessionDao.class);
     }
 }

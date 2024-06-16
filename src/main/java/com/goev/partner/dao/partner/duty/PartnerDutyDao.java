@@ -1,6 +1,3 @@
-
-
-
 package com.goev.partner.dao.partner.duty;
 
 import com.goev.lib.dao.BaseDao;

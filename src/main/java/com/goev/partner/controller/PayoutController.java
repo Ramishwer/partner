@@ -10,7 +10,10 @@ import com.goev.partner.dto.partner.payout.PartnerPayoutTransactionDto;
 import com.goev.partner.service.payout.PartnerPayoutService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
@@ -22,8 +25,8 @@ public class PayoutController {
 
     @GetMapping("/partners/{partner-uuid}/payouts")
     public ResponseDto<PaginatedResponseDto<PartnerPayoutDto>> getPayoutsForPartner(@PathVariable("partner-uuid") String partnerUUID,
-                                                                                   PageDto page) {
-        return new ResponseDto<>(StatusDto.builder().message("SUCCESS").build(), 200, partnerPayoutService.getPayouts(partnerUUID,page));
+                                                                                    PageDto page) {
+        return new ResponseDto<>(StatusDto.builder().message("SUCCESS").build(), 200, partnerPayoutService.getPayouts(partnerUUID, page));
     }
 
     @GetMapping("/partners/{partner-uuid}/payouts/{partner-payout-uuid}/summary")
@@ -36,7 +39,7 @@ public class PayoutController {
     public ResponseDto<PaginatedResponseDto<PartnerPayoutTransactionDto>> getPayoutTransactionsForPartnerAndPayout(@PathVariable("partner-uuid") String partnerUUID,
                                                                                                                    @PathVariable("partner-payout-uuid") String partnerPayoutUUID,
                                                                                                                    PageDto page) {
-        return new ResponseDto<>(StatusDto.builder().message("SUCCESS").build(), 200, partnerPayoutService.getPayoutTransactionsForPayoutUUID(partnerUUID, partnerPayoutUUID,page));
+        return new ResponseDto<>(StatusDto.builder().message("SUCCESS").build(), 200, partnerPayoutService.getPayoutTransactionsForPayoutUUID(partnerUUID, partnerPayoutUUID, page));
     }
 
 }

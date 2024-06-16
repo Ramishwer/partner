@@ -1,7 +1,7 @@
 package com.goev.partner.dao.asset;
 
-import com.goev.partner.dto.asset.AssetDto;
 import com.goev.lib.dao.BaseDao;
+import com.goev.partner.dto.asset.AssetDto;
 import lombok.*;
 
 @AllArgsConstructor
@@ -18,7 +18,7 @@ public class AssetDao extends BaseDao {
     private String serialNo;
     private Integer assetTypeId;
 
-    public static AssetDao fromDto(AssetDto assetDto,Integer assetTypeId) {
+    public static AssetDao fromDto(AssetDto assetDto, Integer assetTypeId) {
         AssetDao assetDao = new AssetDao();
         assetDao.setAssetName(assetDto.getAssetName());
         assetDao.setAssetDescription(assetDto.getAssetDescription());

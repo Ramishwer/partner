@@ -11,7 +11,6 @@ import com.goev.partner.dao.partner.detail.PartnerDao;
 import com.goev.partner.dto.booking.BookingViewDto;
 import com.goev.partner.dto.location.LocationDto;
 import com.goev.partner.dto.partner.duty.PartnerDutyDto;
-import com.goev.partner.dto.partner.duty.PartnerShiftDto;
 import com.goev.partner.dto.vehicle.VehicleViewDto;
 import lombok.*;
 import org.joda.time.DateTime;
@@ -40,13 +39,13 @@ public class PartnerDto {
     @JsonSerialize(using = DateTimeSerializer.class)
     @JsonDeserialize(using = DateTimeDeserializer.class)
     private DateTime computedShiftEndTime;
-    private PartnerDutyDto dutyDetails ;
+    private PartnerDutyDto dutyDetails;
     private String locationStatus;
     private String onboardingStatus;
 
 
-    public static PartnerDto fromDao(PartnerDao partner){
-        if(partner == null)
+    public static PartnerDto fromDao(PartnerDao partner) {
+        if (partner == null)
             return null;
         return PartnerDto.builder()
                 .uuid(partner.getUuid())
@@ -55,10 +54,10 @@ public class PartnerDto {
                 .status(partner.getStatus())
                 .subStatus(partner.getSubStatus())
                 .profileUrl(partner.getProfileUrl())
-                .vehicleDetails(ApplicationConstants.GSON.fromJson(partner.getVehicleDetails(),VehicleViewDto.class))
-                .bookingDetails(ApplicationConstants.GSON.fromJson(partner.getBookingDetails(),BookingViewDto.class))
-                .locationDetails(ApplicationConstants.GSON.fromJson(partner.getLocationDetails(),LocationDto.class))
-                .dutyDetails(ApplicationConstants.GSON.fromJson(partner.getDutyDetails(),PartnerDutyDto.class))
+                .vehicleDetails(ApplicationConstants.GSON.fromJson(partner.getVehicleDetails(), VehicleViewDto.class))
+                .bookingDetails(ApplicationConstants.GSON.fromJson(partner.getBookingDetails(), BookingViewDto.class))
+                .locationDetails(ApplicationConstants.GSON.fromJson(partner.getLocationDetails(), LocationDto.class))
+                .dutyDetails(ApplicationConstants.GSON.fromJson(partner.getDutyDetails(), PartnerDutyDto.class))
                 .locationStatus(partner.getLocationStatus())
                 .onboardingStatus(partner.getOnboardingStatus())
                 .build();

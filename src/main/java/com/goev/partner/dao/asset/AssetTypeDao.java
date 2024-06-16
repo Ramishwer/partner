@@ -1,7 +1,7 @@
 package com.goev.partner.dao.asset;
 
-import com.goev.partner.dto.asset.AssetTypeDto;
 import com.goev.lib.dao.BaseDao;
+import com.goev.partner.dto.asset.AssetTypeDto;
 import lombok.*;
 
 @AllArgsConstructor

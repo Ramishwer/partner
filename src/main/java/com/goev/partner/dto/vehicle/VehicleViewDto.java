@@ -6,10 +6,8 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.joda.deser.DateTimeDeserializer;
 import com.fasterxml.jackson.datatype.joda.ser.DateTimeSerializer;
 import com.goev.partner.constant.ApplicationConstants;
-import com.goev.partner.dao.partner.detail.PartnerDao;
 import com.goev.partner.dao.vehicle.detail.VehicleDao;
 import com.goev.partner.dto.location.LocationDto;
-import com.goev.partner.dto.partner.PartnerViewDto;
 import com.goev.partner.dto.vehicle.detail.VehicleModelDto;
 import lombok.*;
 import org.joda.time.DateTime;
@@ -35,7 +33,7 @@ public class VehicleViewDto {
     private String imageUrl;
 
 
-    public static VehicleViewDto fromDao(VehicleDao vehicleDao){
+    public static VehicleViewDto fromDao(VehicleDao vehicleDao) {
         return ApplicationConstants.GSON.fromJson(vehicleDao.getViewInfo(), VehicleViewDto.class);
     }
 

@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface PartnerDocumentService {
     List<PartnerDocumentDto> createDocument(String partnerUUID, List<PartnerDocumentDto> partnerDocumentDto);
+
     PaginatedResponseDto<PartnerDocumentDto> getDocuments(String partnerUUID);
 }

@@ -25,7 +25,7 @@ public class PartnerAppServiceImpl implements PartnerAppService {
     @Override
     public AppPropertyDto getAppProperties() {
         Map<String, SystemPropertyDao> propertyMap = systemPropertyRepository.getPropertyMap();
-        List<PartnerAppSupportedLanguageDao> languageDaos = partnerAppSupportedLanguageRepository.findAll();
+        List<PartnerAppSupportedLanguageDao> languageDaos = partnerAppSupportedLanguageRepository.findAllActive();
         List<AppSupportedLanguageDto> supportedLanguages = new ArrayList<>();
         languageDaos.forEach(x -> {
             supportedLanguages.add(AppSupportedLanguageDto.builder()

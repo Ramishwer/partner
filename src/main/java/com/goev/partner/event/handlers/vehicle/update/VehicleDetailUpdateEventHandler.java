@@ -1,0 +1,44 @@
+package com.goev.partner.event.handlers.vehicle.update;
+
+import com.goev.lib.event.core.Event;
+import com.goev.lib.event.core.EventHandler;
+import com.goev.partner.dao.vehicle.detail.VehicleDetailDao;
+import com.goev.partner.repository.vehicle.detail.VehicleDetailRepository;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+
+@Component
+@Slf4j
+@AllArgsConstructor
+public class VehicleDetailUpdateEventHandler extends EventHandler<VehicleDetailDao> {
+
+    private final VehicleDetailRepository vehicleDetailRepository;
+
+    @Override
+    public boolean onEvent(Event<VehicleDetailDao> event) {
+        log.info("Data:{}", event.getData());
+        VehicleDetailDao vehicleDetailDao = event.getData();
+        if (vehicleDetailDao == null) {
+            log.info("Vehicle Data Null");
+            return false;
+        }
+        VehicleDetailDao existing = vehicleDetailRepository.findByUUID(vehicleDetailDao.getUuid());
+        if (existing != null) {
+            vehicleDetailDao.setId(existing.getId());
+            vehicleDetailDao.setUuid(existing.getUuid());
+            vehicleDetailDao.setCreatedBy(existing.getCreatedBy());
+            vehicleDetailDao.setUpdatedBy(existing.getUpdatedBy());
+            vehicleDetailDao.setCreatedOn(existing.getCreatedOn());
+            vehicleDetailDao.setUpdatedOn(existing.getUpdatedOn());
+            vehicleDetailDao.setIsActive(existing.getIsActive());
+            vehicleDetailDao.setState(existing.getState());
+            vehicleDetailDao.setApiSource(existing.getApiSource());
+            vehicleDetailDao.setNotes(existing.getNotes());
+            vehicleDetailRepository.update(vehicleDetailDao);
+            return true;
+        }
+
+        return false;
+    }
+}
