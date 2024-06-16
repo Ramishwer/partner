@@ -3,6 +3,7 @@ package com.goev.partner.repository.vehicle.detail.impl;
 import com.goev.lib.enums.RecordState;
 import com.goev.partner.dao.vehicle.detail.VehicleDetailDao;
 import com.goev.partner.repository.vehicle.detail.VehicleDetailRepository;
+import com.goev.partner.utilities.EventExecutorUtils;
 import com.goev.record.partner.tables.records.VehicleDetailsRecord;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,7 @@ import static com.goev.record.partner.tables.VehicleDetails.VEHICLE_DETAILS;
 @Slf4j
 public class VehicleDetailRepositoryImpl implements VehicleDetailRepository {
     private final DSLContext context;
+    private final EventExecutorUtils eventExecutor;
 
     @Override
     public VehicleDetailDao save(VehicleDetailDao vehicleDetails) {

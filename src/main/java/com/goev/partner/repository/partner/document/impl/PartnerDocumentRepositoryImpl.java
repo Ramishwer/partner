@@ -3,6 +3,7 @@ package com.goev.partner.repository.partner.document.impl;
 import com.goev.lib.enums.RecordState;
 import com.goev.partner.dao.partner.document.PartnerDocumentDao;
 import com.goev.partner.repository.partner.document.PartnerDocumentRepository;
+import com.goev.partner.utilities.EventExecutorUtils;
 import com.goev.record.partner.tables.records.PartnerDocumentsRecord;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,7 @@ import static com.goev.record.partner.tables.PartnerDocuments.PARTNER_DOCUMENTS;
 @Slf4j
 public class PartnerDocumentRepositoryImpl implements PartnerDocumentRepository {
     private final DSLContext context;
+    private final EventExecutorUtils eventExecutor;
 
     @Override
     public PartnerDocumentDao save(PartnerDocumentDao partnerDocument) {
@@ -36,6 +38,8 @@ public class PartnerDocumentRepositoryImpl implements PartnerDocumentRepository 
         partnerDocument.setState(partnerDocument.getState());
         partnerDocument.setApiSource(partnerDocument.getApiSource());
         partnerDocument.setNotes(partnerDocument.getNotes());
+
+        eventExecutor.fireEvent("PartnerDocumentSaveEvent", partnerDocument);
         return partnerDocument;
     }
 
@@ -53,6 +57,8 @@ public class PartnerDocumentRepositoryImpl implements PartnerDocumentRepository 
         partnerDocument.setState(partnersDocumentRecord.getState());
         partnerDocument.setApiSource(partnersDocumentRecord.getApiSource());
         partnerDocument.setNotes(partnersDocumentRecord.getNotes());
+
+        eventExecutor.fireEvent("PartnerDocumentUpdateEvent", partnerDocument);
         return partnerDocument;
     }
 

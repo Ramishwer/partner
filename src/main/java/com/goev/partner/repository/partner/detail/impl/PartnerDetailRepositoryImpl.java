@@ -3,6 +3,7 @@ package com.goev.partner.repository.partner.detail.impl;
 import com.goev.lib.enums.RecordState;
 import com.goev.partner.dao.partner.detail.PartnerDetailDao;
 import com.goev.partner.repository.partner.detail.PartnerDetailRepository;
+import com.goev.partner.utilities.EventExecutorUtils;
 import com.goev.record.partner.tables.records.PartnerDetailsRecord;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,7 @@ import static com.goev.record.partner.tables.PartnerDetails.PARTNER_DETAILS;
 public class PartnerDetailRepositoryImpl implements PartnerDetailRepository {
 
     private final DSLContext context;
+    private final EventExecutorUtils eventExecutor;
 
     @Override
     public PartnerDetailDao save(PartnerDetailDao detail) {
@@ -51,6 +53,8 @@ public class PartnerDetailRepositoryImpl implements PartnerDetailRepository {
         detail.setState(partnerDetailsRecord.getState());
         detail.setApiSource(partnerDetailsRecord.getApiSource());
         detail.setNotes(partnerDetailsRecord.getNotes());
+
+        eventExecutor.fireEvent("PartnerDetailUpdateEvent", detail);
         return detail;
     }
 
