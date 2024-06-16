@@ -1,17 +1,13 @@
 package com.goev.partner.config.interceptor;
 
-import com.goev.lib.dto.ResponseDto;
 import com.goev.lib.exceptions.ResponseException;
 import com.goev.lib.services.RestClient;
-import com.goev.partner.constant.ApplicationConstants;
-import com.goev.partner.dto.AuthClientDto;
-import com.goev.partner.utilities.RequestContext;
-import com.google.gson.reflect.TypeToken;
+import com.goev.partner.dto.auth.AuthClientDto;
+import com.goev.partner.service.auth.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -21,7 +17,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 @Slf4j
 @AllArgsConstructor
 public class BasicAuthenticationInterceptor implements HandlerInterceptor {
-    private final RestClient restClient;
+    private final AuthService authService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
@@ -43,13 +39,8 @@ public class BasicAuthenticationInterceptor implements HandlerInterceptor {
             throw new ResponseException("Invalid Access Token");
 
         try {
-            String url = ApplicationConstants.AUTH_URL + "/api/v1/client-management/clients";
-            HttpHeaders header = new HttpHeaders();
-            header.set("Authorization", RequestContext.getAccessToken());
-            String responseStr = restClient.get(url, header, String.class, true);
-            ResponseDto<AuthClientDto> client = ApplicationConstants.GSON.fromJson(responseStr, new TypeToken<ResponseDto<AuthClientDto>>() {
-            }.getType());
-            AuthClientDto authClientDto = client.getData();
+
+            AuthClientDto authClientDto = authService.getClient(authorizationHeader);
             if (authClientDto == null || authClientDto.getUuid() == null) {
                 throw new ResponseException(401, "Token Expired");
             }

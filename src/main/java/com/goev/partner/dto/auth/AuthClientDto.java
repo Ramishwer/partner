@@ -1,4 +1,4 @@
-package com.goev.partner.dto;
+package com.goev.partner.dto.auth;
 
 import lombok.*;
 

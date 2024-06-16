@@ -8,6 +8,7 @@ import com.goev.partner.constant.ApplicationConstants;
 import com.goev.partner.dao.partner.detail.PartnerSessionDao;
 import com.goev.partner.dto.session.SessionDetailsDto;
 import com.goev.partner.repository.partner.detail.PartnerSessionRepository;
+import com.goev.partner.service.auth.AuthService;
 import com.goev.partner.utilities.RequestContext;
 import com.google.gson.reflect.TypeToken;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,7 +27,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 public class AuthenticationInterceptor implements HandlerInterceptor {
 
     private final PartnerSessionRepository partnerSessionRepository;
-    private final RestClient restClient;
+    private final AuthService authService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
@@ -46,13 +47,8 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
             throw new ResponseException(401, "Invalid Session UUID");
 
         try {
-            String url = ApplicationConstants.AUTH_URL + "/api/v1/session-management/sessions/" + partnerSessionDao.getAuthSessionUuid();
-            HttpHeaders header = new HttpHeaders();
-            header.set("Authorization", RequestContext.getAccessToken());
-            String responseStr = restClient.get(url, header, String.class, true);
-            ResponseDto<SessionDetailsDto> session = ApplicationConstants.GSON.fromJson(responseStr, new TypeToken<ResponseDto<SessionDetailsDto>>() {
-            }.getType());
-            SessionDetailsDto sessionDto = session.getData();
+
+            SessionDetailsDto sessionDto = authService.getSessionDetails(partnerSessionDao);
             if (sessionDto == null || sessionDto.getDetails() == null) {
                 throw new ResponseException(401, "Token Expired");
             }
