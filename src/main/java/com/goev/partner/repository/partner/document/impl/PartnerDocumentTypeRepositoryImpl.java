@@ -55,13 +55,13 @@ public class PartnerDocumentTypeRepositoryImpl implements PartnerDocumentTypeRep
 
     @Override
     public void delete(Integer id) {
-     context.update(PARTNER_DOCUMENT_TYPES)
-     .set(PARTNER_DOCUMENT_TYPES.STATE,RecordState.DELETED.name())
-     .where(PARTNER_DOCUMENT_TYPES.ID.eq(id))
-     .and(PARTNER_DOCUMENT_TYPES.STATE.eq(RecordState.ACTIVE.name()))
-     .and(PARTNER_DOCUMENT_TYPES.IS_ACTIVE.eq(true))
-     .execute();
-    } 
+        context.update(PARTNER_DOCUMENT_TYPES)
+                .set(PARTNER_DOCUMENT_TYPES.STATE, RecordState.DELETED.name())
+                .where(PARTNER_DOCUMENT_TYPES.ID.eq(id))
+                .and(PARTNER_DOCUMENT_TYPES.STATE.eq(RecordState.ACTIVE.name()))
+                .and(PARTNER_DOCUMENT_TYPES.IS_ACTIVE.eq(true))
+                .execute();
+    }
 
     @Override
     public PartnerDocumentTypeDao findByUUID(String uuid) {

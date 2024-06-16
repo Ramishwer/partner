@@ -56,13 +56,13 @@ public class PartnerRepositoryImpl implements PartnerRepository {
 
     @Override
     public void delete(Integer id) {
-     context.update(PARTNERS)
-     .set(PARTNERS.STATE,RecordState.DELETED.name())
-     .where(PARTNERS.ID.eq(id))
-     .and(PARTNERS.STATE.eq(RecordState.ACTIVE.name()))
-     .and(PARTNERS.IS_ACTIVE.eq(true))
-     .execute();
-    } 
+        context.update(PARTNERS)
+                .set(PARTNERS.STATE, RecordState.DELETED.name())
+                .where(PARTNERS.ID.eq(id))
+                .and(PARTNERS.STATE.eq(RecordState.ACTIVE.name()))
+                .and(PARTNERS.IS_ACTIVE.eq(true))
+                .execute();
+    }
 
     @Override
     public PartnerDao findByUUID(String uuid) {
