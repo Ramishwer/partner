@@ -7,6 +7,7 @@ import com.goev.partner.dao.partner.detail.PartnerDao;
 import com.goev.partner.dao.partner.detail.PartnerDetailDao;
 import com.goev.partner.dao.partner.document.PartnerDocumentDao;
 import com.goev.partner.dao.vehicle.transfer.VehicleTransferDetailDao;
+import com.goev.partner.event.events.partner.PartnerOnboardingStatusCheckEvent;
 import com.goev.partner.event.events.partner.save.PartnerDocumentSaveEvent;
 import com.goev.partner.event.events.partner.update.PartnerDetailUpdateEvent;
 import com.goev.partner.event.events.partner.update.PartnerDocumentUpdateEvent;
@@ -31,6 +32,9 @@ public class EventExecutorUtils {
             }
             case "PartnerDetailUpdateEvent" -> {
                 return fireEvent(SpringContext.getBean(PartnerDetailUpdateEvent.class),(PartnerDetailDao) data);
+            }
+            case "PartnerOnboardingStatusCheckEvent" -> {
+                return fireEvent(SpringContext.getBean(PartnerOnboardingStatusCheckEvent.class),(String) data);
             }
             case "VehicleTransferDetailSaveEvent" -> {
                 return fireEvent(SpringContext.getBean(VehicleTransferDetailSaveEvent.class),(VehicleTransferDetailDao) data);

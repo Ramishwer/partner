@@ -94,6 +94,7 @@ public class PartnerDetailDto {
                 partnerDocumentDto.setDescription(existingDoc.getDescription());
                 partnerDocumentDto.setStatus(existingDoc.getStatus());
                 partnerDocumentDto.setUuid(existingDoc.getUuid());
+                partnerDocumentDto.setFileName(existingDoc.getFileName());
             }
             finalDocumentResultMap.put(entry.getKey(), partnerDocumentDto);
         }

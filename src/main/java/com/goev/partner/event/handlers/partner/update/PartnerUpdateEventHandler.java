@@ -27,7 +27,7 @@ public class PartnerUpdateEventHandler extends EventHandler<PartnerDao> {
         if (existing != null) {
             partnerDao.setId(existing.getId());
             partnerDao.setUuid(existing.getUuid());
-            partnerRepository.updateWithOutEvent(partnerDao);
+            partnerRepository.update(partnerDao);
             return true;
         }
         return false;

@@ -10,6 +10,8 @@ import com.goev.partner.dao.partner.duty.PartnerDutyDao;
 import com.goev.partner.dao.partner.duty.PartnerShiftDao;
 import com.goev.partner.dto.location.LocationDto;
 import com.goev.partner.dto.partner.PartnerViewDto;
+import com.goev.partner.dto.shift.ShiftConfigurationDto;
+import com.goev.partner.dto.vehicle.detail.VehicleCategoryDto;
 import lombok.*;
 import org.joda.time.DateTime;
 
@@ -71,6 +73,13 @@ public class PartnerDutyDto {
                     .shiftEnd(shift.getShiftEnd())
                     .estimatedStartTime(shift.getEstimatedStartTime())
                     .estimatedEndTime(shift.getEstimatedEndTime())
+                    .shiftConfig(ApplicationConstants.GSON.fromJson(shift.getShiftConfig(), ShiftConfigurationDto.class))
+                    .type(shift.getType())
+                    .inLocationDetails(ApplicationConstants.GSON.fromJson(shift.getInLocationDetails(), LocationDto.class))
+                    .outLocationDetails(ApplicationConstants.GSON.fromJson(shift.getOutLocationDetails(), LocationDto.class))
+                    .onlineLocationDetails(ApplicationConstants.GSON.fromJson(shift.getOnlineLocationDetails(), LocationDto.class))
+                    .assignableVehicleCategoryDetails(ApplicationConstants.GSON.fromJson(shift.getAssignableVehicleCategoryDetails(), VehicleCategoryDto.class))
+                    .dutyDate(shift.getDutyDate())
                     .build();
             result.setShiftDetails(shiftDto);
         }

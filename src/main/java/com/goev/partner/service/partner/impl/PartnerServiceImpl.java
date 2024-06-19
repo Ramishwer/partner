@@ -7,18 +7,28 @@ import com.goev.partner.constant.ApplicationConstants;
 import com.goev.partner.dao.location.LocationDao;
 import com.goev.partner.dao.partner.detail.PartnerDao;
 import com.goev.partner.dao.partner.detail.PartnerDetailDao;
+import com.goev.partner.dao.partner.duty.PartnerDutyDao;
+import com.goev.partner.dao.partner.duty.PartnerShiftDao;
 import com.goev.partner.dto.location.LocationDto;
 import com.goev.partner.dto.partner.PartnerViewDto;
 import com.goev.partner.dto.partner.detail.PartnerDetailDto;
 import com.goev.partner.dto.partner.detail.PartnerDto;
+import com.goev.partner.dto.partner.duty.PartnerDutyDto;
 import com.goev.partner.dto.partner.status.ActionDto;
+import com.goev.partner.dto.vehicle.detail.VehicleDto;
+import com.goev.partner.enums.partner.PartnerDutyStatus;
+import com.goev.partner.enums.partner.PartnerStatus;
+import com.goev.partner.enums.partner.PartnerSubStatus;
 import com.goev.partner.repository.location.LocationRepository;
 import com.goev.partner.repository.partner.detail.PartnerDetailRepository;
 import com.goev.partner.repository.partner.detail.PartnerRepository;
+import com.goev.partner.repository.partner.duty.PartnerDutyRepository;
+import com.goev.partner.repository.partner.duty.PartnerShiftRepository;
 import com.goev.partner.service.partner.PartnerService;
 import com.goev.partner.utilities.S3Utils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -27,6 +37,8 @@ import org.springframework.stereotype.Service;
 public class PartnerServiceImpl implements PartnerService {
     private final PartnerRepository partnerRepository;
     private final PartnerDetailRepository partnerDetailRepository;
+    private final PartnerShiftRepository partnerShiftRepository;
+    private final PartnerDutyRepository partnerDutyRepository;
     private final LocationRepository locationRepository;
     private final S3Utils s3;
 
@@ -193,11 +205,18 @@ public class PartnerServiceImpl implements PartnerService {
     }
 
     private PartnerDao checkOut(PartnerDao partner, ActionDto actionDto) {
-        return null;
+        partner.setStatus(PartnerStatus.OFF_DUTY.name());
+        partner.setSubStatus(PartnerSubStatus.NO_DUTY.name());
+        partner = partnerRepository.update(partner);
+        return partner;
     }
 
     private PartnerDao goOffline(PartnerDao partner, ActionDto actionDto) {
-        return null;
+
+        partner.setStatus(PartnerStatus.VEHICLE_ASSIGNED.name());
+        partner.setSubStatus(PartnerSubStatus.WAITING_FOR_ONLINE.name());
+        partner = partnerRepository.update(partner);
+        return partner;
     }
 
     private PartnerDao complete(PartnerDao partner, ActionDto actionDto) {
@@ -229,22 +248,81 @@ public class PartnerServiceImpl implements PartnerService {
     }
 
     private PartnerDao goOnline(PartnerDao partner, ActionDto actionDto) {
-        return null;
+
+        partner.setStatus(PartnerStatus.ONLINE.name());
+        partner.setSubStatus(PartnerSubStatus.NO_BOOKING.name());
+        partner = partnerRepository.update(partner);
+        return partner;
     }
 
     private PartnerDao submitChecklist(PartnerDao partner, ActionDto actionDto) {
-        return null;
+        partner.setStatus(PartnerStatus.VEHICLE_ASSIGNED.name());
+        partner.setSubStatus(PartnerSubStatus.WAITING_FOR_ONLINE.name());
+        partner = partnerRepository.update(partner);
+        return partner;
     }
 
     private PartnerDao selectVehicle(PartnerDao partner, ActionDto actionDto) {
-        return null;
+        partner.setStatus(PartnerStatus.CHECKLIST.name());
+        partner.setSubStatus(PartnerSubStatus.CHECKLIST_PENDING.name());
+        partner = partnerRepository.update(partner);
+        return partner;
     }
 
     private PartnerDao returnVehicle(PartnerDao partner, ActionDto actionDto) {
-        return null;
+
+        partner.setStatus(PartnerStatus.RETURN_CHECKLIST.name());
+        partner.setSubStatus(PartnerSubStatus.CHECKLIST_PENDING.name());
+        partner = partnerRepository.update(partner);
+        return partner;
     }
 
     private PartnerDao checkin(PartnerDao partner, ActionDto actionDto) {
-        return null;
+
+        PartnerShiftDao partnerShiftDao = partnerShiftRepository.findById(partner.getPartnerShiftId());
+        if (partnerShiftDao == null)
+            throw new ResponseException("Invalid action: Shift Details Incorrect");
+
+//        LocationDao expectedInLocation = locationRepository.findById(partnerShiftDao.getInLocationId());
+//        if (expectedInLocation == null)
+//            throw new ResponseException("Invalid action: Shift Details Incorrect No Location present");
+
+//        validateLocationQr(actionDto.getQrString(),expectedInLocation);
+//        validateLocationGps(actionDto.getLocation(),expectedInLocation);
+
+        PartnerDutyDao newDuty = new PartnerDutyDao();
+
+        newDuty.setPartnerId(partner.getId());
+        newDuty.setStatus(PartnerDutyStatus.IN_PROGRESS.name());
+        newDuty.setPartnerShiftId(partnerShiftDao.getId());
+
+        newDuty.setActualDutyStartTime(DateTime.now());
+//        newDuty.setActualDutyStartLocationDetails(ApplicationConstants.GSON.toJson(expectedInLocation));
+
+        newDuty.setPlannedDutyStartTime(partnerShiftDao.getEstimatedStartTime());
+        newDuty.setPlannedOnlineTime(partnerShiftDao.getEstimatedOnlineTime());
+        newDuty.setPlannedDutyEndTime(partnerShiftDao.getEstimatedEndTime());
+
+        newDuty.setPlannedDutyStartLocationDetails(partnerShiftDao.getInLocationDetails());
+        newDuty.setPlannedOnlineLocationDetails(partnerShiftDao.getOnlineLocationDetails());
+        newDuty.setPlannedDutyEndLocationDetails(partnerShiftDao.getOutLocationDetails());
+
+        newDuty.setPlannedDutyStartLocationId(partnerShiftDao.getInLocationId());
+        newDuty.setPlannedOnlineLocationId(partnerShiftDao.getOnlineLocationId());
+        newDuty.setPlannedDutyEndLocationId(partnerShiftDao.getOutLocationId());
+
+        newDuty = partnerDutyRepository.save(newDuty);
+
+
+        partner.setVehicleId(2);
+        partner.setVehicleDetails(ApplicationConstants.GSON.toJson(VehicleDto.builder()
+                .uuid("c7af8b7e-5b9b-48cb-95a6-810156fe97f4")
+                .plateNumber("V001")
+                .build()));
+        partner.setDutyDetails(ApplicationConstants.GSON.toJson(PartnerDutyDto.fromDao(newDuty, PartnerViewDto.fromDao(partner), partnerShiftDao)));
+        partner.setStatus(PartnerStatus.ON_DUTY.name());
+        partner.setSubStatus(PartnerSubStatus.VEHICLE_ALLOTTED.name());
+        partner = partnerRepository.update(partner);
+        return partner;
     }
 }

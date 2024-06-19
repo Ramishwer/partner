@@ -43,14 +43,6 @@ public class PartnerRepositoryImpl implements PartnerRepository {
     @Override
     public PartnerDao update(PartnerDao partner) {
 
-        updateWithOutEvent(partner);
-        if("API".equals(RequestContext.getRequestSource()))
-            eventExecutor.fireEvent("PartnerUpdateEvent", partner);
-        return partner;
-    }
-
-    @Override
-    public PartnerDao updateWithOutEvent(PartnerDao partner) {
         PartnersRecord partnersRecord = context.newRecord(PARTNERS, partner);
         partnersRecord.update();
 
@@ -63,8 +55,12 @@ public class PartnerRepositoryImpl implements PartnerRepository {
         partner.setState(partnersRecord.getState());
         partner.setApiSource(partnersRecord.getApiSource());
         partner.setNotes(partnersRecord.getNotes());
+
+        if("API".equals(RequestContext.getRequestSource()))
+            eventExecutor.fireEvent("PartnerUpdateEvent", partner);
         return partner;
     }
+
 
     @Override
     public void delete(Integer id) {

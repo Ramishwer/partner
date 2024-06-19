@@ -13,6 +13,7 @@ import com.goev.partner.event.events.booking.BookingSaveEvent;
 import com.goev.partner.event.events.booking.BookingUpdateEvent;
 import com.goev.partner.event.events.location.save.LocationSaveEvent;
 import com.goev.partner.event.events.location.update.LocationUpdateEvent;
+import com.goev.partner.event.events.partner.PartnerOnboardingStatusCheckEvent;
 import com.goev.partner.event.events.partner.save.*;
 import com.goev.partner.event.events.partner.update.*;
 import com.goev.partner.event.events.vehicle.save.*;
@@ -81,6 +82,9 @@ public class EventConfig {
 
     ) {
         SimpleEventProcessor eventProcessor = new SimpleEventProcessor();
+
+        eventProcessor.registerEvents(new PartnerOnboardingStatusCheckEvent());
+
 
         eventProcessor.registerEvents(new AssetUpdateEvent());
         eventProcessor.registerEvents(new AssetTypeUpdateEvent());

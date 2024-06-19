@@ -13,6 +13,7 @@ import com.goev.partner.repository.partner.detail.PartnerRepository;
 import com.goev.partner.repository.partner.document.PartnerDocumentRepository;
 import com.goev.partner.repository.partner.document.PartnerDocumentTypeRepository;
 import com.goev.partner.service.partner.PartnerDocumentService;
+import com.goev.partner.utilities.EventExecutorUtils;
 import com.goev.partner.utilities.S3Utils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +34,7 @@ public class PartnerDocumentServiceImpl implements PartnerDocumentService {
     private final PartnerDocumentRepository partnerDocumentRepository;
     private final PartnerDocumentTypeRepository partnerDocumentTypeRepository;
     private final S3Utils s3;
+    private final EventExecutorUtils eventExecutor;
 
     @Override
     public List<PartnerDocumentDto> createDocument(String partnerUUID, List<PartnerDocumentDto> partnerDocuments) {
@@ -55,7 +57,10 @@ public class PartnerDocumentServiceImpl implements PartnerDocumentService {
                 throw new ResponseException("Error in saving partner document: Invalid Document Type");
 
             partnerDocumentDao.setUrl(s3.getUrlForPath(partnerDocumentDto.getUrl(), partnerDocumentTypeDao.getS3Key()));
-            partnerDocumentDao.setStatus(DocumentStatus.UPLOADED.name());
+            if(Boolean.TRUE.equals(partnerDocumentTypeDao.getNeedsVerification()))
+                partnerDocumentDao.setStatus(DocumentStatus.UPLOADED.name());
+            else
+                partnerDocumentDao.setStatus(DocumentStatus.APPROVED.name());
             partnerDocumentDao.setDescription(partnerDocumentDto.getDescription());
             partnerDocumentDao.setFileName(partnerDocumentDto.getFileName());
             partnerDocumentDao.setPartnerId(partnerDao.getId());
@@ -82,6 +87,8 @@ public class PartnerDocumentServiceImpl implements PartnerDocumentService {
                     .url(partnerDocumentDao.getUrl())
                     .build());
         }
+
+        eventExecutor.fireEvent("PartnerOnboardingStatusCheckEvent",partnerDao.getUuid());
         return result;
     }
 

@@ -5,7 +5,10 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.joda.deser.DateTimeDeserializer;
 import com.fasterxml.jackson.datatype.joda.ser.DateTimeSerializer;
+import com.goev.partner.dto.location.LocationDto;
 import com.goev.partner.dto.partner.PartnerViewDto;
+import com.goev.partner.dto.shift.ShiftConfigurationDto;
+import com.goev.partner.dto.vehicle.detail.VehicleCategoryDto;
 import lombok.*;
 import org.joda.time.DateTime;
 
@@ -29,9 +32,19 @@ public class PartnerShiftDto {
     @JsonSerialize(using = DateTimeSerializer.class)
     @JsonDeserialize(using = DateTimeDeserializer.class)
     private DateTime estimatedStartTime;
+    private ShiftConfigurationDto shiftConfig;
     @JsonSerialize(using = DateTimeSerializer.class)
     @JsonDeserialize(using = DateTimeDeserializer.class)
     private DateTime estimatedEndTime;
     private PartnerViewDto partner;
     private String day;
+    private LocationDto inLocationDetails;
+    private LocationDto outLocationDetails;
+    private LocationDto onlineLocationDetails;
+    private VehicleCategoryDto assignableVehicleCategoryDetails;
+    private String type;
+    private String dutyConfig;
+    @JsonSerialize(using = DateTimeSerializer.class)
+    @JsonDeserialize(using = DateTimeDeserializer.class)
+    private DateTime dutyDate;
 }
