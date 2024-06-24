@@ -9,6 +9,7 @@ import com.fasterxml.jackson.datatype.joda.ser.DateTimeSerializer;
 import com.goev.partner.constant.ApplicationConstants;
 import com.goev.partner.dao.partner.detail.PartnerDao;
 import com.goev.partner.dto.booking.BookingViewDto;
+import com.goev.partner.dto.common.FileDto;
 import com.goev.partner.dto.location.LocationDto;
 import com.goev.partner.dto.partner.duty.PartnerDutyDto;
 import com.goev.partner.dto.vehicle.VehicleViewDto;

@@ -21,10 +21,10 @@ public class FilterDto {
     @JsonSerialize(using = DateTimeSerializer.class)
     @JsonDeserialize(using = DateTimeDeserializer.class)
     private DateTime startTime;
-
     @JsonSerialize(using = DateTimeSerializer.class)
     @JsonDeserialize(using = DateTimeDeserializer.class)
     private DateTime endTime;
-
-
+    private String uuid;
+    private String status;
+    private String query;
 }

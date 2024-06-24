@@ -2,6 +2,7 @@ package com.goev.partner.utilities;
 
 import com.goev.lib.event.core.Event;
 import com.goev.lib.event.service.EventProcessor;
+import com.goev.lib.utilities.ApplicationContext;
 import com.goev.partner.config.SpringContext;
 import com.goev.partner.dao.partner.detail.PartnerDao;
 import com.goev.partner.dao.partner.detail.PartnerDetailDao;
@@ -60,6 +61,7 @@ public class EventExecutorUtils {
     private static  <T>  boolean fireEvent(Event<T> eventObj, T data) {
         eventObj.setData(data);
         eventObj.setExecutionTime(DateTime.now().getMillis());
+        eventObj.setActionByUUID(ApplicationContext.getAuthUUID());
         SpringContext.getBean(EventProcessor.class).sendEvent(eventObj);
         return true;
     }

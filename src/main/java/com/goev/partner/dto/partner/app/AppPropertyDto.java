@@ -17,4 +17,5 @@ public class AppPropertyDto {
     private String minimumAppVersion;
     private KeyDto key;
     private List<AppSupportedLanguageDto> supportedLanguages;
+    private SupportDetailDto supportDetails;
 }

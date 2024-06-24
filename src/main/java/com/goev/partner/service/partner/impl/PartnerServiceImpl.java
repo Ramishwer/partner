@@ -205,9 +205,20 @@ public class PartnerServiceImpl implements PartnerService {
     }
 
     private PartnerDao checkOut(PartnerDao partner, ActionDto actionDto) {
+        PartnerDutyDao currentDuty = partnerDutyRepository.findById(partner.getPartnerDutyId());
+        if(currentDuty!=null){
+            currentDuty.setStatus(PartnerDutyStatus.COMPLETED.name());
+            currentDuty.setActualDutyEndTime(DateTime.now());
+            partnerDutyRepository.update(currentDuty);
+        }
+
         partner.setStatus(PartnerStatus.OFF_DUTY.name());
         partner.setSubStatus(PartnerSubStatus.NO_DUTY.name());
+        partner.setDutyDetails(null);
+        partner.setPartnerDutyId(null);
+        partner.setPartnerShiftId(null);
         partner = partnerRepository.update(partner);
+
         return partner;
     }
 
@@ -248,7 +259,6 @@ public class PartnerServiceImpl implements PartnerService {
     }
 
     private PartnerDao goOnline(PartnerDao partner, ActionDto actionDto) {
-
         partner.setStatus(PartnerStatus.ONLINE.name());
         partner.setSubStatus(PartnerSubStatus.NO_BOOKING.name());
         partner = partnerRepository.update(partner);
@@ -256,9 +266,17 @@ public class PartnerServiceImpl implements PartnerService {
     }
 
     private PartnerDao submitChecklist(PartnerDao partner, ActionDto actionDto) {
-        partner.setStatus(PartnerStatus.VEHICLE_ASSIGNED.name());
-        partner.setSubStatus(PartnerSubStatus.WAITING_FOR_ONLINE.name());
-        partner = partnerRepository.update(partner);
+        if(PartnerStatus.CHECKLIST.name().equals(partner.getStatus())) {
+            partner.setStatus(PartnerStatus.VEHICLE_ASSIGNED.name());
+            partner.setSubStatus(PartnerSubStatus.WAITING_FOR_ONLINE.name());
+            partner = partnerRepository.update(partner);
+        }else if(PartnerStatus.RETURN_CHECKLIST.name().equals(partner.getStatus())){
+            partner.setStatus(PartnerStatus.ON_DUTY.name());
+            partner.setSubStatus(PartnerSubStatus.VEHICLE_NOT_ALLOTTED.name());
+            partner.setVehicleDetails(null);
+            partner.setVehicleId(null);
+            partner = partnerRepository.update(partner);
+        }
         return partner;
     }
 
@@ -313,15 +331,10 @@ public class PartnerServiceImpl implements PartnerService {
 
         newDuty = partnerDutyRepository.save(newDuty);
 
-
-        partner.setVehicleId(2);
-        partner.setVehicleDetails(ApplicationConstants.GSON.toJson(VehicleDto.builder()
-                .uuid("c7af8b7e-5b9b-48cb-95a6-810156fe97f4")
-                .plateNumber("V001")
-                .build()));
         partner.setDutyDetails(ApplicationConstants.GSON.toJson(PartnerDutyDto.fromDao(newDuty, PartnerViewDto.fromDao(partner), partnerShiftDao)));
+        partner.setPartnerDutyId(newDuty.getId());
         partner.setStatus(PartnerStatus.ON_DUTY.name());
-        partner.setSubStatus(PartnerSubStatus.VEHICLE_ALLOTTED.name());
+        partner.setSubStatus(PartnerSubStatus.VEHICLE_NOT_ALLOTTED.name());
         partner = partnerRepository.update(partner);
         return partner;
     }

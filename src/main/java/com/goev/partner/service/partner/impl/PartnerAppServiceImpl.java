@@ -4,6 +4,7 @@ import com.goev.partner.dao.partner.app.PartnerAppSupportedLanguageDao;
 import com.goev.partner.dao.system.property.SystemPropertyDao;
 import com.goev.partner.dto.partner.app.AppPropertyDto;
 import com.goev.partner.dto.partner.app.AppSupportedLanguageDto;
+import com.goev.partner.dto.partner.app.SupportDetailDto;
 import com.goev.partner.repository.partner.app.PartnerAppSupportedLanguageRepository;
 import com.goev.partner.repository.system.property.SystemPropertyRepository;
 import com.goev.partner.service.partner.PartnerAppService;
@@ -27,17 +28,23 @@ public class PartnerAppServiceImpl implements PartnerAppService {
         Map<String, SystemPropertyDao> propertyMap = systemPropertyRepository.getPropertyMap();
         List<PartnerAppSupportedLanguageDao> languageDaos = partnerAppSupportedLanguageRepository.findAllActive();
         List<AppSupportedLanguageDto> supportedLanguages = new ArrayList<>();
-        languageDaos.forEach(x -> {
-            supportedLanguages.add(AppSupportedLanguageDto.builder()
-                    .languageCode(x.getLanguageCode())
-                    .name(x.getName())
-                    .url(x.getS3Key())
-                    .build());
-        });
+        languageDaos.forEach(x ->
+                supportedLanguages.add(AppSupportedLanguageDto.builder()
+                        .languageCode(x.getLanguageCode())
+                        .name(x.getName())
+                        .url(x.getS3Key())
+                        .build())
+        );
 
         return AppPropertyDto.builder()
                 .currentAppVersion(propertyMap.getOrDefault("CURRENT_APP_VERSION", new SystemPropertyDao()).getPropertyValue())
                 .minimumAppVersion(propertyMap.getOrDefault("MINIMUM_APP_VERSION", new SystemPropertyDao()).getPropertyValue())
-                .supportedLanguages(supportedLanguages).build();
+                .supportedLanguages(supportedLanguages)
+                .supportDetails(SupportDetailDto.builder()
+                        .supportAddress(propertyMap.getOrDefault("SUPPORT_ADDRESS", new SystemPropertyDao()).getPropertyValue())
+                        .supportEmail(propertyMap.getOrDefault("SUPPORT_EMAIL", new SystemPropertyDao()).getPropertyValue())
+                        .supportNumber(propertyMap.getOrDefault("SUPPORT_NUMBER", new SystemPropertyDao()).getPropertyValue())
+                        .build())
+                .build();
     }
 }

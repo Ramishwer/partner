@@ -117,5 +117,13 @@ public class RequestContext {
             request.setAttribute("requestSource", source);
         }
     }
+
+    public static void setAuthUUID(String authUUID) {
+        ServletRequestAttributes requestAttributes = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes());
+        if (requestAttributes != null) {
+            HttpServletRequest request = requestAttributes.getRequest();
+            request.setAttribute("authUUID", authUUID);
+        }
+    }
 }
 
