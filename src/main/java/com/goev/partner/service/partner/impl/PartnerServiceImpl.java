@@ -214,8 +214,18 @@ public class PartnerServiceImpl implements PartnerService {
 
         partner.setStatus(PartnerStatus.OFF_DUTY.name());
         partner.setSubStatus(PartnerSubStatus.DUTY_ASSIGNED.name());
-//        partner.setDutyDetails(null);
-//        partner.setPartnerDutyId(null);
+        partner.setDutyDetails("{\n" +
+                "  \n" +
+                "  \"shiftDetails\":{\n" +
+                "    \"shiftStart\":\"10:00\",\n" +
+                "    \"shiftEnd\":\"20:00\",\n" +
+                "    \"shiftConfig\":{\n" +
+                "      \"minimumIn\":\"9:30\",\n" +
+                "      \"maximumIn\":\"10:15\"\n" +
+                "    }\n" +
+                "  }\n" +
+                "}");
+        partner.setPartnerDutyId(null);
 //        partner.setPartnerShiftId(null);
         partner = partnerRepository.update(partner);
 
