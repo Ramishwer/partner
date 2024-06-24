@@ -21,37 +21,37 @@ public class AssetTypeRepositoryImpl implements AssetTypeRepository {
     private final DSLContext context;
 
     @Override
-    public AssetTypeDao save(AssetTypeDao client) {
-        AssetTypesRecord assetTypesRecord = context.newRecord(ASSET_TYPES, client);
+    public AssetTypeDao save(AssetTypeDao assetTypeDao) {
+        AssetTypesRecord assetTypesRecord = context.newRecord(ASSET_TYPES, assetTypeDao);
         assetTypesRecord.store();
-        client.setId(assetTypesRecord.getId());
-        client.setUuid(assetTypesRecord.getUuid());
-        client.setCreatedBy(assetTypesRecord.getCreatedBy());
-        client.setUpdatedBy(assetTypesRecord.getUpdatedBy());
-        client.setCreatedOn(assetTypesRecord.getCreatedOn());
-        client.setUpdatedOn(assetTypesRecord.getUpdatedOn());
-        client.setIsActive(assetTypesRecord.getIsActive());
-        client.setState(assetTypesRecord.getState());
-        client.setApiSource(assetTypesRecord.getApiSource());
-        client.setNotes(assetTypesRecord.getNotes());
-        return client;
+        assetTypeDao.setId(assetTypesRecord.getId());
+        assetTypeDao.setUuid(assetTypesRecord.getUuid());
+        assetTypeDao.setCreatedBy(assetTypesRecord.getCreatedBy());
+        assetTypeDao.setUpdatedBy(assetTypesRecord.getUpdatedBy());
+        assetTypeDao.setCreatedOn(assetTypesRecord.getCreatedOn());
+        assetTypeDao.setUpdatedOn(assetTypesRecord.getUpdatedOn());
+        assetTypeDao.setIsActive(assetTypesRecord.getIsActive());
+        assetTypeDao.setState(assetTypesRecord.getState());
+        assetTypeDao.setApiSource(assetTypesRecord.getApiSource());
+        assetTypeDao.setNotes(assetTypesRecord.getNotes());
+        return assetTypeDao;
     }
 
     @Override
-    public AssetTypeDao update(AssetTypeDao client) {
-        AssetTypesRecord assetTypesRecord = context.newRecord(ASSET_TYPES, client);
+    public AssetTypeDao update(AssetTypeDao assetTypeDao) {
+        AssetTypesRecord assetTypesRecord = context.newRecord(ASSET_TYPES, assetTypeDao);
         assetTypesRecord.update();
 
 
-        client.setCreatedBy(assetTypesRecord.getCreatedBy());
-        client.setUpdatedBy(assetTypesRecord.getUpdatedBy());
-        client.setCreatedOn(assetTypesRecord.getCreatedOn());
-        client.setUpdatedOn(assetTypesRecord.getUpdatedOn());
-        client.setIsActive(assetTypesRecord.getIsActive());
-        client.setState(assetTypesRecord.getState());
-        client.setApiSource(assetTypesRecord.getApiSource());
-        client.setNotes(assetTypesRecord.getNotes());
-        return client;
+        assetTypeDao.setCreatedBy(assetTypesRecord.getCreatedBy());
+        assetTypeDao.setUpdatedBy(assetTypesRecord.getUpdatedBy());
+        assetTypeDao.setCreatedOn(assetTypesRecord.getCreatedOn());
+        assetTypeDao.setUpdatedOn(assetTypesRecord.getUpdatedOn());
+        assetTypeDao.setIsActive(assetTypesRecord.getIsActive());
+        assetTypeDao.setState(assetTypesRecord.getState());
+        assetTypeDao.setApiSource(assetTypesRecord.getApiSource());
+        assetTypeDao.setNotes(assetTypesRecord.getNotes());
+        return assetTypeDao;
     }
 
     @Override

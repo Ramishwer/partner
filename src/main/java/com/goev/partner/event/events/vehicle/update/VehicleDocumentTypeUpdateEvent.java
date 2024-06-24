@@ -1,13 +1,14 @@
 package com.goev.partner.event.events.vehicle.update;
 
 import com.goev.partner.dao.partner.document.PartnerDocumentTypeDao;
+import com.goev.partner.dao.vehicle.document.VehicleDocumentTypeDao;
 import com.goev.partner.event.targets.CentralTarget;
 import com.goev.lib.event.core.Event;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
 
 @Component
-public class VehicleDocumentTypeUpdateEvent extends Event<PartnerDocumentTypeDao> {
+public class VehicleDocumentTypeUpdateEvent extends Event<VehicleDocumentTypeDao> {
 
     @Override
     @PostConstruct
@@ -17,7 +18,7 @@ public class VehicleDocumentTypeUpdateEvent extends Event<PartnerDocumentTypeDao
 
     @Override
     public String getName() {
-        return "VehicleDocumentTypeAddEvent";
+        return "VehicleDocumentTypeUpdateEvent";
     }
 
 }

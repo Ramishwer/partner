@@ -17,7 +17,7 @@ public class VehicleDocumentTypeSaveEvent extends Event<VehicleDocumentTypeDao> 
 
     @Override
     public String getName() {
-        return "VehicleAssetTransferDetailUpdateEvent";
+        return "VehicleDocumentTypeSaveEvent";
     }
 
 }

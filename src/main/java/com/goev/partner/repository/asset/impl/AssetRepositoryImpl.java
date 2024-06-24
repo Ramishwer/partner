@@ -21,37 +21,37 @@ public class AssetRepositoryImpl implements AssetRepository {
     private final DSLContext context;
 
     @Override
-    public AssetDao save(AssetDao client) {
-        AssetsRecord assetsRecord = context.newRecord(ASSETS, client);
+    public AssetDao save(AssetDao assetDao) {
+        AssetsRecord assetsRecord = context.newRecord(ASSETS, assetDao);
         assetsRecord.store();
-        client.setId(assetsRecord.getId());
-        client.setUuid(assetsRecord.getUuid());
-        client.setCreatedBy(assetsRecord.getCreatedBy());
-        client.setUpdatedBy(assetsRecord.getUpdatedBy());
-        client.setCreatedOn(assetsRecord.getCreatedOn());
-        client.setUpdatedOn(assetsRecord.getUpdatedOn());
-        client.setIsActive(assetsRecord.getIsActive());
-        client.setState(assetsRecord.getState());
-        client.setApiSource(assetsRecord.getApiSource());
-        client.setNotes(assetsRecord.getNotes());
-        return client;
+        assetDao.setId(assetsRecord.getId());
+        assetDao.setUuid(assetsRecord.getUuid());
+        assetDao.setCreatedBy(assetsRecord.getCreatedBy());
+        assetDao.setUpdatedBy(assetsRecord.getUpdatedBy());
+        assetDao.setCreatedOn(assetsRecord.getCreatedOn());
+        assetDao.setUpdatedOn(assetsRecord.getUpdatedOn());
+        assetDao.setIsActive(assetsRecord.getIsActive());
+        assetDao.setState(assetsRecord.getState());
+        assetDao.setApiSource(assetsRecord.getApiSource());
+        assetDao.setNotes(assetsRecord.getNotes());
+        return assetDao;
     }
 
     @Override
-    public AssetDao update(AssetDao client) {
-        AssetsRecord assetsRecord = context.newRecord(ASSETS, client);
+    public AssetDao update(AssetDao assetDao) {
+        AssetsRecord assetsRecord = context.newRecord(ASSETS, assetDao);
         assetsRecord.update();
 
 
-        client.setCreatedBy(assetsRecord.getCreatedBy());
-        client.setUpdatedBy(assetsRecord.getUpdatedBy());
-        client.setCreatedOn(assetsRecord.getCreatedOn());
-        client.setUpdatedOn(assetsRecord.getUpdatedOn());
-        client.setIsActive(assetsRecord.getIsActive());
-        client.setState(assetsRecord.getState());
-        client.setApiSource(assetsRecord.getApiSource());
-        client.setNotes(assetsRecord.getNotes());
-        return client;
+        assetDao.setCreatedBy(assetsRecord.getCreatedBy());
+        assetDao.setUpdatedBy(assetsRecord.getUpdatedBy());
+        assetDao.setCreatedOn(assetsRecord.getCreatedOn());
+        assetDao.setUpdatedOn(assetsRecord.getUpdatedOn());
+        assetDao.setIsActive(assetsRecord.getIsActive());
+        assetDao.setState(assetsRecord.getState());
+        assetDao.setApiSource(assetsRecord.getApiSource());
+        assetDao.setNotes(assetsRecord.getNotes());
+        return assetDao;
     }
 
     @Override
