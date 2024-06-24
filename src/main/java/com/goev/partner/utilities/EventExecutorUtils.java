@@ -7,11 +7,14 @@ import com.goev.partner.config.SpringContext;
 import com.goev.partner.dao.partner.detail.PartnerDao;
 import com.goev.partner.dao.partner.detail.PartnerDetailDao;
 import com.goev.partner.dao.partner.document.PartnerDocumentDao;
+import com.goev.partner.dao.partner.duty.PartnerDutyDao;
 import com.goev.partner.dao.vehicle.transfer.VehicleTransferDetailDao;
 import com.goev.partner.event.events.partner.PartnerOnboardingStatusCheckEvent;
 import com.goev.partner.event.events.partner.save.PartnerDocumentSaveEvent;
+import com.goev.partner.event.events.partner.save.PartnerDutySaveEvent;
 import com.goev.partner.event.events.partner.update.PartnerDetailUpdateEvent;
 import com.goev.partner.event.events.partner.update.PartnerDocumentUpdateEvent;
+import com.goev.partner.event.events.partner.update.PartnerDutyUpdateEvent;
 import com.goev.partner.event.events.partner.update.PartnerUpdateEvent;
 import com.goev.partner.event.events.vehicle.save.VehicleTransferDetailSaveEvent;
 import com.goev.partner.event.events.vehicle.update.VehicleTransferDetailUpdateEvent;
@@ -33,6 +36,12 @@ public class EventExecutorUtils {
             }
             case "PartnerDetailUpdateEvent" -> {
                 return fireEvent(SpringContext.getBean(PartnerDetailUpdateEvent.class),(PartnerDetailDao) data);
+            }
+            case "PartnerDutySaveEvent" -> {
+                return fireEvent(SpringContext.getBean(PartnerDutySaveEvent.class),(PartnerDutyDao) data);
+            }
+            case "PartnerDutyUpdateEvent" -> {
+                return fireEvent(SpringContext.getBean(PartnerDutyUpdateEvent.class),(PartnerDutyDao) data);
             }
             case "PartnerOnboardingStatusCheckEvent" -> {
                 return fireEvent(SpringContext.getBean(PartnerOnboardingStatusCheckEvent.class),(String) data);

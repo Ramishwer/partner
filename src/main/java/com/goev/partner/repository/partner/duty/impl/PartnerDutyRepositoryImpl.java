@@ -4,6 +4,8 @@ import com.goev.lib.enums.RecordState;
 import com.goev.partner.dao.partner.duty.PartnerDutyDao;
 import com.goev.partner.dto.common.PageDto;
 import com.goev.partner.repository.partner.duty.PartnerDutyRepository;
+import com.goev.partner.utilities.EventExecutorUtils;
+import com.goev.partner.utilities.RequestContext;
 import com.goev.record.partner.tables.records.PartnerDutiesRecord;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +22,7 @@ import static com.goev.record.partner.tables.PartnerDuties.PARTNER_DUTIES;
 public class PartnerDutyRepositoryImpl implements PartnerDutyRepository {
 
     private final DSLContext context;
+    private final EventExecutorUtils eventExecutor;
 
     @Override
     public PartnerDutyDao save(PartnerDutyDao partnerDutyDao) {
@@ -35,6 +38,10 @@ public class PartnerDutyRepositoryImpl implements PartnerDutyRepository {
         partnerDutyDao.setState(partnerDutiesRecord.getState());
         partnerDutyDao.setApiSource(partnerDutiesRecord.getApiSource());
         partnerDutyDao.setNotes(partnerDutiesRecord.getNotes());
+
+        if ("API".equals(RequestContext.getRequestSource()))
+            eventExecutor.fireEvent("PartnerDutySaveEvent", partnerDutyDao);
+
         return partnerDutyDao;
     }
 
@@ -52,6 +59,9 @@ public class PartnerDutyRepositoryImpl implements PartnerDutyRepository {
         partnerDutyDao.setState(partnerDutiesRecord.getState());
         partnerDutyDao.setApiSource(partnerDutiesRecord.getApiSource());
         partnerDutyDao.setNotes(partnerDutiesRecord.getNotes());
+
+        if ("API".equals(RequestContext.getRequestSource()))
+            eventExecutor.fireEvent("PartnerDutyUpdateEvent", partnerDutyDao);
         return partnerDutyDao;
     }
 
