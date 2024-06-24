@@ -213,10 +213,10 @@ public class PartnerServiceImpl implements PartnerService {
         }
 
         partner.setStatus(PartnerStatus.OFF_DUTY.name());
-        partner.setSubStatus(PartnerSubStatus.NO_DUTY.name());
-        partner.setDutyDetails(null);
-        partner.setPartnerDutyId(null);
-        partner.setPartnerShiftId(null);
+        partner.setSubStatus(PartnerSubStatus.DUTY_ASSIGNED.name());
+//        partner.setDutyDetails(null);
+//        partner.setPartnerDutyId(null);
+//        partner.setPartnerShiftId(null);
         partner = partnerRepository.update(partner);
 
         return partner;
