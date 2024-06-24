@@ -17,12 +17,14 @@ public class PartnerDocumentUpdateEventHandler extends EventHandler<PartnerDocum
 
     @Override
     public boolean onEvent(Event<PartnerDocumentDao> event) {
-        log.info("Data:{}", event.getData());
+
         PartnerDocumentDao partnerDocumentDao = event.getData();
         if (partnerDocumentDao == null) {
             log.info("PartnerDocument Data Null");
             return false;
         }
+        log.info("Data:{} {}", event.getData() ,partnerDocumentDao.getUuid());
+
         PartnerDocumentDao existing = partnerDocumentRepository.findByUUID(partnerDocumentDao.getUuid());
         if (existing != null) {
             partnerDocumentDao.setId(existing.getId());
