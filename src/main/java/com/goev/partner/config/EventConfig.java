@@ -58,6 +58,7 @@ public class EventConfig {
                                             VehicleDetailUpdateEventHandler vehicleDetailUpdateEventHandler,
                                             VehicleTransferDetailUpdateEventHandler vehicleTransferDetailUpdateEventHandler,
                                             VehicleAssetTransferDetailUpdateEventHandler vehicleAssetTransferDetailUpdateEventHandler,
+                                            VehicleAssetMappingUpdateEventHandler vehicleAssetMappingUpdateEventHandler,
                                             BookingUpdateEventHandler bookingUpdateEventHandler,
                                             LocationUpdateEventHandler locationUpdateEventHandler,
 
@@ -76,6 +77,7 @@ public class EventConfig {
                                             VehicleDetailSaveEventHandler vehicleDetailSaveEventHandler,
                                             VehicleTransferDetailSaveEventHandler vehicleTransferDetailSaveEventHandler,
                                             VehicleAssetTransferDetailSaveEventHandler vehicleAssetTransferDetailSaveEventHandler,
+                                            VehicleAssetMappingSaveEventHandler vehicleAssetMappingSaveEventHandler,
                                             BookingSaveEventHandler bookingSaveEventHandler,
                                             LocationSaveEventHandler locationSaveEventHandler
 
@@ -100,8 +102,10 @@ public class EventConfig {
         eventProcessor.registerEvents(new VehicleDetailUpdateEvent());
         eventProcessor.registerEvents(new VehicleTransferDetailUpdateEvent());
         eventProcessor.registerEvents(new VehicleAssetTransferDetailUpdateEvent());
+        eventProcessor.registerEvents(new VehicleAssetMappingUpdateEvent());
         eventProcessor.registerEvents(new BookingUpdateEvent());
         eventProcessor.registerEvents(new LocationUpdateEvent());
+
 
         eventProcessor.registerEventHandlers(new AssetUpdateEvent(), assetUpdateEventHandler);
         eventProcessor.registerEventHandlers(new AssetTypeUpdateEvent(), assetTypeUpdateEventHandler);
@@ -117,6 +121,7 @@ public class EventConfig {
         eventProcessor.registerEventHandlers(new VehicleDetailUpdateEvent(), vehicleDetailUpdateEventHandler);
         eventProcessor.registerEventHandlers(new VehicleTransferDetailUpdateEvent(), vehicleTransferDetailUpdateEventHandler);
         eventProcessor.registerEventHandlers(new VehicleAssetTransferDetailUpdateEvent(), vehicleAssetTransferDetailUpdateEventHandler);
+        eventProcessor.registerEventHandlers(new VehicleAssetMappingUpdateEvent(), vehicleAssetMappingUpdateEventHandler);
         eventProcessor.registerEventHandlers(new BookingUpdateEvent(), bookingUpdateEventHandler);
         eventProcessor.registerEventHandlers(new LocationUpdateEvent(), locationUpdateEventHandler);
 
@@ -135,6 +140,7 @@ public class EventConfig {
         eventProcessor.registerEvents(new VehicleDetailSaveEvent());
         eventProcessor.registerEvents(new VehicleTransferDetailSaveEvent());
         eventProcessor.registerEvents(new VehicleAssetTransferDetailSaveEvent());
+        eventProcessor.registerEvents(new VehicleAssetMappingSaveEvent());
         eventProcessor.registerEvents(new BookingSaveEvent());
         eventProcessor.registerEvents(new LocationSaveEvent());
 
@@ -152,6 +158,7 @@ public class EventConfig {
         eventProcessor.registerEventHandlers(new VehicleDetailSaveEvent(), vehicleDetailSaveEventHandler);
         eventProcessor.registerEventHandlers(new VehicleTransferDetailSaveEvent(), vehicleTransferDetailSaveEventHandler);
         eventProcessor.registerEventHandlers(new VehicleAssetTransferDetailSaveEvent(), vehicleAssetTransferDetailSaveEventHandler);
+        eventProcessor.registerEventHandlers(new VehicleAssetMappingSaveEvent(), vehicleAssetMappingSaveEventHandler);
         eventProcessor.registerEventHandlers(new BookingSaveEvent(), bookingSaveEventHandler);
         eventProcessor.registerEventHandlers(new LocationSaveEvent(), locationSaveEventHandler);
 
