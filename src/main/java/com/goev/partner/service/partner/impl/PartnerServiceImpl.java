@@ -9,13 +9,14 @@ import com.goev.partner.dao.partner.detail.PartnerDao;
 import com.goev.partner.dao.partner.detail.PartnerDetailDao;
 import com.goev.partner.dao.partner.duty.PartnerDutyDao;
 import com.goev.partner.dao.partner.duty.PartnerShiftDao;
+import com.goev.partner.dao.vehicle.detail.VehicleDao;
 import com.goev.partner.dto.location.LocationDto;
 import com.goev.partner.dto.partner.PartnerViewDto;
 import com.goev.partner.dto.partner.detail.PartnerDetailDto;
 import com.goev.partner.dto.partner.detail.PartnerDto;
 import com.goev.partner.dto.partner.duty.PartnerDutyDto;
 import com.goev.partner.dto.partner.status.ActionDto;
-import com.goev.partner.dto.vehicle.detail.VehicleDto;
+import com.goev.partner.dto.vehicle.VehicleViewDto;
 import com.goev.partner.enums.partner.PartnerDutyStatus;
 import com.goev.partner.enums.partner.PartnerStatus;
 import com.goev.partner.enums.partner.PartnerSubStatus;
@@ -24,12 +25,17 @@ import com.goev.partner.repository.partner.detail.PartnerDetailRepository;
 import com.goev.partner.repository.partner.detail.PartnerRepository;
 import com.goev.partner.repository.partner.duty.PartnerDutyRepository;
 import com.goev.partner.repository.partner.duty.PartnerShiftRepository;
+import com.goev.partner.repository.vehicle.detail.VehicleRepository;
 import com.goev.partner.service.partner.PartnerService;
 import com.goev.partner.utilities.S3Utils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
 
 @Service
 @Slf4j
@@ -41,7 +47,8 @@ public class PartnerServiceImpl implements PartnerService {
     private final PartnerDutyRepository partnerDutyRepository;
     private final LocationRepository locationRepository;
     private final S3Utils s3;
-
+    private final ExecutorService executorService;
+    private final VehicleRepository vehicleRepository;
 
     @Override
     public PartnerDetailDto getPartnerDetails(String partnerUUID) {
@@ -206,7 +213,7 @@ public class PartnerServiceImpl implements PartnerService {
 
     private PartnerDao checkOut(PartnerDao partner, ActionDto actionDto) {
         PartnerDutyDao currentDuty = partnerDutyRepository.findById(partner.getPartnerDutyId());
-        if(currentDuty!=null){
+        if (currentDuty != null) {
             currentDuty.setStatus(PartnerDutyStatus.COMPLETED.name());
             currentDuty.setActualDutyEndTime(DateTime.now());
             partnerDutyRepository.update(currentDuty);
@@ -276,11 +283,11 @@ public class PartnerServiceImpl implements PartnerService {
     }
 
     private PartnerDao submitChecklist(PartnerDao partner, ActionDto actionDto) {
-        if(PartnerStatus.CHECKLIST.name().equals(partner.getStatus())) {
+        if (PartnerStatus.CHECKLIST.name().equals(partner.getStatus())) {
             partner.setStatus(PartnerStatus.VEHICLE_ASSIGNED.name());
             partner.setSubStatus(PartnerSubStatus.WAITING_FOR_ONLINE.name());
             partner = partnerRepository.update(partner);
-        }else if(PartnerStatus.RETURN_CHECKLIST.name().equals(partner.getStatus())){
+        } else if (PartnerStatus.RETURN_CHECKLIST.name().equals(partner.getStatus())) {
             partner.setStatus(PartnerStatus.ON_DUTY.name());
             partner.setSubStatus(PartnerSubStatus.VEHICLE_NOT_ALLOTTED.name());
             partner.setVehicleDetails(null);
@@ -346,6 +353,31 @@ public class PartnerServiceImpl implements PartnerService {
         partner.setStatus(PartnerStatus.ON_DUTY.name());
         partner.setSubStatus(PartnerSubStatus.VEHICLE_NOT_ALLOTTED.name());
         partner = partnerRepository.update(partner);
+
+        if(ApplicationConstants.assignmentMap.containsKey(partner.getPunchId())) {
+            final PartnerDao assignVehiclePartner = partner;
+            executorService.submit(() -> {
+                try {
+                    Thread.sleep(2000L);
+                } catch (InterruptedException e) {
+                    log.error("Error in sleep", e);
+                }
+
+                assignVehiclePartner.setStatus(PartnerStatus.ON_DUTY.name());
+                assignVehiclePartner.setSubStatus(PartnerSubStatus.VEHICLE_ALLOTTED.name());
+                String vehicleNumber = ApplicationConstants.assignmentMap.get(assignVehiclePartner.getPunchId());
+                if(vehicleNumber!=null){
+                    VehicleDao vehicle = vehicleRepository.findByPlateNumber(vehicleNumber);
+                    if(vehicle!=null) {
+                        assignVehiclePartner.setVehicleId(vehicle.getId());
+                        assignVehiclePartner.setVehicleDetails(vehicle.getViewInfo());
+                        partnerRepository.update(assignVehiclePartner);
+                    }
+                }
+
+
+            });
+        }
         return partner;
     }
 }
