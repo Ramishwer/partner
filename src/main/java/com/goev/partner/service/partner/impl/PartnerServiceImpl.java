@@ -220,21 +220,25 @@ public class PartnerServiceImpl implements PartnerService {
         }
 
         partner.setStatus(PartnerStatus.OFF_DUTY.name());
-        partner.setSubStatus(PartnerSubStatus.DUTY_ASSIGNED.name());
-        partner.setDutyDetails("{\n" +
-                "  \n" +
-                "  \"shiftDetails\":{\n" +
-                "    \"shiftStart\":\"10:00\",\n" +
-                "    \"shiftEnd\":\"20:00\",\n" +
-                "    \"shiftConfig\":{\n" +
-                "      \"minimumIn\":\"9:30\",\n" +
-                "      \"maximumIn\":\"10:15\"\n" +
-                "    }\n" +
-                "  }\n" +
-                "}");
+        partner.setSubStatus(PartnerSubStatus.NO_DUTY.name());
         partner.setPartnerDutyId(null);
-//        partner.setPartnerShiftId(null);
+        if(partner.getPartnerShiftId() == null)
+            partner.setDutyDetails(null);
         partner = partnerRepository.update(partner);
+
+
+        //        partner.setSubStatus(PartnerSubStatus.DUTY_ASSIGNED.name());
+//        partner.setDutyDetails("{\n" +
+//                "  \n" +
+//                "  \"shiftDetails\":{\n" +
+//                "    \"shiftStart\":\"10:00\",\n" +
+//                "    \"shiftEnd\":\"20:00\",\n" +
+//                "    \"shiftConfig\":{\n" +
+//                "      \"minimumIn\":\"9:30\",\n" +
+//                "      \"maximumIn\":\"10:15\"\n" +
+//                "    }\n" +
+//                "  }\n" +
+//                "}");
 
         return partner;
     }
@@ -248,31 +252,52 @@ public class PartnerServiceImpl implements PartnerService {
     }
 
     private PartnerDao complete(PartnerDao partner, ActionDto actionDto) {
-        return null;
+        partner.setStatus(PartnerStatus.ONLINE.name());
+        partner.setSubStatus(PartnerSubStatus.NO_BOOKING.name());
+        partner = partnerRepository.update(partner);
+        return partner;
     }
 
     private PartnerDao end(PartnerDao partner, ActionDto actionDto) {
-        return null;
+        partner.setStatus(PartnerStatus.ONLINE.name());
+        partner.setSubStatus(PartnerSubStatus.NO_BOOKING.name());
+        partner = partnerRepository.update(partner);
+        return partner;
     }
 
     private PartnerDao start(PartnerDao partner, ActionDto actionDto) {
-        return null;
+        partner.setStatus(PartnerStatus.ON_BOOKING.name());
+        partner.setSubStatus(PartnerSubStatus.STARTED.name());
+        partner = partnerRepository.update(partner);
+        return partner;
     }
 
     private PartnerDao arrive(PartnerDao partner, ActionDto actionDto) {
-        return null;
+        partner.setStatus(PartnerStatus.ON_BOOKING.name());
+        partner.setSubStatus(PartnerSubStatus.ARRIVED.name());
+        partner = partnerRepository.update(partner);
+        return partner;
     }
 
     private PartnerDao enroute(PartnerDao partner, ActionDto actionDto) {
-        return null;
+        partner.setStatus(PartnerStatus.ON_BOOKING.name());
+        partner.setSubStatus(PartnerSubStatus.ENROUTE.name());
+        partner = partnerRepository.update(partner);
+        return partner;
     }
 
     private PartnerDao unPause(PartnerDao partner, ActionDto actionDto) {
-        return null;
+        partner.setStatus(PartnerStatus.ONLINE.name());
+        partner.setSubStatus(PartnerSubStatus.NO_BOOKING.name());
+        partner = partnerRepository.update(partner);
+        return partner;
     }
 
     private PartnerDao pause(PartnerDao partner, ActionDto actionDto) {
-        return null;
+        partner.setStatus(PartnerStatus.ONLINE.name());
+        partner.setSubStatus(PartnerSubStatus.PAUSE.name());
+        partner = partnerRepository.update(partner);
+        return partner;
     }
 
     private PartnerDao goOnline(PartnerDao partner, ActionDto actionDto) {

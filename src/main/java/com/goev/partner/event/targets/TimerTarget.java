@@ -9,28 +9,28 @@ import com.goev.partner.config.SpringContext;
 import com.goev.partner.constant.ApplicationConstants;
 
 
-public class CentralTarget extends EventTarget {
-    private CentralTarget() {
+public class TimerTarget extends EventTarget {
+    private TimerTarget() {
     }
 
     public static String getTargetName() {
-        return "CENTRAL";
+        return "TIMER";
     }
 
-    public static CentralTarget getTarget(EventProcessor eventProcessor) {
+    public static TimerTarget getTarget(EventProcessor eventProcessor) {
         APIEventChannel eventChannel = new APIEventChannel();
         eventChannel.init(SpringContext.getBean(RestClient.class));
-        CentralTarget centralTarget = new CentralTarget();
-        centralTarget.setChannel(eventChannel);
-        centralTarget.setName(getTargetName());
-        centralTarget.setConfig(EventChannelConfiguration.builder()
-                .hostName(ApplicationConstants.CENTRAL_URL)
+        TimerTarget timerTarget = new TimerTarget();
+        timerTarget.setChannel(eventChannel);
+        timerTarget.setName(getTargetName());
+        timerTarget.setConfig(EventChannelConfiguration.builder()
+                .hostName(ApplicationConstants.TIMER_URL)
                 .base("/api/v1/internal")
                 .path("/events")
                 .authKey(ApplicationConstants.CLIENT_ID)
                 .authSecret(ApplicationConstants.CLIENT_SECRET)
                 .processor(eventProcessor)
                 .build());
-        return centralTarget;
+        return timerTarget;
     }
 }

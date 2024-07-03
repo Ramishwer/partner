@@ -18,6 +18,7 @@ import java.util.Map;
 @AllArgsConstructor
 public class ApplicationConstants {
     public static final Gson GSON = new GsonBuilder().registerTypeAdapter(DateTime.class, new GsonDateTimeSerializer()).create();
+    public static String TIMER_URL;
     public static String AWS_ACCESS_KEY_SECRET;
     public static String AWS_ACCESS_KEY_ID;
     public static String APPLICATION_ID;
