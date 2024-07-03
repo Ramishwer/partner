@@ -11,6 +11,7 @@ import com.goev.partner.utilities.RequestContext;
 import com.goev.record.partner.tables.records.BookingsRecord;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.joda.time.DateTime;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
 
@@ -121,6 +122,7 @@ public class BookingRepositoryImpl implements BookingRepository {
                 .and(BOOKINGS.STATUS.in(status))
                 .and(BOOKINGS.STATE.eq(RecordState.ACTIVE.name()))
                 .and(BOOKINGS.IS_ACTIVE.eq(true))
+                .and(BOOKINGS.PLANNED_START_TIME.between(DateTime.now(),DateTime.now().plusHours(1)))
                 .orderBy(BOOKINGS.PLANNED_START_TIME.asc(), BOOKINGS.ID.asc())
                 .fetchInto(BookingDao.class);
     }

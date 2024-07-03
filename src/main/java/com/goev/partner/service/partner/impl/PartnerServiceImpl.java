@@ -141,6 +141,7 @@ public class PartnerServiceImpl implements PartnerService {
         if(PartnerStatus.ONLINE.name().equals(partner.getStatus())) {
             List<BookingDao> bookings = bookingRepository.findByPartnerIdAndStatus(partner.getId(), BookingStatus.CONFIRMED.name());
             if (!CollectionUtils.isEmpty(bookings)){
+
                 BookingDao bookingDao = bookings.get(0);
                 bookingDao.setStatus(BookingStatus.IN_PROGRESS.name());
                 bookingDao.setSubStatus(BookingSubStatus.ASSIGNED.name());
