@@ -91,4 +91,12 @@ public class VehicleRepositoryImpl implements VehicleRepository {
     public VehicleDao findByPlateNumber(String plateNumber) {
         return context.selectFrom(VEHICLES).where(VEHICLES.PLATE_NUMBER.eq(plateNumber)).fetchAnyInto(VehicleDao.class);
     }
+
+    @Override
+    public VehicleDao findByPartnerId(Integer partnerId) {
+        return context.selectFrom(VEHICLES)
+                .where(VEHICLES.PARTNER_ID.eq(partnerId))
+                .and(VEHICLES.IS_ACTIVE.eq(true))
+                .fetchAnyInto(VehicleDao.class);
+    }
 }

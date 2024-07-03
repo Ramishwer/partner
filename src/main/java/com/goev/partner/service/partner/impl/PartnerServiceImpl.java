@@ -39,9 +39,7 @@ import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
 @Service
@@ -138,9 +136,9 @@ public class PartnerServiceImpl implements PartnerService {
         if (partner == null)
             throw new ResponseException("No partner found for Id :" + partnerUUID);
 
-        if(PartnerStatus.ONLINE.name().equals(partner.getStatus())) {
+        if (PartnerStatus.ONLINE.name().equals(partner.getStatus())) {
             List<BookingDao> bookings = bookingRepository.findByPartnerIdAndStatus(partner.getId(), BookingStatus.CONFIRMED.name());
-            if (!CollectionUtils.isEmpty(bookings)){
+            if (!CollectionUtils.isEmpty(bookings)) {
 
                 BookingDao bookingDao = bookings.get(0);
                 bookingDao.setStatus(BookingStatus.IN_PROGRESS.name());
@@ -257,7 +255,7 @@ public class PartnerServiceImpl implements PartnerService {
         partner.setStatus(PartnerStatus.OFF_DUTY.name());
         partner.setSubStatus(PartnerSubStatus.NO_DUTY.name());
         partner.setPartnerDutyId(null);
-        if(partner.getPartnerShiftId() == null)
+        if (partner.getPartnerShiftId() == null)
             partner.setDutyDetails(null);
         partner = partnerRepository.update(partner);
 
@@ -290,8 +288,8 @@ public class PartnerServiceImpl implements PartnerService {
         partner.setStatus(PartnerStatus.ONLINE.name());
         partner.setSubStatus(PartnerSubStatus.NO_BOOKING.name());
         partner = partnerRepository.update(partner);
-        if(partner.getBookingId()!=null){
-            BookingDao bookingDao =  bookingRepository.findById(partner.getBookingId());
+        if (partner.getBookingId() != null) {
+            BookingDao bookingDao = bookingRepository.findById(partner.getBookingId());
             bookingDao.setStatus(BookingStatus.COMPLETED.name());
             bookingDao.setSubStatus(BookingSubStatus.COMPLETED.name());
             bookingRepository.update(bookingDao);
@@ -303,8 +301,8 @@ public class PartnerServiceImpl implements PartnerService {
         partner.setStatus(PartnerStatus.ONLINE.name());
         partner.setSubStatus(PartnerSubStatus.NO_BOOKING.name());
         partner = partnerRepository.update(partner);
-        if(partner.getBookingId()!=null){
-            BookingDao bookingDao =  bookingRepository.findById(partner.getBookingId());
+        if (partner.getBookingId() != null) {
+            BookingDao bookingDao = bookingRepository.findById(partner.getBookingId());
             bookingDao.setStatus(BookingStatus.COMPLETED.name());
             bookingDao.setSubStatus(BookingSubStatus.ENDED.name());
             bookingRepository.update(bookingDao);
@@ -316,8 +314,8 @@ public class PartnerServiceImpl implements PartnerService {
         partner.setStatus(PartnerStatus.ON_BOOKING.name());
         partner.setSubStatus(PartnerSubStatus.STARTED.name());
         partner = partnerRepository.update(partner);
-        if(partner.getBookingId()!=null){
-            BookingDao bookingDao =  bookingRepository.findById(partner.getBookingId());
+        if (partner.getBookingId() != null) {
+            BookingDao bookingDao = bookingRepository.findById(partner.getBookingId());
             bookingDao.setStatus(BookingStatus.IN_PROGRESS.name());
             bookingDao.setSubStatus(BookingSubStatus.STARTED.name());
             bookingRepository.update(bookingDao);
@@ -329,8 +327,8 @@ public class PartnerServiceImpl implements PartnerService {
         partner.setStatus(PartnerStatus.ON_BOOKING.name());
         partner.setSubStatus(PartnerSubStatus.ARRIVED.name());
         partner = partnerRepository.update(partner);
-        if(partner.getBookingId()!=null){
-            BookingDao bookingDao =  bookingRepository.findById(partner.getBookingId());
+        if (partner.getBookingId() != null) {
+            BookingDao bookingDao = bookingRepository.findById(partner.getBookingId());
             bookingDao.setStatus(BookingStatus.IN_PROGRESS.name());
             bookingDao.setSubStatus(BookingSubStatus.ARRIVED.name());
             bookingRepository.update(bookingDao);
@@ -342,8 +340,8 @@ public class PartnerServiceImpl implements PartnerService {
         partner.setStatus(PartnerStatus.ON_BOOKING.name());
         partner.setSubStatus(PartnerSubStatus.ENROUTE.name());
         partner = partnerRepository.update(partner);
-        if(partner.getBookingId()!=null){
-            BookingDao bookingDao =  bookingRepository.findById(partner.getBookingId());
+        if (partner.getBookingId() != null) {
+            BookingDao bookingDao = bookingRepository.findById(partner.getBookingId());
             bookingDao.setStatus(BookingStatus.IN_PROGRESS.name());
             bookingDao.setSubStatus(BookingSubStatus.ENROUTE.name());
             bookingRepository.update(bookingDao);
@@ -444,7 +442,9 @@ public class PartnerServiceImpl implements PartnerService {
         partner.setSubStatus(PartnerSubStatus.VEHICLE_NOT_ALLOTTED.name());
         partner = partnerRepository.update(partner);
 
-        if(ApplicationConstants.assignmentMap.containsKey(partner.getId())) {
+
+        VehicleDao vehicle = vehicleRepository.findByPartnerId(partner.getId());
+        if (vehicle != null) {
             final PartnerDao assignVehiclePartner = partner;
             executorService.submit(() -> {
                 try {
@@ -455,19 +455,14 @@ public class PartnerServiceImpl implements PartnerService {
 
                 assignVehiclePartner.setStatus(PartnerStatus.ON_DUTY.name());
                 assignVehiclePartner.setSubStatus(PartnerSubStatus.VEHICLE_ALLOTTED.name());
-                String vehicleNumber = ApplicationConstants.assignmentMap.get(assignVehiclePartner.getId());
-                if(vehicleNumber!=null){
-                    VehicleDao vehicle = vehicleRepository.findByPlateNumber(vehicleNumber);
-                    if(vehicle!=null) {
-                        assignVehiclePartner.setVehicleId(vehicle.getId());
-                        assignVehiclePartner.setVehicleDetails(vehicle.getViewInfo());
-                        partnerRepository.update(assignVehiclePartner);
-                    }
-                }
-
+                assignVehiclePartner.setVehicleId(vehicle.getId());
+                assignVehiclePartner.setVehicleDetails(vehicle.getViewInfo());
+                partnerRepository.update(assignVehiclePartner);
 
             });
+
         }
+
         return partner;
     }
 }
