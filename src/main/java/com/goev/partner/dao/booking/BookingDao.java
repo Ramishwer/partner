@@ -2,6 +2,7 @@ package com.goev.partner.dao.booking;
 
 import com.goev.lib.dao.BaseDao;
 import lombok.*;
+import org.joda.time.DateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -23,5 +24,5 @@ public class BookingDao extends BaseDao {
     private Integer customerId;
     private Integer partnerId;
     private Integer vehicleId;
-
+    private DateTime plannedStartTime;
 }

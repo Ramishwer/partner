@@ -153,6 +153,7 @@ public class PartnerServiceImpl implements PartnerService {
                         .subStatus(bookingDao.getSubStatus())
                         .startLocationDetails(ApplicationConstants.GSON.fromJson(bookingDao.getStartLocationDetails(), LatLongDto.class))
                         .endLocationDetails(ApplicationConstants.GSON.fromJson(bookingDao.getEndLocationDetails(), LatLongDto.class))
+                        .plannedStartTime(bookingDao.getPlannedStartTime())
                         .build();
                 partner.setStatus(PartnerStatus.ON_BOOKING.name());
                 partner.setBookingId(bookingDao.getId());
