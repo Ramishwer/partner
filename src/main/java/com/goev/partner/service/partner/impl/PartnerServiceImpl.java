@@ -11,6 +11,7 @@ import com.goev.partner.dao.partner.detail.PartnerDetailDao;
 import com.goev.partner.dao.partner.duty.PartnerDutyDao;
 import com.goev.partner.dao.partner.duty.PartnerShiftDao;
 import com.goev.partner.dao.vehicle.detail.VehicleDao;
+import com.goev.partner.dto.booking.BookingViewDto;
 import com.goev.partner.dto.location.LocationDto;
 import com.goev.partner.dto.partner.PartnerViewDto;
 import com.goev.partner.dto.partner.detail.PartnerDetailDto;
@@ -36,8 +37,10 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
@@ -135,6 +138,31 @@ public class PartnerServiceImpl implements PartnerService {
         if (partner == null)
             throw new ResponseException("No partner found for Id :" + partnerUUID);
 
+        if(PartnerStatus.ONLINE.name().equals(partner.getStatus())) {
+            List<BookingDao> bookings = bookingRepository.findByPartnerIdAndStatus(partner.getId(), BookingStatus.CONFIRMED.name());
+            if (!CollectionUtils.isEmpty(bookings)){
+                BookingDao bookingDao = bookings.get(0);
+                bookingDao.setStatus(BookingStatus.IN_PROGRESS.name());
+                bookingDao.setSubStatus(BookingSubStatus.ASSIGNED.name());
+
+                BookingViewDto viewDto = BookingViewDto.builder()
+                        .uuid(bookingDao.getUuid())
+                        .partnerDetails(ApplicationConstants.GSON.fromJson(bookingDao.getPartnerDetails(), PartnerViewDto.class))
+                        .vehicleDetails(ApplicationConstants.GSON.fromJson(bookingDao.getVehicleDetails(), VehicleViewDto.class))
+                        .status(bookingDao.getStatus())
+                        .subStatus(bookingDao.getSubStatus())
+                        .startLocationDetails(ApplicationConstants.GSON.fromJson(bookingDao.getStartLocationDetails(), LatLongDto.class))
+                        .endLocationDetails(ApplicationConstants.GSON.fromJson(bookingDao.getEndLocationDetails(), LatLongDto.class))
+                        .build();
+                partner.setStatus(PartnerStatus.ON_BOOKING.name());
+                partner.setBookingId(bookingDao.getId());
+                partner.setSubStatus(PartnerSubStatus.ASSIGNED.name());
+                partner.setBookingDetails(ApplicationConstants.GSON.toJson(viewDto));
+                partnerRepository.update(partner);
+                bookingDao.setViewInfo(ApplicationConstants.GSON.toJson(viewDto));
+                bookingRepository.update(bookingDao);
+            }
+        }
         return PartnerDto.fromDao(partner);
     }
 

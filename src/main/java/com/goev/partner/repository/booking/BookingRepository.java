@@ -20,4 +20,5 @@ public interface BookingRepository {
 
     List<BookingDao> findAllByPartnerId(Integer partnerId, PageDto page);
 
+    List<BookingDao> findByPartnerIdAndStatus(Integer id, String status);
 }

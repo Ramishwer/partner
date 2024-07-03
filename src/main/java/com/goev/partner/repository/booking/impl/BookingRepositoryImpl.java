@@ -113,4 +113,15 @@ public class BookingRepositoryImpl implements BookingRepository {
                 .limit(page.getLimit())
                 .fetchInto(BookingDao.class);
     }
+
+    @Override
+    public List<BookingDao> findByPartnerIdAndStatus(Integer partnerId, String status) {
+        return context.selectFrom(BOOKINGS)
+                .where(BOOKINGS.PARTNER_ID.eq(partnerId))
+                .and(BOOKINGS.STATUS.in(status))
+                .and(BOOKINGS.STATE.eq(RecordState.ACTIVE.name()))
+                .and(BOOKINGS.IS_ACTIVE.eq(true))
+                .orderBy(BOOKINGS.PLANNED_START_TIME.asc(), BOOKINGS.ID.asc())
+                .fetchInto(BookingDao.class);
+    }
 }
