@@ -59,7 +59,7 @@ public class BookingRepositoryImpl implements BookingRepository {
         bookingDao.setApiSource(bookingsRecord.getApiSource());
         bookingDao.setNotes(bookingsRecord.getNotes());
         if("API".equals(RequestContext.getRequestSource()))
-            eventExecutor.fireEvent("PartnerUpdateEvent", bookingDao);
+            eventExecutor.fireEvent("BookingUpdateEvent", bookingDao);
         return bookingDao;
     }
 
