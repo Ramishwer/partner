@@ -4,6 +4,7 @@ import com.goev.lib.dto.LatLongDto;
 import com.goev.lib.exceptions.ResponseException;
 import com.goev.lib.utilities.ApplicationContext;
 import com.goev.partner.constant.ApplicationConstants;
+import com.goev.partner.dao.booking.BookingDao;
 import com.goev.partner.dao.location.LocationDao;
 import com.goev.partner.dao.partner.detail.PartnerDao;
 import com.goev.partner.dao.partner.detail.PartnerDetailDao;
@@ -17,9 +18,12 @@ import com.goev.partner.dto.partner.detail.PartnerDto;
 import com.goev.partner.dto.partner.duty.PartnerDutyDto;
 import com.goev.partner.dto.partner.status.ActionDto;
 import com.goev.partner.dto.vehicle.VehicleViewDto;
+import com.goev.partner.enums.booking.BookingStatus;
+import com.goev.partner.enums.booking.BookingSubStatus;
 import com.goev.partner.enums.partner.PartnerDutyStatus;
 import com.goev.partner.enums.partner.PartnerStatus;
 import com.goev.partner.enums.partner.PartnerSubStatus;
+import com.goev.partner.repository.booking.BookingRepository;
 import com.goev.partner.repository.location.LocationRepository;
 import com.goev.partner.repository.partner.detail.PartnerDetailRepository;
 import com.goev.partner.repository.partner.detail.PartnerRepository;
@@ -49,6 +53,7 @@ public class PartnerServiceImpl implements PartnerService {
     private final S3Utils s3;
     private final ExecutorService executorService;
     private final VehicleRepository vehicleRepository;
+    private final BookingRepository bookingRepository;
 
     @Override
     public PartnerDetailDto getPartnerDetails(String partnerUUID) {
@@ -255,6 +260,12 @@ public class PartnerServiceImpl implements PartnerService {
         partner.setStatus(PartnerStatus.ONLINE.name());
         partner.setSubStatus(PartnerSubStatus.NO_BOOKING.name());
         partner = partnerRepository.update(partner);
+        if(partner.getBookingId()!=null){
+            BookingDao bookingDao =  bookingRepository.findById(partner.getBookingId());
+            bookingDao.setStatus(BookingStatus.COMPLETED.name());
+            bookingDao.setSubStatus(BookingSubStatus.COMPLETED.name());
+            bookingRepository.update(bookingDao);
+        }
         return partner;
     }
 
@@ -262,6 +273,12 @@ public class PartnerServiceImpl implements PartnerService {
         partner.setStatus(PartnerStatus.ONLINE.name());
         partner.setSubStatus(PartnerSubStatus.NO_BOOKING.name());
         partner = partnerRepository.update(partner);
+        if(partner.getBookingId()!=null){
+            BookingDao bookingDao =  bookingRepository.findById(partner.getBookingId());
+            bookingDao.setStatus(BookingStatus.COMPLETED.name());
+            bookingDao.setSubStatus(BookingSubStatus.ENDED.name());
+            bookingRepository.update(bookingDao);
+        }
         return partner;
     }
 
@@ -269,6 +286,12 @@ public class PartnerServiceImpl implements PartnerService {
         partner.setStatus(PartnerStatus.ON_BOOKING.name());
         partner.setSubStatus(PartnerSubStatus.STARTED.name());
         partner = partnerRepository.update(partner);
+        if(partner.getBookingId()!=null){
+            BookingDao bookingDao =  bookingRepository.findById(partner.getBookingId());
+            bookingDao.setStatus(BookingStatus.IN_PROGRESS.name());
+            bookingDao.setSubStatus(BookingSubStatus.STARTED.name());
+            bookingRepository.update(bookingDao);
+        }
         return partner;
     }
 
@@ -276,6 +299,12 @@ public class PartnerServiceImpl implements PartnerService {
         partner.setStatus(PartnerStatus.ON_BOOKING.name());
         partner.setSubStatus(PartnerSubStatus.ARRIVED.name());
         partner = partnerRepository.update(partner);
+        if(partner.getBookingId()!=null){
+            BookingDao bookingDao =  bookingRepository.findById(partner.getBookingId());
+            bookingDao.setStatus(BookingStatus.IN_PROGRESS.name());
+            bookingDao.setSubStatus(BookingSubStatus.ARRIVED.name());
+            bookingRepository.update(bookingDao);
+        }
         return partner;
     }
 
@@ -283,6 +312,12 @@ public class PartnerServiceImpl implements PartnerService {
         partner.setStatus(PartnerStatus.ON_BOOKING.name());
         partner.setSubStatus(PartnerSubStatus.ENROUTE.name());
         partner = partnerRepository.update(partner);
+        if(partner.getBookingId()!=null){
+            BookingDao bookingDao =  bookingRepository.findById(partner.getBookingId());
+            bookingDao.setStatus(BookingStatus.IN_PROGRESS.name());
+            bookingDao.setSubStatus(BookingSubStatus.ENROUTE.name());
+            bookingRepository.update(bookingDao);
+        }
         return partner;
     }
 
@@ -379,7 +414,7 @@ public class PartnerServiceImpl implements PartnerService {
         partner.setSubStatus(PartnerSubStatus.VEHICLE_NOT_ALLOTTED.name());
         partner = partnerRepository.update(partner);
 
-        if(ApplicationConstants.assignmentMap.containsKey(partner.getPunchId())) {
+        if(ApplicationConstants.assignmentMap.containsKey(partner.getId())) {
             final PartnerDao assignVehiclePartner = partner;
             executorService.submit(() -> {
                 try {
@@ -390,7 +425,7 @@ public class PartnerServiceImpl implements PartnerService {
 
                 assignVehiclePartner.setStatus(PartnerStatus.ON_DUTY.name());
                 assignVehiclePartner.setSubStatus(PartnerSubStatus.VEHICLE_ALLOTTED.name());
-                String vehicleNumber = ApplicationConstants.assignmentMap.get(assignVehiclePartner.getPunchId());
+                String vehicleNumber = ApplicationConstants.assignmentMap.get(assignVehiclePartner.getId());
                 if(vehicleNumber!=null){
                     VehicleDao vehicle = vehicleRepository.findByPlateNumber(vehicleNumber);
                     if(vehicle!=null) {

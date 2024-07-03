@@ -6,6 +6,8 @@ import com.goev.partner.dao.booking.BookingDao;
 import com.goev.partner.dto.common.PageDto;
 import com.goev.partner.enums.booking.BookingStatus;
 import com.goev.partner.repository.booking.BookingRepository;
+import com.goev.partner.utilities.EventExecutorUtils;
+import com.goev.partner.utilities.RequestContext;
 import com.goev.record.partner.tables.records.BookingsRecord;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +24,7 @@ import static com.goev.record.partner.tables.Bookings.BOOKINGS;
 public class BookingRepositoryImpl implements BookingRepository {
 
     private final DSLContext context;
+    private final EventExecutorUtils eventExecutor;
 
     @Override
     public BookingDao save(BookingDao bookingDao) {
@@ -54,6 +57,8 @@ public class BookingRepositoryImpl implements BookingRepository {
         bookingDao.setState(bookingsRecord.getState());
         bookingDao.setApiSource(bookingsRecord.getApiSource());
         bookingDao.setNotes(bookingsRecord.getNotes());
+        if("API".equals(RequestContext.getRequestSource()))
+            eventExecutor.fireEvent("PartnerUpdateEvent", bookingDao);
         return bookingDao;
     }
 
@@ -100,7 +105,7 @@ public class BookingRepositoryImpl implements BookingRepository {
     public List<BookingDao> findAllByPartnerId(Integer partnerId, PageDto page) {
         return context.selectFrom(BOOKINGS)
                 .where(BOOKINGS.PARTNER_ID.eq(partnerId))
-                .and(BOOKINGS.STATUS.in(BookingStatus.END.name(), BookingStatus.CANCELLED.name(), BookingStatus.NO_SHOW.name()))
+                .and(BOOKINGS.STATUS.in(BookingStatus.COMPLETED.name()))
                 .and(BOOKINGS.STATE.eq(RecordState.ACTIVE.name()))
                 .and(BOOKINGS.IS_ACTIVE.eq(true))
                 .orderBy(BOOKINGS.PLANNED_START_TIME.desc(), BOOKINGS.ID.asc())

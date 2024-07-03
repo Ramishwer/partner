@@ -4,11 +4,13 @@ import com.goev.lib.event.core.Event;
 import com.goev.lib.event.service.EventProcessor;
 import com.goev.lib.utilities.ApplicationContext;
 import com.goev.partner.config.SpringContext;
+import com.goev.partner.dao.booking.BookingDao;
 import com.goev.partner.dao.partner.detail.PartnerDao;
 import com.goev.partner.dao.partner.detail.PartnerDetailDao;
 import com.goev.partner.dao.partner.document.PartnerDocumentDao;
 import com.goev.partner.dao.partner.duty.PartnerDutyDao;
 import com.goev.partner.dao.vehicle.transfer.VehicleTransferDetailDao;
+import com.goev.partner.event.events.booking.BookingUpdateEvent;
 import com.goev.partner.event.events.partner.PartnerOnboardingStatusCheckEvent;
 import com.goev.partner.event.events.partner.save.PartnerDocumentSaveEvent;
 import com.goev.partner.event.events.partner.save.PartnerDutySaveEvent;
@@ -64,6 +66,9 @@ public class EventExecutorUtils {
             }
             case "PartnerDocumentUpdateEvent" -> {
                 return fireEvent(SpringContext.getBean(PartnerDocumentUpdateEvent.class),(PartnerDocumentDao) data,executionTime);
+            }
+            case "BookingUpdateEvent" -> {
+                return fireEvent(SpringContext.getBean(BookingUpdateEvent.class),(BookingDao) data,executionTime);
             }
 
             default -> {
