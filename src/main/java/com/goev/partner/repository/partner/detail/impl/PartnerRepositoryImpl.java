@@ -56,7 +56,7 @@ public class PartnerRepositoryImpl implements PartnerRepository {
         partner.setApiSource(partnersRecord.getApiSource());
         partner.setNotes(partnersRecord.getNotes());
 
-        if("API".equals(RequestContext.getRequestSource()))
+        if(!"EVENT".equals(RequestContext.getRequestSource()))
             eventExecutor.fireEvent("PartnerUpdateEvent", partner);
         return partner;
     }

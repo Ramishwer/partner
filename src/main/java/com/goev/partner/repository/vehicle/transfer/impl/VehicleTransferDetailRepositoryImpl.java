@@ -37,7 +37,7 @@ public class VehicleTransferDetailRepositoryImpl implements VehicleTransferDetai
         transferDetail.setState(vehicleTransferDetailsRecord.getState());
         transferDetail.setApiSource(vehicleTransferDetailsRecord.getApiSource());
         transferDetail.setNotes(vehicleTransferDetailsRecord.getNotes());
-        if("API".equals(RequestContext.getRequestSource()))
+        if(!"EVENT".equals(RequestContext.getRequestSource()))
             eventExecutor.fireEvent("VehicleTransferDetailSaveEvent", transferDetail);
         return transferDetail;
     }
@@ -57,7 +57,7 @@ public class VehicleTransferDetailRepositoryImpl implements VehicleTransferDetai
         transferDetail.setApiSource(vehicleTransferDetailsRecord.getApiSource());
         transferDetail.setNotes(vehicleTransferDetailsRecord.getNotes());
 
-        if("API".equals(RequestContext.getRequestSource()))
+        if(!"EVENT".equals(RequestContext.getRequestSource()))
             eventExecutor.fireEvent("VehicleTransferDetailUpdateEvent", transferDetail);
         return transferDetail;
     }

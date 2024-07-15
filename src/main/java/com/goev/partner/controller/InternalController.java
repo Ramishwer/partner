@@ -1,8 +1,10 @@
 package com.goev.partner.controller;
 
+import com.goev.lib.command.service.CommandProcessor;
 import com.goev.lib.dto.ResponseDto;
 import com.goev.lib.dto.StatusDto;
 import com.goev.lib.event.service.EventProcessor;
+import com.goev.partner.config.SpringContext;
 import com.goev.partner.utilities.RequestContext;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
@@ -17,8 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 public class InternalController {
 
-    private final EventProcessor eventProcessor;
-
     @PostMapping("/api/v1/internal/events")
     public ResponseDto<Boolean> receivedEvent(@RequestBody String event, @RequestParam("name") String name, HttpServletRequest request) {
 
@@ -27,6 +27,16 @@ public class InternalController {
         RequestContext.setAuthUUID(request.getHeader("authUUID"));
         return new ResponseDto<>(
                 StatusDto.builder().message("SUCCESS").build(), 200,
-                eventProcessor.receiveEvent(event, name));
+                SpringContext.getBean(EventProcessor.class).receiveEvent(event, name));
+    }
+
+    @PostMapping("/api/v1/internal/commands")
+    public ResponseDto<String> receivedCommand(@RequestBody String command, @RequestParam("name") String name, HttpServletRequest request) {
+        log.info("Received Event :{}", command);
+        RequestContext.setRequestSource("COMMAND");
+        RequestContext.setAuthUUID(request.getHeader("authUUID"));
+        return new ResponseDto<>(
+                StatusDto.builder().message("SUCCESS").build(), 200,
+                SpringContext.getBean(CommandProcessor.class).receiveCommand(command, name));
     }
 }

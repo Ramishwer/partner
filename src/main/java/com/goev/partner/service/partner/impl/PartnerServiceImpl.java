@@ -136,33 +136,33 @@ public class PartnerServiceImpl implements PartnerService {
         if (partner == null)
             throw new ResponseException("No partner found for Id :" + partnerUUID);
 
-        if (PartnerStatus.ONLINE.name().equals(partner.getStatus())) {
-            List<BookingDao> bookings = bookingRepository.findByPartnerIdAndStatus(partner.getId(), BookingStatus.CONFIRMED.name());
-            if (!CollectionUtils.isEmpty(bookings)) {
-
-                BookingDao bookingDao = bookings.get(0);
-                bookingDao.setStatus(BookingStatus.IN_PROGRESS.name());
-                bookingDao.setSubStatus(BookingSubStatus.ASSIGNED.name());
-
-                BookingViewDto viewDto = BookingViewDto.builder()
-                        .uuid(bookingDao.getUuid())
-                        .partnerDetails(ApplicationConstants.GSON.fromJson(bookingDao.getPartnerDetails(), PartnerViewDto.class))
-                        .vehicleDetails(ApplicationConstants.GSON.fromJson(bookingDao.getVehicleDetails(), VehicleViewDto.class))
-                        .status(bookingDao.getStatus())
-                        .subStatus(bookingDao.getSubStatus())
-                        .startLocationDetails(ApplicationConstants.GSON.fromJson(bookingDao.getStartLocationDetails(), LatLongDto.class))
-                        .endLocationDetails(ApplicationConstants.GSON.fromJson(bookingDao.getEndLocationDetails(), LatLongDto.class))
-                        .plannedStartTime(bookingDao.getPlannedStartTime())
-                        .build();
-                partner.setStatus(PartnerStatus.ON_BOOKING.name());
-                partner.setBookingId(bookingDao.getId());
-                partner.setSubStatus(PartnerSubStatus.ASSIGNED.name());
-                partner.setBookingDetails(ApplicationConstants.GSON.toJson(viewDto));
-                partnerRepository.update(partner);
-                bookingDao.setViewInfo(ApplicationConstants.GSON.toJson(viewDto));
-                bookingRepository.update(bookingDao);
-            }
-        }
+//        if (PartnerStatus.ONLINE.name().equals(partner.getStatus())) {
+//            List<BookingDao> bookings = bookingRepository.findByPartnerIdAndStatus(partner.getId(), BookingStatus.CONFIRMED.name());
+//            if (!CollectionUtils.isEmpty(bookings)) {
+//
+//                BookingDao bookingDao = bookings.get(0);
+//                bookingDao.setStatus(BookingStatus.IN_PROGRESS.name());
+//                bookingDao.setSubStatus(BookingSubStatus.ASSIGNED.name());
+//
+//                BookingViewDto viewDto = BookingViewDto.builder()
+//                        .uuid(bookingDao.getUuid())
+//                        .partnerDetails(ApplicationConstants.GSON.fromJson(bookingDao.getPartnerDetails(), PartnerViewDto.class))
+//                        .vehicleDetails(ApplicationConstants.GSON.fromJson(bookingDao.getVehicleDetails(), VehicleViewDto.class))
+//                        .status(bookingDao.getStatus())
+//                        .subStatus(bookingDao.getSubStatus())
+//                        .startLocationDetails(ApplicationConstants.GSON.fromJson(bookingDao.getStartLocationDetails(), LatLongDto.class))
+//                        .endLocationDetails(ApplicationConstants.GSON.fromJson(bookingDao.getEndLocationDetails(), LatLongDto.class))
+//                        .plannedStartTime(bookingDao.getPlannedStartTime())
+//                        .build();
+//                partner.setStatus(PartnerStatus.ON_BOOKING.name());
+//                partner.setBookingId(bookingDao.getId());
+//                partner.setSubStatus(PartnerSubStatus.ASSIGNED.name());
+//                partner.setBookingDetails(ApplicationConstants.GSON.toJson(viewDto));
+//                partnerRepository.update(partner);
+//                bookingDao.setViewInfo(ApplicationConstants.GSON.toJson(viewDto));
+//                bookingRepository.update(bookingDao);
+//            }
+//        }
         return PartnerDto.fromDao(partner);
     }
 
@@ -258,21 +258,6 @@ public class PartnerServiceImpl implements PartnerService {
         if (partner.getPartnerShiftId() == null)
             partner.setDutyDetails(null);
         partner = partnerRepository.update(partner);
-
-
-        //        partner.setSubStatus(PartnerSubStatus.DUTY_ASSIGNED.name());
-//        partner.setDutyDetails("{\n" +
-//                "  \n" +
-//                "  \"shiftDetails\":{\n" +
-//                "    \"shiftStart\":\"10:00\",\n" +
-//                "    \"shiftEnd\":\"20:00\",\n" +
-//                "    \"shiftConfig\":{\n" +
-//                "      \"minimumIn\":\"9:30\",\n" +
-//                "      \"maximumIn\":\"10:15\"\n" +
-//                "    }\n" +
-//                "  }\n" +
-//                "}");
-
         return partner;
     }
 
@@ -386,17 +371,30 @@ public class PartnerServiceImpl implements PartnerService {
     }
 
     private PartnerDao selectVehicle(PartnerDao partner, ActionDto actionDto) {
-        partner.setStatus(PartnerStatus.CHECKLIST.name());
-        partner.setSubStatus(PartnerSubStatus.CHECKLIST_PENDING.name());
+        partner.setStatus(PartnerStatus.VEHICLE_ASSIGNED.name());
+        partner.setSubStatus(PartnerSubStatus.WAITING_FOR_ONLINE.name());
         partner = partnerRepository.update(partner);
+
+
+
+//        partner.setStatus(PartnerStatus.CHECKLIST.name());
+//        partner.setSubStatus(PartnerSubStatus.CHECKLIST_PENDING.name());
+//        partner = partnerRepository.update(partner);
         return partner;
     }
 
     private PartnerDao returnVehicle(PartnerDao partner, ActionDto actionDto) {
 
-        partner.setStatus(PartnerStatus.RETURN_CHECKLIST.name());
-        partner.setSubStatus(PartnerSubStatus.CHECKLIST_PENDING.name());
+
+        partner.setStatus(PartnerStatus.ON_DUTY.name());
+        partner.setSubStatus(PartnerSubStatus.VEHICLE_NOT_ALLOTTED.name());
+        partner.setVehicleDetails(null);
+        partner.setVehicleId(null);
         partner = partnerRepository.update(partner);
+
+//        partner.setStatus(PartnerStatus.RETURN_CHECKLIST.name());
+//        partner.setSubStatus(PartnerSubStatus.CHECKLIST_PENDING.name());
+//        partner = partnerRepository.update(partner);
         return partner;
     }
 
@@ -441,27 +439,6 @@ public class PartnerServiceImpl implements PartnerService {
         partner.setStatus(PartnerStatus.ON_DUTY.name());
         partner.setSubStatus(PartnerSubStatus.VEHICLE_NOT_ALLOTTED.name());
         partner = partnerRepository.update(partner);
-
-
-        VehicleDao vehicle = vehicleRepository.findByPartnerId(partner.getId());
-        if (vehicle != null) {
-            final PartnerDao assignVehiclePartner = partner;
-            executorService.submit(() -> {
-                try {
-                    Thread.sleep(2000L);
-                } catch (InterruptedException e) {
-                    log.error("Error in sleep", e);
-                }
-
-                assignVehiclePartner.setStatus(PartnerStatus.ON_DUTY.name());
-                assignVehiclePartner.setSubStatus(PartnerSubStatus.VEHICLE_ALLOTTED.name());
-                assignVehiclePartner.setVehicleId(vehicle.getId());
-                assignVehiclePartner.setVehicleDetails(vehicle.getViewInfo());
-                partnerRepository.update(assignVehiclePartner);
-
-            });
-
-        }
 
         return partner;
     }
