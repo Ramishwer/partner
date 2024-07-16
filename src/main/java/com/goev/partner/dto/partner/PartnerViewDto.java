@@ -25,7 +25,7 @@ public class PartnerViewDto {
     @JsonDeserialize(using = DateTimeDeserializer.class)
     private DateTime onboardingDate;
     private String uuid;
-    private String state;
+    private String onboardingStatus;
     private String profileUrl;
     private LocationDto homeLocation;
 

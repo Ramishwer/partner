@@ -10,15 +10,12 @@ import com.goev.partner.dao.partner.detail.PartnerDao;
 import com.goev.partner.dao.partner.detail.PartnerDetailDao;
 import com.goev.partner.dao.partner.duty.PartnerDutyDao;
 import com.goev.partner.dao.partner.duty.PartnerShiftDao;
-import com.goev.partner.dao.vehicle.detail.VehicleDao;
-import com.goev.partner.dto.booking.BookingViewDto;
 import com.goev.partner.dto.location.LocationDto;
 import com.goev.partner.dto.partner.PartnerViewDto;
 import com.goev.partner.dto.partner.detail.PartnerDetailDto;
 import com.goev.partner.dto.partner.detail.PartnerDto;
 import com.goev.partner.dto.partner.duty.PartnerDutyDto;
 import com.goev.partner.dto.partner.status.ActionDto;
-import com.goev.partner.dto.vehicle.VehicleViewDto;
 import com.goev.partner.enums.booking.BookingStatus;
 import com.goev.partner.enums.booking.BookingSubStatus;
 import com.goev.partner.enums.partner.PartnerDutyStatus;
@@ -37,9 +34,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 @Service
@@ -79,9 +74,8 @@ public class PartnerServiceImpl implements PartnerService {
     private void setPartnerDetails(PartnerDetailDto result, PartnerDao partnerDao, PartnerDetailDao partnerDetails) {
         PartnerViewDto partnerDto = new PartnerViewDto();
         partnerDto.setPunchId(partnerDao.getPunchId());
-        partnerDto.setState(partnerDao.getState());
+        partnerDto.setOnboardingStatus(partnerDao.getOnboardingStatus());
         partnerDto.setUuid(partnerDao.getUuid());
-        partnerDto.setState(partnerDao.getState());
         partnerDto.setPhoneNumber(partnerDao.getPhoneNumber());
         partnerDto.setProfileUrl(partnerDao.getProfileUrl());
 
