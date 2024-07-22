@@ -130,33 +130,6 @@ public class PartnerServiceImpl implements PartnerService {
         if (partner == null)
             throw new ResponseException("No partner found for Id :" + partnerUUID);
 
-//        if (PartnerStatus.ONLINE.name().equals(partner.getStatus())) {
-//            List<BookingDao> bookings = bookingRepository.findByPartnerIdAndStatus(partner.getId(), BookingStatus.CONFIRMED.name());
-//            if (!CollectionUtils.isEmpty(bookings)) {
-//
-//                BookingDao bookingDao = bookings.get(0);
-//                bookingDao.setStatus(BookingStatus.IN_PROGRESS.name());
-//                bookingDao.setSubStatus(BookingSubStatus.ASSIGNED.name());
-//
-//                BookingViewDto viewDto = BookingViewDto.builder()
-//                        .uuid(bookingDao.getUuid())
-//                        .partnerDetails(ApplicationConstants.GSON.fromJson(bookingDao.getPartnerDetails(), PartnerViewDto.class))
-//                        .vehicleDetails(ApplicationConstants.GSON.fromJson(bookingDao.getVehicleDetails(), VehicleViewDto.class))
-//                        .status(bookingDao.getStatus())
-//                        .subStatus(bookingDao.getSubStatus())
-//                        .startLocationDetails(ApplicationConstants.GSON.fromJson(bookingDao.getStartLocationDetails(), LatLongDto.class))
-//                        .endLocationDetails(ApplicationConstants.GSON.fromJson(bookingDao.getEndLocationDetails(), LatLongDto.class))
-//                        .plannedStartTime(bookingDao.getPlannedStartTime())
-//                        .build();
-//                partner.setStatus(PartnerStatus.ON_BOOKING.name());
-//                partner.setBookingId(bookingDao.getId());
-//                partner.setSubStatus(PartnerSubStatus.ASSIGNED.name());
-//                partner.setBookingDetails(ApplicationConstants.GSON.toJson(viewDto));
-//                partnerRepository.update(partner);
-//                bookingDao.setViewInfo(ApplicationConstants.GSON.toJson(viewDto));
-//                bookingRepository.update(bookingDao);
-//            }
-//        }
         return PartnerDto.fromDao(partner);
     }
 
@@ -225,7 +198,13 @@ public class PartnerServiceImpl implements PartnerService {
     }
 
     private PartnerDao socEntry(PartnerDao partner, ActionDto actionDto) {
-        return null;
+        if(PartnerStatus.VEHICLE_ASSIGNED.name().equals(partner.getStatus()))
+            partner.setSubStatus(PartnerSubStatus.WAITING_FOR_ONLINE.name());
+
+        if(PartnerStatus.RETURN_CHECKLIST.name().equals(partner.getStatus()))
+            partner.setSubStatus(PartnerSubStatus.CHECKLIST_PENDING.name());
+        partner = partnerRepository.update(partner);
+        return partner;
     }
 
     @Override
@@ -366,7 +345,7 @@ public class PartnerServiceImpl implements PartnerService {
     private PartnerDao submitChecklist(PartnerDao partner, ActionDto actionDto) {
         if (PartnerStatus.CHECKLIST.name().equals(partner.getStatus())) {
             partner.setStatus(PartnerStatus.VEHICLE_ASSIGNED.name());
-            partner.setSubStatus(PartnerSubStatus.WAITING_FOR_ONLINE.name());
+            partner.setSubStatus(PartnerSubStatus.SOC_ENTRY.name());
             partner = partnerRepository.update(partner);
         } else if (PartnerStatus.RETURN_CHECKLIST.name().equals(partner.getStatus())) {
             partner.setStatus(PartnerStatus.ON_DUTY.name());
@@ -385,9 +364,9 @@ public class PartnerServiceImpl implements PartnerService {
 
 
 
-//        partner.setStatus(PartnerStatus.CHECKLIST.name());
-//        partner.setSubStatus(PartnerSubStatus.CHECKLIST_PENDING.name());
-//        partner = partnerRepository.update(partner);
+        partner.setStatus(PartnerStatus.CHECKLIST.name());
+        partner.setSubStatus(PartnerSubStatus.CHECKLIST_PENDING.name());
+        partner = partnerRepository.update(partner);
         return partner;
     }
 
@@ -400,9 +379,9 @@ public class PartnerServiceImpl implements PartnerService {
         partner.setVehicleId(null);
         partner = partnerRepository.update(partner);
 
-//        partner.setStatus(PartnerStatus.RETURN_CHECKLIST.name());
-//        partner.setSubStatus(PartnerSubStatus.CHECKLIST_PENDING.name());
-//        partner = partnerRepository.update(partner);
+        partner.setStatus(PartnerStatus.RETURN_CHECKLIST.name());
+        partner.setSubStatus(PartnerSubStatus.SOC_ENTRY.name());
+        partner = partnerRepository.update(partner);
         return partner;
     }
 
