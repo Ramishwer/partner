@@ -387,6 +387,7 @@ public class PartnerServiceImpl implements PartnerService {
 
     private PartnerDao checkin(PartnerDao partner, ActionDto actionDto) {
 
+        log.info("Partner Shift Id : {}",partner.getPartnerShiftId());
         PartnerShiftDao partnerShiftDao = partnerShiftRepository.findById(partner.getPartnerShiftId());
         if (partnerShiftDao == null)
             throw new ResponseException("Invalid action: Shift Details Incorrect");
