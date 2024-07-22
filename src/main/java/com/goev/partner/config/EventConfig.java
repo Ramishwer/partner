@@ -64,6 +64,7 @@ public class EventConfig {
             PartnerSaveEventHandler partnerSaveEventHandler,
             PartnerDetailSaveEventHandler partnerDetailSaveEventHandler,
             PartnerDutySaveEventHandler partnerDutySaveEventHandler,
+            PartnerShiftSaveEventHandler partnerShiftSaveEventHandler,
             PartnerPayoutSaveEventHandler partnerPayoutSaveEventHandler,
             PartnerDocumentSaveEventHandler partnerDocumentSaveEventHandler,
             PartnerDocumentTypeSaveEventHandler partnerDocumentTypeSaveEventHandler,
@@ -127,6 +128,7 @@ public class EventConfig {
         eventProcessor.registerEvents(new PartnerSaveEvent());
         eventProcessor.registerEvents(new PartnerDetailSaveEvent());
         eventProcessor.registerEvents(new PartnerDutySaveEvent());
+        eventProcessor.registerEvents(new PartnerShiftSaveEvent());
         eventProcessor.registerEvents(new PartnerPayoutSaveEvent());
         eventProcessor.registerEvents(new PartnerDocumentSaveEvent());
         eventProcessor.registerEvents(new PartnerDocumentTypeSaveEvent());
@@ -140,11 +142,13 @@ public class EventConfig {
         eventProcessor.registerEvents(new BookingSaveEvent());
         eventProcessor.registerEvents(new LocationSaveEvent());
 
+
         eventProcessor.registerEventHandlers(new AssetSaveEvent(), assetSaveEventHandler);
         eventProcessor.registerEventHandlers(new AssetTypeSaveEvent(), assetTypeSaveEventHandler);
         eventProcessor.registerEventHandlers(new PartnerSaveEvent(), partnerSaveEventHandler);
         eventProcessor.registerEventHandlers(new PartnerDetailSaveEvent(), partnerDetailSaveEventHandler);
         eventProcessor.registerEventHandlers(new PartnerDutySaveEvent(), partnerDutySaveEventHandler);
+        eventProcessor.registerEventHandlers(new PartnerShiftSaveEvent(), partnerShiftSaveEventHandler);
         eventProcessor.registerEventHandlers(new PartnerPayoutSaveEvent(), partnerPayoutSaveEventHandler);
         eventProcessor.registerEventHandlers(new PartnerDocumentSaveEvent(), partnerDocumentSaveEventHandler);
         eventProcessor.registerEventHandlers(new PartnerDocumentTypeSaveEvent(), partnerDocumentTypeSaveEventHandler);
