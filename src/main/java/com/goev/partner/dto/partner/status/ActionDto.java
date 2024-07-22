@@ -16,4 +16,6 @@ public class ActionDto {
     protected PartnerAction action;
     protected LatLongDto location;
     protected String qrString;
+    protected Integer soc;
+    protected Integer odometer;
 }

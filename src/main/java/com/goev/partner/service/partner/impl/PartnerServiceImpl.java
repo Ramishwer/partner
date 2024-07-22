@@ -209,9 +209,23 @@ public class PartnerServiceImpl implements PartnerService {
             case CHECK_OUT -> {
                 partner = checkOut(partner, actionDto);
             }
+            case SOC_ENTRY -> {
+                partner = socEntry(partner, actionDto);
+            }
+            case ODOMETER_ENTRY -> {
+                partner = odometerEntry(partner, actionDto);
+            }
         }
 
         return PartnerDto.fromDao(partner);
+    }
+
+    private PartnerDao odometerEntry(PartnerDao partner, ActionDto actionDto) {
+        return null;
+    }
+
+    private PartnerDao socEntry(PartnerDao partner, ActionDto actionDto) {
+        return null;
     }
 
     @Override

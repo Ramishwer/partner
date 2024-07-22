@@ -10,5 +10,8 @@ public enum PartnerAction {
     UNPAUSE,
     ENROUTE, ARRIVE, START, END, COMPLETE,
     GO_OFFLINE,
-    CHECK_OUT
+    CHECK_OUT,
+
+    SOC_ENTRY,
+    ODOMETER_ENTRY
 }
