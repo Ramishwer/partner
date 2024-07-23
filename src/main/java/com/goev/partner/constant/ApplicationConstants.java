@@ -1,6 +1,7 @@
 package com.goev.partner.constant;
 
 import com.goev.lib.utilities.GsonDateTimeSerializer;
+import com.goev.partner.dto.asset.AssetDto;
 import com.goev.partner.utilities.ConstantUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -10,7 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -34,9 +37,19 @@ public class ApplicationConstants {
 
     private final ConstantUtils constantUtils;
 
+    public static List<AssetDto> MANDATORY_ASSETS;
+
     @PostConstruct
     void init() throws IllegalAccessException {
         constantUtils.configurationOfConstantsFromDataBase(this);
+
+
+        MANDATORY_ASSETS = new ArrayList<>();
+
+        MANDATORY_ASSETS.add(AssetDto.builder().assetName("TOOLBOX").build());
+        MANDATORY_ASSETS.add(AssetDto.builder().assetName("SLOW-CHARGER").build());
+        MANDATORY_ASSETS.add(AssetDto.builder().assetName("STEPNEY").build());
+
     }
 
 }

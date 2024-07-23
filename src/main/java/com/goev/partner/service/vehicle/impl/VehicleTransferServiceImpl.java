@@ -64,24 +64,33 @@ public class VehicleTransferServiceImpl implements VehicleTransferService {
         if (detailDao == null)
             throw new ResponseException("No vehicle transfer detail found for uuid:" + vehicleTransferUUID);
 
-        List<VehicleAssetMappingDao> assetMappingDaoList = vehicleAssetMappingRepository.findAllByVehicleId(vehicle.getId());
-
-        if (CollectionUtils.isEmpty(assetMappingDaoList))
-            return new PaginatedResponseDto<>();
+//        List<VehicleAssetMappingDao> assetMappingDaoList = vehicleAssetMappingRepository.findAllByVehicleId(vehicle.getId());
+//
+//        if (CollectionUtils.isEmpty(assetMappingDaoList))
+//            return new PaginatedResponseDto<>();
 
 
         PaginatedResponseDto<VehicleAssetTransferDetailDto> result = new PaginatedResponseDto<>();
         List<VehicleAssetTransferDetailDto> assetList = new ArrayList<>();
-        for (VehicleAssetMappingDao mappingDao : assetMappingDaoList) {
-            AssetDao asset = assetRepository.findById(mappingDao.getAssetId());
-            if (asset == null)
-                continue;
+//        for (VehicleAssetMappingDao mappingDao : assetMappingDaoList) {
+//            AssetDao asset = assetRepository.findById(mappingDao.getAssetId());
+//            if (asset == null)
+//                continue;
+//            VehicleAssetTransferDetailDao assetTransferDetailDao = new VehicleAssetTransferDetailDao();
+//            assetTransferDetailDao.setVehicleTransferId(detailDao.getId());
+//            assetTransferDetailDao.setVehicleId(vehicle.getId());
+//            assetTransferDetailDao.setAssetId(asset.getId());
+//            assetTransferDetailDao = vehicleAssetTransferDetailRepository.save(assetTransferDetailDao);
+//            assetList.add(VehicleAssetTransferDetailDto.fromDao(assetTransferDetailDao, AssetDto.fromDao(asset)));
+//        }
+
+
+        for (AssetDto assetDto : ApplicationConstants.MANDATORY_ASSETS ) {
             VehicleAssetTransferDetailDao assetTransferDetailDao = new VehicleAssetTransferDetailDao();
             assetTransferDetailDao.setVehicleTransferId(detailDao.getId());
             assetTransferDetailDao.setVehicleId(vehicle.getId());
-            assetTransferDetailDao.setAssetId(asset.getId());
             assetTransferDetailDao = vehicleAssetTransferDetailRepository.save(assetTransferDetailDao);
-            assetList.add(VehicleAssetTransferDetailDto.fromDao(assetTransferDetailDao, AssetDto.fromDao(asset)));
+            assetList.add(VehicleAssetTransferDetailDto.fromDao(assetTransferDetailDao, assetDto));
         }
 
         result.setElements(assetList);
@@ -153,8 +162,10 @@ public class VehicleTransferServiceImpl implements VehicleTransferService {
             AssetDao assetDao = assetRepository.findByUUID(parsedUUID);
             if (assetDao == null)
                 throw new ResponseException("Invalid Qr Code for the item");
-            if (!assetDao.getId().equals(assetTransferDetailDao.getAssetId()))
-                throw new ResponseException("Invalid Qr Code for the item");
+//            if (!assetDao.getId().equals(assetTransferDetailDao.getAssetId()))
+//                throw new ResponseException("Invalid Qr Code for the item");
+
+            assetTransferDetailDao.setAssetId(assetDao.getId());
             assetTransferDetailDao.setStatus(AssetStatus.PRESENT.name());
             vehicleAssetTransferDetailRepository.update(assetTransferDetailDao);
             return VehicleAssetTransferDetailDto.fromDao(assetTransferDetailDao, AssetDto.fromDao(assetDao));
