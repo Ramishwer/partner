@@ -10,6 +10,7 @@ import com.goev.partner.dao.partner.detail.PartnerDao;
 import com.goev.partner.dao.partner.detail.PartnerDetailDao;
 import com.goev.partner.dao.partner.duty.PartnerDutyDao;
 import com.goev.partner.dao.partner.duty.PartnerShiftDao;
+import com.goev.partner.dao.vehicle.detail.VehicleDao;
 import com.goev.partner.dto.location.LocationDto;
 import com.goev.partner.dto.partner.PartnerViewDto;
 import com.goev.partner.dto.partner.detail.PartnerDetailDto;
@@ -203,7 +204,12 @@ public class PartnerServiceImpl implements PartnerService {
 
         if(PartnerStatus.RETURN_CHECKLIST.name().equals(partner.getStatus()))
             partner.setSubStatus(PartnerSubStatus.CHECKLIST_PENDING.name());
+
+
         partner = partnerRepository.update(partner);
+        VehicleDao vehicle = vehicleRepository.findById(partner.getVehicleId());
+        vehicle.setSoc(actionDto.getSoc());
+        vehicleRepository.update(vehicle);
         return partner;
     }
 
