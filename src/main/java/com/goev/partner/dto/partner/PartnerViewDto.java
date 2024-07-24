@@ -30,6 +30,10 @@ public class PartnerViewDto {
     private LocationDto homeLocation;
 
     public static PartnerViewDto fromDao(PartnerDao partnerDao) {
-        return ApplicationConstants.GSON.fromJson(partnerDao.getViewInfo(), PartnerViewDto.class);
+        if (partnerDao.getViewInfo() == null)
+            return null;
+        PartnerViewDto result = ApplicationConstants.GSON.fromJson(partnerDao.getViewInfo(), PartnerViewDto.class);
+        result.setUuid(partnerDao.getUuid());
+        return result;
     }
 }

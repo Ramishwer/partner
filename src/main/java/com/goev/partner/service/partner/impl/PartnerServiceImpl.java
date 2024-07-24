@@ -271,20 +271,26 @@ public class PartnerServiceImpl implements PartnerService {
             bookingDao.setStatus(BookingStatus.COMPLETED.name());
             bookingDao.setSubStatus(BookingSubStatus.COMPLETED.name());
             bookingRepository.update(bookingDao);
+            partner.setBookingDetails(null);
+            partner.setBookingId(null);
         }
+        partner = partnerRepository.update(partner);
         return partner;
     }
 
     private PartnerDao end(PartnerDao partner, ActionDto actionDto) {
         partner.setStatus(PartnerStatus.ONLINE.name());
         partner.setSubStatus(PartnerSubStatus.NO_BOOKING.name());
-        partner = partnerRepository.update(partner);
         if (partner.getBookingId() != null) {
             BookingDao bookingDao = bookingRepository.findById(partner.getBookingId());
             bookingDao.setStatus(BookingStatus.COMPLETED.name());
             bookingDao.setSubStatus(BookingSubStatus.ENDED.name());
             bookingRepository.update(bookingDao);
+            partner.setBookingDetails(null);
+            partner.setBookingId(null);
         }
+
+        partner = partnerRepository.update(partner);
         return partner;
     }
 
@@ -364,12 +370,6 @@ public class PartnerServiceImpl implements PartnerService {
     }
 
     private PartnerDao selectVehicle(PartnerDao partner, ActionDto actionDto) {
-        partner.setStatus(PartnerStatus.VEHICLE_ASSIGNED.name());
-        partner.setSubStatus(PartnerSubStatus.WAITING_FOR_ONLINE.name());
-        partner = partnerRepository.update(partner);
-
-
-
         partner.setStatus(PartnerStatus.CHECKLIST.name());
         partner.setSubStatus(PartnerSubStatus.CHECKLIST_PENDING.name());
         partner = partnerRepository.update(partner);
@@ -377,14 +377,6 @@ public class PartnerServiceImpl implements PartnerService {
     }
 
     private PartnerDao returnVehicle(PartnerDao partner, ActionDto actionDto) {
-
-
-        partner.setStatus(PartnerStatus.ON_DUTY.name());
-        partner.setSubStatus(PartnerSubStatus.VEHICLE_NOT_ALLOTTED.name());
-        partner.setVehicleDetails(null);
-        partner.setVehicleId(null);
-        partner = partnerRepository.update(partner);
-
         partner.setStatus(PartnerStatus.RETURN_CHECKLIST.name());
         partner.setSubStatus(PartnerSubStatus.SOC_ENTRY.name());
         partner = partnerRepository.update(partner);

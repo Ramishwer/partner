@@ -1,5 +1,5 @@
 package com.goev.partner.enums.vehicle;
 
-public enum AssetStatus {
+public enum VehicleAssetStatus {
     PENDING, PRESENT, ABSENT
 }

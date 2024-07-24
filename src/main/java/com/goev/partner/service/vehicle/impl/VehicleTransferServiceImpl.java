@@ -2,20 +2,28 @@ package com.goev.partner.service.vehicle.impl;
 
 
 import com.goev.lib.exceptions.ResponseException;
+import com.goev.lib.utilities.ApplicationContext;
 import com.goev.partner.constant.ApplicationConstants;
 import com.goev.partner.dao.asset.AssetDao;
-import com.goev.partner.dao.vehicle.asset.VehicleAssetMappingDao;
+import com.goev.partner.dao.partner.detail.PartnerDao;
 import com.goev.partner.dao.vehicle.detail.VehicleDao;
 import com.goev.partner.dao.vehicle.transfer.VehicleAssetTransferDetailDao;
 import com.goev.partner.dao.vehicle.transfer.VehicleTransferDetailDao;
 import com.goev.partner.dto.asset.AssetDto;
 import com.goev.partner.dto.common.PaginatedResponseDto;
 import com.goev.partner.dto.common.QrValueDto;
+import com.goev.partner.dto.partner.PartnerViewDto;
 import com.goev.partner.dto.vehicle.VehicleViewDto;
+import com.goev.partner.dto.vehicle.transfer.TransferUserDetailsDto;
 import com.goev.partner.dto.vehicle.transfer.VehicleAssetTransferDetailDto;
 import com.goev.partner.dto.vehicle.transfer.VehicleTransferDto;
-import com.goev.partner.enums.vehicle.AssetStatus;
+import com.goev.partner.enums.EntityType;
+import com.goev.partner.enums.partner.PartnerStatus;
+import com.goev.partner.enums.vehicle.VehicleAssetStatus;
+import com.goev.partner.enums.vehicle.VehicleTransferStatus;
+import com.goev.partner.enums.vehicle.VehicleTransferType;
 import com.goev.partner.repository.asset.AssetRepository;
+import com.goev.partner.repository.partner.detail.PartnerRepository;
 import com.goev.partner.repository.vehicle.asset.VehicleAssetMappingRepository;
 import com.goev.partner.repository.vehicle.detail.VehicleRepository;
 import com.goev.partner.repository.vehicle.transfer.VehicleAssetTransferDetailRepository;
@@ -24,7 +32,6 @@ import com.goev.partner.service.vehicle.VehicleTransferService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +47,7 @@ public class VehicleTransferServiceImpl implements VehicleTransferService {
     private final VehicleAssetMappingRepository vehicleAssetMappingRepository;
     private final VehicleAssetTransferDetailRepository vehicleAssetTransferDetailRepository;
     private final AssetRepository assetRepository;
+    private final PartnerRepository partnerRepository;
 
 
     @Override
@@ -48,7 +56,31 @@ public class VehicleTransferServiceImpl implements VehicleTransferService {
         if (vehicle == null)
             throw new ResponseException("No vehicle found for uuid:" + vehicleUUID);
 
-        VehicleTransferDetailDao detailDao = vehicleTransferDetailRepository.save(VehicleTransferDetailDao.fromDto(vehicleTransferDto, vehicle.getId()));
+        PartnerDao partner = partnerRepository.findByAuthUUID(ApplicationContext.getAuthUUID());
+        if (partner == null)
+            throw new ResponseException("No partner found Mapped to vehicle :" + vehicleUUID);
+
+        VehicleTransferDetailDao detailDao = VehicleTransferDetailDao.fromDto(vehicleTransferDto, vehicle.getId());
+        detailDao.setStatus(VehicleTransferStatus.PENDING.name());
+
+        PartnerViewDto partnerViewDto = PartnerViewDto.fromDao(partner);
+
+        TransferUserDetailsDto transferDetail = TransferUserDetailsDto.builder()
+                .firstName(partnerViewDto!=null?partnerViewDto.getFirstName():null)
+                .lastName(partnerViewDto!=null?partnerViewDto.getFirstName():null)
+                .uuid(partner.getUuid())
+                .entityType(EntityType.PARTNER.name())
+                .build();
+
+        if(PartnerStatus.CHECKLIST.name().equals(partner.getStatus())) {
+            detailDao.setTransferTo(ApplicationConstants.GSON.toJson(transferDetail));
+            detailDao.setTransferType(VehicleTransferType.HANDOVER.name());
+        } else if (PartnerStatus.RETURN_CHECKLIST.name().equals(partner.getStatus())) {
+            detailDao.setTransferFrom(ApplicationConstants.GSON.toJson(transferDetail));
+            detailDao.setTransferType(VehicleTransferType.TAKEOVER.name());
+        }
+
+        detailDao = vehicleTransferDetailRepository.save(detailDao);
         if (detailDao == null)
             throw new ResponseException("Error in creating vehicle transfer");
         return VehicleTransferDto.fromDao(detailDao, VehicleViewDto.fromDao(vehicle));
@@ -85,11 +117,11 @@ public class VehicleTransferServiceImpl implements VehicleTransferService {
 //        }
 
 
-        for (AssetDto assetDto : ApplicationConstants.MANDATORY_ASSETS ) {
+        for (AssetDto assetDto : ApplicationConstants.MANDATORY_ASSETS) {
             VehicleAssetTransferDetailDao assetTransferDetailDao = new VehicleAssetTransferDetailDao();
             assetTransferDetailDao.setVehicleTransferId(detailDao.getId());
             assetTransferDetailDao.setVehicleId(vehicle.getId());
-            assetTransferDetailDao.setStatus(AssetStatus.PENDING.name());
+            assetTransferDetailDao.setStatus(VehicleAssetStatus.PENDING.name());
             assetTransferDetailDao = vehicleAssetTransferDetailRepository.save(assetTransferDetailDao);
             assetList.add(VehicleAssetTransferDetailDto.fromDao(assetTransferDetailDao, assetDto));
         }
@@ -122,14 +154,6 @@ public class VehicleTransferServiceImpl implements VehicleTransferService {
         VehicleTransferDetailDao newDetailDao = VehicleTransferDetailDao.fromDto(vehicleTransferDto, vehicle.getId());
         newDetailDao.setId(detailDao.getId());
         newDetailDao.setUuid(detailDao.getUuid());
-        newDetailDao.setCreatedBy(detailDao.getCreatedBy());
-        newDetailDao.setUpdatedBy(detailDao.getUpdatedBy());
-        newDetailDao.setCreatedOn(detailDao.getCreatedOn());
-        newDetailDao.setUpdatedOn(detailDao.getUpdatedOn());
-        newDetailDao.setIsActive(detailDao.getIsActive());
-        newDetailDao.setState(detailDao.getState());
-        newDetailDao.setApiSource(detailDao.getApiSource());
-        newDetailDao.setNotes(detailDao.getNotes());
         detailDao = vehicleTransferDetailRepository.update(newDetailDao);
         if (detailDao == null)
             throw new ResponseException("Error in creating vehicle transfer");
@@ -150,8 +174,8 @@ public class VehicleTransferServiceImpl implements VehicleTransferService {
         if (assetTransferDetailDao == null)
             throw new ResponseException("No vehicle asset transfer detail found for uuid:" + assetTransferDetailUUID);
 
-        if (AssetStatus.ABSENT.name().equals(status)) {
-            assetTransferDetailDao.setStatus(AssetStatus.ABSENT.name());
+        if (VehicleAssetStatus.ABSENT.name().equals(status)) {
+            assetTransferDetailDao.setStatus(VehicleAssetStatus.ABSENT.name());
             vehicleAssetTransferDetailRepository.update(assetTransferDetailDao);
             return VehicleAssetTransferDetailDto.fromDao(assetTransferDetailDao, null);
         } else {
@@ -167,8 +191,8 @@ public class VehicleTransferServiceImpl implements VehicleTransferService {
 //                throw new ResponseException("Invalid Qr Code for the item");
 
             assetTransferDetailDao.setAssetId(assetDao.getId());
-            assetTransferDetailDao.setStatus(AssetStatus.PRESENT.name());
-            vehicleAssetTransferDetailRepository.update(assetTransferDetailDao);
+            assetTransferDetailDao.setStatus(VehicleAssetStatus.PRESENT.name());
+            assetTransferDetailDao = vehicleAssetTransferDetailRepository.update(assetTransferDetailDao);
             return VehicleAssetTransferDetailDto.fromDao(assetTransferDetailDao, AssetDto.fromDao(assetDao));
         }
 

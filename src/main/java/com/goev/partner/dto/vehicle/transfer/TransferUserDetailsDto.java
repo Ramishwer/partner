@@ -14,4 +14,5 @@ public class TransferUserDetailsDto {
     private String uuid;
     private String firstName;
     private String lastName;
+    private String entityType;
 }

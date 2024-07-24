@@ -15,6 +15,8 @@ public class VehicleTransferDetailDao extends BaseDao {
     private String transferType;
     private String transferFrom;
     private String transferTo;
+    private String approvedBy;
+    private String approvedByUserId;
     private String status;
     private String transferDetails;
     private String transferLocationDetails;
@@ -27,10 +29,16 @@ public class VehicleTransferDetailDao extends BaseDao {
         result.setUuid(vehicleTransferDto.getUuid());
         result.setVehicleId(vehicleId);
         result.setTransferType(vehicleTransferDto.getTransferType());
-        result.setTransferFrom(ApplicationConstants.GSON.toJson(vehicleTransferDto.getTransferFrom()));
-        result.setTransferTo(ApplicationConstants.GSON.toJson(vehicleTransferDto.getTransferTo()));
+        if(vehicleTransferDto.getTransferFrom() !=null)
+            result.setTransferFrom(ApplicationConstants.GSON.toJson(vehicleTransferDto.getTransferFrom()));
+        if(vehicleTransferDto.getTransferTo() !=null)
+            result.setTransferTo(ApplicationConstants.GSON.toJson(vehicleTransferDto.getTransferTo()));
+
+        if(vehicleTransferDto.getApprovedBy() !=null)
+            result.setTransferTo(ApplicationConstants.GSON.toJson(vehicleTransferDto.getApprovedBy()));
         result.setStatus(vehicleTransferDto.getStatus());
-        result.setTransferLocationDetails(ApplicationConstants.GSON.toJson(vehicleTransferDto.getTransferLocationDetails()));
+        if(vehicleTransferDto.getTransferLocationDetails()!=null)
+            result.setTransferLocationDetails(ApplicationConstants.GSON.toJson(vehicleTransferDto.getTransferLocationDetails()));
         result.setOdometerReading(vehicleTransferDto.getOdometerReading());
         result.setSocReading(vehicleTransferDto.getSocReading());
         return result;

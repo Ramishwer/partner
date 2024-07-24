@@ -34,7 +34,11 @@ public class VehicleViewDto {
 
 
     public static VehicleViewDto fromDao(VehicleDao vehicleDao) {
-        return ApplicationConstants.GSON.fromJson(vehicleDao.getViewInfo(), VehicleViewDto.class);
+        if (vehicleDao.getViewInfo() == null)
+            return null;
+        VehicleViewDto result = ApplicationConstants.GSON.fromJson(vehicleDao.getViewInfo(), VehicleViewDto.class);
+        result.setUuid(vehicleDao.getUuid());
+        return result;
     }
 
 }

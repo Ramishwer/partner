@@ -20,21 +20,30 @@ public class VehicleTransferDto {
     private String transferType;
     private TransferUserDetailsDto transferFrom;
     private TransferUserDetailsDto transferTo;
+    private TransferUserDetailsDto approvedBy;
     private String status;
     private LocationDto transferLocationDetails;
     private Integer odometerReading;
     private Integer socReading;
 
     public static VehicleTransferDto fromDao(VehicleTransferDetailDao detailDao, VehicleViewDto vehicleViewDto) {
-        return VehicleTransferDto.builder()
+        VehicleTransferDto result = VehicleTransferDto.builder()
                 .odometerReading(detailDao.getOdometerReading())
                 .vehicle(vehicleViewDto)
                 .status(detailDao.getStatus())
                 .socReading(detailDao.getSocReading())
-                .transferFrom(ApplicationConstants.GSON.fromJson(detailDao.getTransferFrom(), TransferUserDetailsDto.class))
-                .transferTo(ApplicationConstants.GSON.fromJson(detailDao.getTransferTo(), TransferUserDetailsDto.class))
-                .transferLocationDetails(ApplicationConstants.GSON.fromJson(detailDao.getTransferLocationDetails(), LocationDto.class))
                 .transferType(detailDao.getTransferType())
                 .uuid(detailDao.getUuid()).build();
+        if (detailDao.getTransferFrom() != null)
+            result.setTransferFrom(ApplicationConstants.GSON.fromJson(detailDao.getTransferFrom(), TransferUserDetailsDto.class));
+        if (detailDao.getTransferTo() != null)
+            result.setTransferTo(ApplicationConstants.GSON.fromJson(detailDao.getTransferTo(), TransferUserDetailsDto.class));
+        if (detailDao.getTransferLocationDetails() != null)
+            result.setTransferLocationDetails(ApplicationConstants.GSON.fromJson(detailDao.getTransferLocationDetails(), LocationDto.class));
+        if (detailDao.getApprovedBy() != null)
+            result.setApprovedBy(ApplicationConstants.GSON.fromJson(detailDao.getApprovedBy(), TransferUserDetailsDto.class));
+
+
+        return result;
     }
 }

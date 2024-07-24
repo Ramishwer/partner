@@ -9,6 +9,7 @@ import com.goev.partner.dao.partner.detail.PartnerDao;
 import com.goev.partner.dao.partner.detail.PartnerDetailDao;
 import com.goev.partner.dao.partner.document.PartnerDocumentDao;
 import com.goev.partner.dao.partner.duty.PartnerDutyDao;
+import com.goev.partner.dao.vehicle.transfer.VehicleAssetTransferDetailDao;
 import com.goev.partner.dao.vehicle.transfer.VehicleTransferDetailDao;
 import com.goev.partner.event.events.booking.BookingUpdateEvent;
 import com.goev.partner.event.events.partner.PartnerOnboardingStatusCheckEvent;
@@ -18,7 +19,10 @@ import com.goev.partner.event.events.partner.update.PartnerDetailUpdateEvent;
 import com.goev.partner.event.events.partner.update.PartnerDocumentUpdateEvent;
 import com.goev.partner.event.events.partner.update.PartnerDutyUpdateEvent;
 import com.goev.partner.event.events.partner.update.PartnerUpdateEvent;
+import com.goev.partner.event.events.vehicle.save.VehicleAssetMappingSaveEvent;
+import com.goev.partner.event.events.vehicle.save.VehicleAssetTransferDetailSaveEvent;
 import com.goev.partner.event.events.vehicle.save.VehicleTransferDetailSaveEvent;
+import com.goev.partner.event.events.vehicle.update.VehicleAssetTransferDetailUpdateEvent;
 import com.goev.partner.event.events.vehicle.update.VehicleTransferDetailUpdateEvent;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -73,6 +77,12 @@ public class EventExecutorUtils {
             }
             case "VehicleTransferDetailUpdateEvent" -> {
                 return fireEvent(SpringContext.getBean(VehicleTransferDetailUpdateEvent.class), (VehicleTransferDetailDao) data, executionTime);
+            }
+            case "VehicleAssetTransferDetailSaveEvent" -> {
+                return fireEvent(SpringContext.getBean(VehicleAssetTransferDetailSaveEvent.class), (VehicleAssetTransferDetailDao) data, executionTime);
+            }
+            case "VehicleAssetTransferDetailUpdateEvent" -> {
+                return fireEvent(SpringContext.getBean(VehicleAssetTransferDetailUpdateEvent.class), (VehicleAssetTransferDetailDao) data, executionTime);
             }
             case "PartnerDocumentSaveEvent" -> {
                 return fireEvent(SpringContext.getBean(PartnerDocumentSaveEvent.class), (PartnerDocumentDao) data, executionTime);
