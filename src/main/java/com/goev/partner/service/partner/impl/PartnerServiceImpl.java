@@ -428,6 +428,7 @@ public class PartnerServiceImpl implements PartnerService {
 
         newDuty = partnerDutyRepository.save(newDuty);
 
+
         partner.setDutyDetails(ApplicationConstants.GSON.toJson(PartnerDutyDto.fromDao(newDuty, PartnerViewDto.fromDao(partner), partnerShiftDao)));
         partner.setPartnerDutyId(newDuty.getId());
         partner.setStatus(PartnerStatus.ON_DUTY.name());

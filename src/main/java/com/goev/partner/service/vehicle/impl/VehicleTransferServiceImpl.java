@@ -89,6 +89,7 @@ public class VehicleTransferServiceImpl implements VehicleTransferService {
             VehicleAssetTransferDetailDao assetTransferDetailDao = new VehicleAssetTransferDetailDao();
             assetTransferDetailDao.setVehicleTransferId(detailDao.getId());
             assetTransferDetailDao.setVehicleId(vehicle.getId());
+            assetTransferDetailDao.setStatus(AssetStatus.PENDING.name());
             assetTransferDetailDao = vehicleAssetTransferDetailRepository.save(assetTransferDetailDao);
             assetList.add(VehicleAssetTransferDetailDto.fromDao(assetTransferDetailDao, assetDto));
         }
