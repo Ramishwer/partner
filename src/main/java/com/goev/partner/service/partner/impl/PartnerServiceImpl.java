@@ -228,8 +228,10 @@ public class PartnerServiceImpl implements PartnerService {
 
         partner.setProfileUrl(partnerDetailDao.getProfileUrl());
         PartnerViewDto partnerViewDto = PartnerViewDto.fromDao(partner);
-        partnerViewDto.setProfileUrl(partnerDetailDao.getProfileUrl());
-        partner.setViewInfo(ApplicationConstants.GSON.toJson(partnerViewDto));
+        if(partnerViewDto!=null) {
+            partnerViewDto.setProfileUrl(partnerDetailDao.getProfileUrl());
+            partner.setViewInfo(ApplicationConstants.GSON.toJson(partnerViewDto));
+        }
         partnerRepository.update(partner);
         PartnerDetailDto result = PartnerDetailDto.builder().build();
         setPartnerDetails(result, partner, partnerDetailDao);
