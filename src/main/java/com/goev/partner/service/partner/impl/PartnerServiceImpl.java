@@ -20,6 +20,7 @@ import com.goev.partner.dto.partner.status.ActionDto;
 import com.goev.partner.enums.booking.BookingStatus;
 import com.goev.partner.enums.booking.BookingSubStatus;
 import com.goev.partner.enums.partner.PartnerDutyStatus;
+import com.goev.partner.enums.partner.PartnerShiftStatus;
 import com.goev.partner.enums.partner.PartnerStatus;
 import com.goev.partner.enums.partner.PartnerSubStatus;
 import com.goev.partner.repository.booking.BookingRepository;
@@ -250,10 +251,17 @@ public class PartnerServiceImpl implements PartnerService {
         partner.setStatus(PartnerStatus.OFF_DUTY.name());
         partner.setSubStatus(PartnerSubStatus.NO_DUTY.name());
         partner.setPartnerDutyId(null);
+        partner.setBookingDetails(null);
+        partner.setBookingId(null);
+        partner.setPartnerShiftId(null);
         partner.setVehicleId(null);
         partner.setVehicleDetails(null);
-        if (partner.getPartnerShiftId() == null)
+        if (partner.getPartnerDutyId() == null)
             partner.setDutyDetails(null);
+        if (partner.getVehicleId() == null)
+            partner.setVehicleDetails(null);
+        if (partner.getBookingId() == null)
+            partner.setBookingDetails(null);
         partner = partnerRepository.update(partner);
         return partner;
     }
@@ -430,6 +438,9 @@ public class PartnerServiceImpl implements PartnerService {
         partner.setStatus(PartnerStatus.ON_DUTY.name());
         partner.setSubStatus(PartnerSubStatus.VEHICLE_NOT_ALLOTTED.name());
         partner = partnerRepository.update(partner);
+
+        partnerShiftDao.setStatus(PartnerShiftStatus.IN_PROGRESS.name());
+        partnerShiftRepository.update(partnerShiftDao);
 
         return partner;
     }
