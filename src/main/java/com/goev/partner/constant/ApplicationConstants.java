@@ -21,7 +21,6 @@ import java.util.Map;
 @AllArgsConstructor
 public class ApplicationConstants {
     public static final Gson GSON = new GsonBuilder().registerTypeAdapter(DateTime.class, new GsonDateTimeSerializer()).create();
-    public static String TIMER_URL;
     public static String AWS_ACCESS_KEY_SECRET;
     public static String AWS_ACCESS_KEY_ID;
     public static String APPLICATION_ID;
@@ -32,6 +31,8 @@ public class ApplicationConstants {
     public static String S3_BUCKET_NAME;
     public static String AUTH_URL;
     public static String CENTRAL_URL;
+    public static String BOOKING_URL;
+    public static String TIMER_URL;
     public static String CREDENTIAL_TYPE_NAME;
     public static String CREDENTIAL_TYPE_UUID;
 
