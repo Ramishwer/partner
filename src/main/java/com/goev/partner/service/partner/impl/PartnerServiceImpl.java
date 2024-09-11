@@ -435,8 +435,8 @@ public class PartnerServiceImpl implements PartnerService {
             throw new ResponseException("Invalid action: Shift Details Incorrect");
 
 //        LocationDao expectedInLocation = locationRepository.findById(partnerShiftDao.getInLocationId());
-        if (partnerShiftDao.getInLocationDetails() == null)
-            throw new ResponseException("Invalid action: Shift Details Incorrect No Location present");
+//        if (partnerShiftDao.getInLocationDetails() == null)
+//            throw new ResponseException("Invalid action: Shift Details Incorrect No Location present");
 
 //        validateLocationQr(actionDto.getQrString(),expectedInLocation);
 //        validateLocationGps(actionDto.getLocation(),expectedInLocation);
