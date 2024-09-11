@@ -9,6 +9,7 @@ import com.goev.partner.dao.partner.detail.PartnerDao;
 import com.goev.partner.dao.partner.detail.PartnerDetailDao;
 import com.goev.partner.dao.partner.document.PartnerDocumentDao;
 import com.goev.partner.dao.partner.duty.PartnerDutyDao;
+import com.goev.partner.dao.vehicle.detail.VehicleDao;
 import com.goev.partner.dao.vehicle.transfer.VehicleAssetTransferDetailDao;
 import com.goev.partner.dao.vehicle.transfer.VehicleTransferDetailDao;
 import com.goev.partner.event.events.booking.BookingUpdateEvent;
@@ -24,6 +25,7 @@ import com.goev.partner.event.events.vehicle.save.VehicleAssetTransferDetailSave
 import com.goev.partner.event.events.vehicle.save.VehicleTransferDetailSaveEvent;
 import com.goev.partner.event.events.vehicle.update.VehicleAssetTransferDetailUpdateEvent;
 import com.goev.partner.event.events.vehicle.update.VehicleTransferDetailUpdateEvent;
+import com.goev.partner.event.events.vehicle.update.VehicleUpdateEvent;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
@@ -59,6 +61,9 @@ public class EventExecutorUtils {
         switch (event) {
             case "PartnerUpdateEvent" -> {
                 return fireEvent(SpringContext.getBean(PartnerUpdateEvent.class), (PartnerDao) data, executionTime);
+            }
+            case "VehicleUpdateEvent" -> {
+                return fireEvent(SpringContext.getBean(VehicleUpdateEvent.class), (VehicleDao) data, executionTime);
             }
             case "PartnerDetailUpdateEvent" -> {
                 return fireEvent(SpringContext.getBean(PartnerDetailUpdateEvent.class), (PartnerDetailDao) data, executionTime);

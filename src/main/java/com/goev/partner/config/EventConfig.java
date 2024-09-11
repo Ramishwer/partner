@@ -28,6 +28,7 @@ import com.goev.partner.event.handlers.partner.update.*;
 import com.goev.partner.event.handlers.vehicle.save.*;
 import com.goev.partner.event.handlers.vehicle.update.*;
 import com.goev.partner.event.targets.CentralTarget;
+import com.goev.partner.event.targets.CustomerTarget;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -164,7 +165,7 @@ public class EventConfig {
 
 
         eventProcessor.registerTargets(CentralTarget.getTarget(eventProcessor));
-
+        eventProcessor.registerTargets(CustomerTarget.getTarget(eventProcessor));
         return eventProcessor;
     }
 }

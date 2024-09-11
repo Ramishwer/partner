@@ -1,6 +1,7 @@
 package com.goev.partner.service.partner.impl;
 
 import com.goev.lib.dto.LatLongDto;
+import com.goev.lib.dto.StatsDto;
 import com.goev.lib.exceptions.ResponseException;
 import com.goev.lib.utilities.ApplicationContext;
 import com.goev.partner.constant.ApplicationConstants;
@@ -11,12 +12,14 @@ import com.goev.partner.dao.partner.detail.PartnerDetailDao;
 import com.goev.partner.dao.partner.duty.PartnerDutyDao;
 import com.goev.partner.dao.partner.duty.PartnerShiftDao;
 import com.goev.partner.dao.vehicle.detail.VehicleDao;
+import com.goev.partner.dto.booking.BookingViewDto;
 import com.goev.partner.dto.location.LocationDto;
 import com.goev.partner.dto.partner.PartnerViewDto;
 import com.goev.partner.dto.partner.detail.PartnerDetailDto;
 import com.goev.partner.dto.partner.detail.PartnerDto;
 import com.goev.partner.dto.partner.duty.PartnerDutyDto;
 import com.goev.partner.dto.partner.status.ActionDto;
+import com.goev.partner.dto.vehicle.VehicleStatsDto;
 import com.goev.partner.enums.booking.BookingStatus;
 import com.goev.partner.enums.booking.BookingSubStatus;
 import com.goev.partner.enums.partner.PartnerDutyStatus;
@@ -37,8 +40,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 
-import java.util.concurrent.ExecutorService;
-
 @Service
 @Slf4j
 @AllArgsConstructor
@@ -49,7 +50,6 @@ public class PartnerServiceImpl implements PartnerService {
     private final PartnerDutyRepository partnerDutyRepository;
     private final LocationRepository locationRepository;
     private final S3Utils s3;
-    private final ExecutorService executorService;
     private final VehicleRepository vehicleRepository;
     private final BookingRepository bookingRepository;
 
@@ -200,16 +200,24 @@ public class PartnerServiceImpl implements PartnerService {
     }
 
     private PartnerDao socEntry(PartnerDao partner, ActionDto actionDto) {
-        if(PartnerStatus.VEHICLE_ASSIGNED.name().equals(partner.getStatus()))
+        if (PartnerStatus.VEHICLE_ASSIGNED.name().equals(partner.getStatus()))
             partner.setSubStatus(PartnerSubStatus.WAITING_FOR_ONLINE.name());
 
-        if(PartnerStatus.RETURN_CHECKLIST.name().equals(partner.getStatus()))
+        if (PartnerStatus.RETURN_CHECKLIST.name().equals(partner.getStatus()))
             partner.setSubStatus(PartnerSubStatus.CHECKLIST_PENDING.name());
 
 
         partner = partnerRepository.update(partner);
         VehicleDao vehicle = vehicleRepository.findById(partner.getVehicleId());
-        vehicle.setSoc(actionDto.getSoc());
+        VehicleStatsDto stats = VehicleStatsDto.builder().build();
+        if(vehicle.getStats()!=null){
+            stats = ApplicationConstants.GSON.fromJson(vehicle.getStats(),VehicleStatsDto.class);
+        }
+        stats.setSoc(StatsDto.builder()
+                .manual(actionDto.getSoc())
+                .timestamp(DateTime.now().getMillis())
+                .build());
+        vehicle.setStats(ApplicationConstants.GSON.toJson(stats));
         vehicleRepository.update(vehicle);
         return partner;
     }
@@ -229,7 +237,7 @@ public class PartnerServiceImpl implements PartnerService {
 
         partner.setProfileUrl(partnerDetailDao.getProfileUrl());
         PartnerViewDto partnerViewDto = PartnerViewDto.fromDao(partner);
-        if(partnerViewDto!=null) {
+        if (partnerViewDto != null) {
             partnerViewDto.setProfileUrl(partnerDetailDao.getProfileUrl());
             partner.setViewInfo(ApplicationConstants.GSON.toJson(partnerViewDto));
         }
@@ -297,6 +305,12 @@ public class PartnerServiceImpl implements PartnerService {
             BookingDao bookingDao = bookingRepository.findById(partner.getBookingId());
             bookingDao.setStatus(BookingStatus.COMPLETED.name());
             bookingDao.setSubStatus(BookingSubStatus.ENDED.name());
+            BookingViewDto viewDto = BookingViewDto.fromDao(bookingDao);
+            if (viewDto != null) {
+                viewDto.setStatus(bookingDao.getStatus());
+                viewDto.setSubStatus(bookingDao.getSubStatus());
+            }
+            bookingDao.setViewInfo(ApplicationConstants.GSON.toJson(viewDto));
             bookingRepository.update(bookingDao);
             partner.setBookingDetails(null);
             partner.setBookingId(null);
@@ -314,6 +328,12 @@ public class PartnerServiceImpl implements PartnerService {
             BookingDao bookingDao = bookingRepository.findById(partner.getBookingId());
             bookingDao.setStatus(BookingStatus.IN_PROGRESS.name());
             bookingDao.setSubStatus(BookingSubStatus.STARTED.name());
+            BookingViewDto viewDto = BookingViewDto.fromDao(bookingDao);
+            if (viewDto != null) {
+                viewDto.setStatus(bookingDao.getStatus());
+                viewDto.setSubStatus(bookingDao.getSubStatus());
+            }
+            bookingDao.setViewInfo(ApplicationConstants.GSON.toJson(viewDto));
             bookingRepository.update(bookingDao);
         }
         return partner;
@@ -327,6 +347,12 @@ public class PartnerServiceImpl implements PartnerService {
             BookingDao bookingDao = bookingRepository.findById(partner.getBookingId());
             bookingDao.setStatus(BookingStatus.IN_PROGRESS.name());
             bookingDao.setSubStatus(BookingSubStatus.ARRIVED.name());
+            BookingViewDto viewDto = BookingViewDto.fromDao(bookingDao);
+            if (viewDto != null) {
+                viewDto.setStatus(bookingDao.getStatus());
+                viewDto.setSubStatus(bookingDao.getSubStatus());
+            }
+            bookingDao.setViewInfo(ApplicationConstants.GSON.toJson(viewDto));
             bookingRepository.update(bookingDao);
         }
         return partner;
@@ -340,6 +366,12 @@ public class PartnerServiceImpl implements PartnerService {
             BookingDao bookingDao = bookingRepository.findById(partner.getBookingId());
             bookingDao.setStatus(BookingStatus.IN_PROGRESS.name());
             bookingDao.setSubStatus(BookingSubStatus.ENROUTE.name());
+            BookingViewDto viewDto = BookingViewDto.fromDao(bookingDao);
+            if (viewDto != null) {
+                viewDto.setStatus(bookingDao.getStatus());
+                viewDto.setSubStatus(bookingDao.getSubStatus());
+            }
+            bookingDao.setViewInfo(ApplicationConstants.GSON.toJson(viewDto));
             bookingRepository.update(bookingDao);
         }
         return partner;
@@ -397,14 +429,14 @@ public class PartnerServiceImpl implements PartnerService {
 
     private PartnerDao checkin(PartnerDao partner, ActionDto actionDto) {
 
-        log.info("Partner Shift Id : {}",partner.getPartnerShiftId());
+        log.info("Partner Shift Id : {}", partner.getPartnerShiftId());
         PartnerShiftDao partnerShiftDao = partnerShiftRepository.findById(partner.getPartnerShiftId());
         if (partnerShiftDao == null)
             throw new ResponseException("Invalid action: Shift Details Incorrect");
 
 //        LocationDao expectedInLocation = locationRepository.findById(partnerShiftDao.getInLocationId());
-//        if (expectedInLocation == null)
-//            throw new ResponseException("Invalid action: Shift Details Incorrect No Location present");
+        if (partnerShiftDao.getInLocationDetails() == null)
+            throw new ResponseException("Invalid action: Shift Details Incorrect No Location present");
 
 //        validateLocationQr(actionDto.getQrString(),expectedInLocation);
 //        validateLocationGps(actionDto.getLocation(),expectedInLocation);
@@ -416,7 +448,7 @@ public class PartnerServiceImpl implements PartnerService {
         newDuty.setPartnerShiftId(partnerShiftDao.getId());
 
         newDuty.setActualDutyStartTime(DateTime.now());
-//        newDuty.setActualDutyStartLocationDetails(ApplicationConstants.GSON.toJson(expectedInLocation));
+        newDuty.setActualDutyStartLocationDetails(partnerShiftDao.getInLocationDetails());
 
         newDuty.setPlannedDutyStartTime(partnerShiftDao.getEstimatedStartTime());
         newDuty.setPlannedOnlineTime(partnerShiftDao.getEstimatedOnlineTime());
@@ -429,10 +461,9 @@ public class PartnerServiceImpl implements PartnerService {
         newDuty.setPlannedDutyStartLocationId(partnerShiftDao.getInLocationId());
         newDuty.setPlannedOnlineLocationId(partnerShiftDao.getOnlineLocationId());
         newDuty.setPlannedDutyEndLocationId(partnerShiftDao.getOutLocationId());
-
         newDuty = partnerDutyRepository.save(newDuty);
 
-
+        partner.setLocationDetails(partnerShiftDao.getInLocationDetails());
         partner.setDutyDetails(ApplicationConstants.GSON.toJson(PartnerDutyDto.fromDao(newDuty, PartnerViewDto.fromDao(partner), partnerShiftDao)));
         partner.setPartnerDutyId(newDuty.getId());
         partner.setStatus(PartnerStatus.ON_DUTY.name());
@@ -440,6 +471,7 @@ public class PartnerServiceImpl implements PartnerService {
         partner = partnerRepository.update(partner);
 
         partnerShiftDao.setStatus(PartnerShiftStatus.IN_PROGRESS.name());
+        partnerShiftDao.setSubStatus(PartnerShiftStatus.IN_PROGRESS.name());
         partnerShiftRepository.update(partnerShiftDao);
 
         return partner;

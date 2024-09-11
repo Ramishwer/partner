@@ -31,6 +31,7 @@ public class ApplicationConstants {
     public static String S3_BUCKET_NAME;
     public static String AUTH_URL;
     public static String CENTRAL_URL;
+    public static String CUSTOMER_URL;
     public static String BOOKING_URL;
     public static String TIMER_URL;
     public static String CREDENTIAL_TYPE_NAME;
