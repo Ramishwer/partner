@@ -20,6 +20,7 @@ import com.goev.partner.dto.partner.detail.PartnerDto;
 import com.goev.partner.dto.partner.duty.PartnerDutyDto;
 import com.goev.partner.dto.partner.status.ActionDto;
 import com.goev.partner.dto.vehicle.VehicleStatsDto;
+import com.goev.partner.dto.vehicle.VehicleViewDto;
 import com.goev.partner.enums.booking.BookingStatus;
 import com.goev.partner.enums.booking.BookingSubStatus;
 import com.goev.partner.enums.partner.PartnerDutyStatus;
@@ -207,7 +208,7 @@ public class PartnerServiceImpl implements PartnerService {
             partner.setSubStatus(PartnerSubStatus.CHECKLIST_PENDING.name());
 
 
-        partner = partnerRepository.update(partner);
+
         VehicleDao vehicle = vehicleRepository.findById(partner.getVehicleId());
         VehicleStatsDto stats = VehicleStatsDto.builder().build();
         if(vehicle.getStats()!=null){
@@ -219,6 +220,8 @@ public class PartnerServiceImpl implements PartnerService {
                 .build());
         vehicle.setStats(ApplicationConstants.GSON.toJson(stats));
         vehicleRepository.update(vehicle);
+        partner.setVehicleDetails(ApplicationConstants.GSON.toJson(VehicleViewDto.fromDao(vehicle)));
+        partner = partnerRepository.update(partner);
         return partner;
     }
 
