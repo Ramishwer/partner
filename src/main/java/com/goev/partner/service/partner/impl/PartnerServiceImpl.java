@@ -208,11 +208,10 @@ public class PartnerServiceImpl implements PartnerService {
             partner.setSubStatus(PartnerSubStatus.CHECKLIST_PENDING.name());
 
 
-
         VehicleDao vehicle = vehicleRepository.findById(partner.getVehicleId());
         VehicleStatsDto stats = VehicleStatsDto.builder().build();
-        if(vehicle.getStats()!=null){
-            stats = ApplicationConstants.GSON.fromJson(vehicle.getStats(),VehicleStatsDto.class);
+        if (vehicle.getStats() != null) {
+            stats = ApplicationConstants.GSON.fromJson(vehicle.getStats(), VehicleStatsDto.class);
         }
         stats.setSoc(StatsDto.builder()
                 .manual(actionDto.getSoc())
@@ -220,7 +219,13 @@ public class PartnerServiceImpl implements PartnerService {
                 .build());
         vehicle.setStats(ApplicationConstants.GSON.toJson(stats));
         vehicleRepository.update(vehicle);
-        partner.setVehicleDetails(ApplicationConstants.GSON.toJson(VehicleViewDto.fromDao(vehicle)));
+
+        VehicleViewDto viewDto = VehicleViewDto.fromDao(vehicle);
+        if (viewDto != null) {
+            viewDto.setStats(stats);
+            partner.setVehicleDetails(ApplicationConstants.GSON.toJson(viewDto));
+        }
+
         partner = partnerRepository.update(partner);
         return partner;
     }
@@ -255,7 +260,7 @@ public class PartnerServiceImpl implements PartnerService {
         PartnerDutyDao currentDuty = partnerDutyRepository.findById(partner.getPartnerDutyId());
         if (currentDuty != null) {
             PartnerShiftDao shiftDao = partnerShiftRepository.findById(currentDuty.getPartnerShiftId());
-            if(shiftDao!=null)
+            if (shiftDao != null)
                 currentDuty.setActualDutyEndLocationDetails(shiftDao.getOutLocationDetails());
             currentDuty.setStatus(PartnerDutyStatus.COMPLETED.name());
             currentDuty.setActualDutyEndTime(DateTime.now());
