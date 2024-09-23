@@ -45,6 +45,7 @@ public class EventConfig {
             AssetTypeUpdateEventHandler assetTypeUpdateEventHandler,
             PartnerUpdateEventHandler partnerUpdateEventHandler,
             PartnerDetailUpdateEventHandler partnerDetailUpdateEventHandler,
+            PartnerShiftUpdateEventHandler partnerShiftUpdateEventHandler,
             PartnerDutyUpdateEventHandler partnerDutyUpdateEventHandler,
             PartnerPayoutUpdateEventHandler partnerPayoutUpdateEventHandler,
             PartnerDocumentUpdateEventHandler partnerDocumentUpdateEventHandler,
@@ -91,6 +92,7 @@ public class EventConfig {
         eventProcessor.registerEvents(new PartnerUpdateEvent());
         eventProcessor.registerEvents(new PartnerDetailUpdateEvent());
         eventProcessor.registerEvents(new PartnerDutyUpdateEvent());
+        eventProcessor.registerEvents(new PartnerShiftUpdateEvent());
         eventProcessor.registerEvents(new PartnerPayoutUpdateEvent());
         eventProcessor.registerEvents(new PartnerDocumentUpdateEvent());
         eventProcessor.registerEvents(new PartnerDocumentTypeUpdateEvent());
@@ -110,6 +112,7 @@ public class EventConfig {
         eventProcessor.registerEventHandlers(new PartnerUpdateEvent(), partnerUpdateEventHandler);
         eventProcessor.registerEventHandlers(new PartnerDetailUpdateEvent(), partnerDetailUpdateEventHandler);
         eventProcessor.registerEventHandlers(new PartnerDutyUpdateEvent(), partnerDutyUpdateEventHandler);
+        eventProcessor.registerEventHandlers(new PartnerShiftUpdateEvent(), partnerShiftUpdateEventHandler);
         eventProcessor.registerEventHandlers(new PartnerPayoutUpdateEvent(), partnerPayoutUpdateEventHandler);
         eventProcessor.registerEventHandlers(new PartnerDocumentUpdateEvent(), partnerDocumentUpdateEventHandler);
         eventProcessor.registerEventHandlers(new PartnerDocumentTypeUpdateEvent(), partnerDocumentTypeUpdateEventHandler);

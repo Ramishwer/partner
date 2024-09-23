@@ -9,6 +9,7 @@ import com.goev.partner.dao.partner.detail.PartnerDao;
 import com.goev.partner.dao.partner.detail.PartnerDetailDao;
 import com.goev.partner.dao.partner.document.PartnerDocumentDao;
 import com.goev.partner.dao.partner.duty.PartnerDutyDao;
+import com.goev.partner.dao.partner.duty.PartnerShiftDao;
 import com.goev.partner.dao.vehicle.detail.VehicleDao;
 import com.goev.partner.dao.vehicle.transfer.VehicleAssetTransferDetailDao;
 import com.goev.partner.dao.vehicle.transfer.VehicleTransferDetailDao;
@@ -16,10 +17,7 @@ import com.goev.partner.event.events.booking.BookingUpdateEvent;
 import com.goev.partner.event.events.partner.PartnerOnboardingStatusCheckEvent;
 import com.goev.partner.event.events.partner.save.PartnerDocumentSaveEvent;
 import com.goev.partner.event.events.partner.save.PartnerDutySaveEvent;
-import com.goev.partner.event.events.partner.update.PartnerDetailUpdateEvent;
-import com.goev.partner.event.events.partner.update.PartnerDocumentUpdateEvent;
-import com.goev.partner.event.events.partner.update.PartnerDutyUpdateEvent;
-import com.goev.partner.event.events.partner.update.PartnerUpdateEvent;
+import com.goev.partner.event.events.partner.update.*;
 import com.goev.partner.event.events.vehicle.save.VehicleAssetMappingSaveEvent;
 import com.goev.partner.event.events.vehicle.save.VehicleAssetTransferDetailSaveEvent;
 import com.goev.partner.event.events.vehicle.save.VehicleTransferDetailSaveEvent;
@@ -97,6 +95,9 @@ public class EventExecutorUtils {
             }
             case "BookingUpdateEvent" -> {
                 return fireEvent(SpringContext.getBean(BookingUpdateEvent.class), (BookingDao) data, executionTime);
+            }
+            case "PartnerShiftUpdateEvent" -> {
+                return fireEvent(SpringContext.getBean(PartnerShiftUpdateEvent.class), (PartnerShiftDao) data, executionTime);
             }
 
             default -> {

@@ -23,10 +23,8 @@ import com.goev.partner.dto.vehicle.VehicleStatsDto;
 import com.goev.partner.dto.vehicle.VehicleViewDto;
 import com.goev.partner.enums.booking.BookingStatus;
 import com.goev.partner.enums.booking.BookingSubStatus;
-import com.goev.partner.enums.partner.PartnerDutyStatus;
-import com.goev.partner.enums.partner.PartnerShiftStatus;
-import com.goev.partner.enums.partner.PartnerStatus;
-import com.goev.partner.enums.partner.PartnerSubStatus;
+import com.goev.partner.enums.partner.*;
+import com.goev.partner.enums.vehicle.VehicleStatus;
 import com.goev.partner.repository.booking.BookingRepository;
 import com.goev.partner.repository.location.LocationRepository;
 import com.goev.partner.repository.partner.detail.PartnerDetailRepository;
@@ -273,8 +271,12 @@ public class PartnerServiceImpl implements PartnerService {
         partner.setBookingDetails(null);
         partner.setBookingId(null);
         partner.setPartnerShiftId(null);
+        if (partner.getVehicleId() != null) {
+            VehicleDao vehicle = vehicleRepository.findById(partner.getVehicleId());
+            vehicle.setStatus(VehicleStatus.AVAILABLE.name());
+            vehicleRepository.update(vehicle);
+        }
         partner.setVehicleId(null);
-        partner.setVehicleDetails(null);
         if (partner.getPartnerDutyId() == null)
             partner.setDutyDetails(null);
         if (partner.getVehicleId() == null)
@@ -415,6 +417,12 @@ public class PartnerServiceImpl implements PartnerService {
             partner.setSubStatus(PartnerSubStatus.SOC_ENTRY.name());
             partner = partnerRepository.update(partner);
         } else if (PartnerStatus.RETURN_CHECKLIST.name().equals(partner.getStatus())) {
+
+            if (partner.getVehicleId() != null) {
+                VehicleDao vehicle = vehicleRepository.findById(partner.getVehicleId());
+                vehicle.setStatus(VehicleStatus.AVAILABLE.name());
+                vehicleRepository.update(vehicle);
+            }
             partner.setStatus(PartnerStatus.ON_DUTY.name());
             partner.setSubStatus(PartnerSubStatus.VEHICLE_NOT_ALLOTTED.name());
             partner.setVehicleDetails(null);
@@ -482,7 +490,7 @@ public class PartnerServiceImpl implements PartnerService {
         partner = partnerRepository.update(partner);
 
         partnerShiftDao.setStatus(PartnerShiftStatus.IN_PROGRESS.name());
-        partnerShiftDao.setSubStatus(PartnerShiftStatus.IN_PROGRESS.name());
+        partnerShiftDao.setSubStatus(PartnerShiftSubStatus.PRESENT.name());
         partnerShiftRepository.update(partnerShiftDao);
 
         return partner;
