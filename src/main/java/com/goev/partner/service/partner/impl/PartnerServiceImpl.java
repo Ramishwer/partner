@@ -139,7 +139,7 @@ public class PartnerServiceImpl implements PartnerService {
         PartnerDao partner = partnerRepository.findByAuthUUID(ApplicationContext.getAuthUUID());
         if (partner == null)
             throw new ResponseException("No partner found for Id :" + partnerUUID);
-
+        log.info("Action By Partner : {} {}",partner.getPunchId(),ApplicationConstants.GSON.toJson(actionDto));
         switch (actionDto.getAction()) {
             case CHECK_IN -> {
                 partner = checkin(partner, actionDto);
@@ -271,6 +271,8 @@ public class PartnerServiceImpl implements PartnerService {
         partner.setBookingDetails(null);
         partner.setBookingId(null);
         partner.setPartnerShiftId(null);
+        partner.setLocationDetails(null);
+        partner.setLocationId(null);
         if (partner.getVehicleId() != null) {
             VehicleDao vehicle = vehicleRepository.findById(partner.getVehicleId());
             vehicle.setStatus(VehicleStatus.AVAILABLE.name());
@@ -298,6 +300,8 @@ public class PartnerServiceImpl implements PartnerService {
     private PartnerDao complete(PartnerDao partner, ActionDto actionDto) {
         partner.setStatus(PartnerStatus.ONLINE.name());
         partner.setSubStatus(PartnerSubStatus.NO_BOOKING.name());
+        partner.setBookingId(null);
+        partner.setBookingDetails(null);
         partner = partnerRepository.update(partner);
         if (partner.getBookingId() != null) {
             BookingDao bookingDao = bookingRepository.findById(partner.getBookingId());
@@ -314,6 +318,8 @@ public class PartnerServiceImpl implements PartnerService {
     private PartnerDao end(PartnerDao partner, ActionDto actionDto) {
         partner.setStatus(PartnerStatus.ONLINE.name());
         partner.setSubStatus(PartnerSubStatus.NO_BOOKING.name());
+        partner.setBookingId(null);
+        partner.setBookingDetails(null);
         if (partner.getBookingId() != null) {
             BookingDao bookingDao = bookingRepository.findById(partner.getBookingId());
             bookingDao.setStatus(BookingStatus.COMPLETED.name());
@@ -407,6 +413,8 @@ public class PartnerServiceImpl implements PartnerService {
     private PartnerDao goOnline(PartnerDao partner, ActionDto actionDto) {
         partner.setStatus(PartnerStatus.ONLINE.name());
         partner.setSubStatus(PartnerSubStatus.NO_BOOKING.name());
+        partner.setBookingId(null);
+        partner.setBookingDetails(null);
         partner = partnerRepository.update(partner);
         return partner;
     }
