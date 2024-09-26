@@ -291,6 +291,8 @@ public class PartnerServiceImpl implements PartnerService {
 
     private PartnerDao goOffline(PartnerDao partner, ActionDto actionDto) {
 
+        if(!PartnerStatus.ONLINE.name().equals(partner.getStatus()))
+            throw new ResponseException("Partner Is not online yet");
         partner.setStatus(PartnerStatus.VEHICLE_ASSIGNED.name());
         partner.setSubStatus(PartnerSubStatus.WAITING_FOR_ONLINE.name());
         partner = partnerRepository.update(partner);
@@ -300,9 +302,6 @@ public class PartnerServiceImpl implements PartnerService {
     private PartnerDao complete(PartnerDao partner, ActionDto actionDto) {
         partner.setStatus(PartnerStatus.ONLINE.name());
         partner.setSubStatus(PartnerSubStatus.NO_BOOKING.name());
-        partner.setBookingId(null);
-        partner.setBookingDetails(null);
-        partner = partnerRepository.update(partner);
         if (partner.getBookingId() != null) {
             BookingDao bookingDao = bookingRepository.findById(partner.getBookingId());
             bookingDao.setStatus(BookingStatus.COMPLETED.name());
@@ -318,8 +317,6 @@ public class PartnerServiceImpl implements PartnerService {
     private PartnerDao end(PartnerDao partner, ActionDto actionDto) {
         partner.setStatus(PartnerStatus.ONLINE.name());
         partner.setSubStatus(PartnerSubStatus.NO_BOOKING.name());
-        partner.setBookingId(null);
-        partner.setBookingDetails(null);
         if (partner.getBookingId() != null) {
             BookingDao bookingDao = bookingRepository.findById(partner.getBookingId());
             bookingDao.setStatus(BookingStatus.COMPLETED.name());
