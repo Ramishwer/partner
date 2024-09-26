@@ -1,6 +1,5 @@
 package com.goev.partner.dto.booking;
 
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -9,6 +8,8 @@ import com.fasterxml.jackson.datatype.joda.ser.DateTimeSerializer;
 import lombok.*;
 import org.joda.time.DateTime;
 
+import java.util.Map;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -16,17 +17,20 @@ import org.joda.time.DateTime;
 @ToString
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class BookingPaymentDto {
+public class PaymentDto {
     private String uuid;
-    private String paymentMode;
-    private String paymentMethod;
     private String status;
     private Integer amount;
-    private Integer pendingAmount;
     private Integer paidAmount;
-    private String transactionPurpose;
+    private Integer pendingAmount;
     private String gatewayUniqueIdentifier;
     private String gatewayTransactionIdentifier;
+    private String entityUUID;
+    private Map<String,String> entityDetails;
+    private String paymentMode;
+    private String paymentMethod;
+    private String paymentDescription;
+    private String paymentURL;
     @JsonSerialize(using = DateTimeSerializer.class)
     @JsonDeserialize(using = DateTimeDeserializer.class)
     private DateTime transactionTime;
@@ -34,10 +38,8 @@ public class BookingPaymentDto {
     @JsonDeserialize(using = DateTimeDeserializer.class)
     private DateTime expiryTime;
     private String paymentType;
-    private String paymentUUID;
-    private BookingViewDto bookingDetails;
-    private PaymentDto paymentDetails;
+    private String transactionPurpose;
+    private String payload;
+    private String signature;
+    private String verificationMethod;
 }
-
-
-
