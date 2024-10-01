@@ -17,6 +17,8 @@ import lombok.*;
 public class VehicleTransferDto {
     private String uuid;
     private VehicleViewDto vehicleDetails;
+    @Deprecated
+    private VehicleViewDto vehicle;
     private String transferType;
     private TransferUserDetailsDto transferFrom;
     private TransferUserDetailsDto transferTo;
@@ -30,6 +32,7 @@ public class VehicleTransferDto {
         VehicleTransferDto result = VehicleTransferDto.builder()
                 .odometerReading(detailDao.getOdometerReading())
                 .vehicleDetails(vehicleViewDto)
+                .vehicle(vehicleViewDto)
                 .status(detailDao.getStatus())
                 .socReading(detailDao.getSocReading())
                 .transferType(detailDao.getTransferType())

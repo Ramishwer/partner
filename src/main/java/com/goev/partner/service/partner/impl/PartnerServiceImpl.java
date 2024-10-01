@@ -90,6 +90,7 @@ public class PartnerServiceImpl implements PartnerService {
         partnerDto.setLastName(partnerDetails.getLastName());
 
         result.setPartnerDetails(partnerDto);
+        result.setPartner(partnerDto);
         result.setProfileUrl(partnerDetails.getProfileUrl());
         result.setJoiningDate(partnerDetails.getJoiningDate());
         result.setDlNumber(partnerDetails.getDlNumber());

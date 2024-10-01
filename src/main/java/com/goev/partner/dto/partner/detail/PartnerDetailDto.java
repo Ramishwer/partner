@@ -31,6 +31,8 @@ import java.util.Map;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PartnerDetailDto {
+    @Deprecated
+    private PartnerViewDto partner;
     private PartnerViewDto partnerDetails;
     private String uuid;
     @JsonSerialize(using = DateTimeSerializer.class)
