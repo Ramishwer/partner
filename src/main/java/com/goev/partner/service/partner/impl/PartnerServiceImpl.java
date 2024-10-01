@@ -542,6 +542,8 @@ public class PartnerServiceImpl implements PartnerService {
     }
 
     private void validateLocationGps(LatLongDto location, LocationDao expectedInLocation) {
+        if (location == null)
+            throw new ResponseException("Invalid Location.Please turn on your gps.");
         if (location.getLongitude() == null || location.getLatitude() == null)
             throw new ResponseException("Invalid Location.Please turn on your gps.");
         double distance = DistanceUtils.calculateDistance(location, LatLongDto.builder().latitude(expectedInLocation.getLatitude()).longitude(expectedInLocation.getLongitude()).build());
