@@ -28,7 +28,7 @@ import java.util.Map;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class VehicleDetailDto {
-    private VehicleViewDto vehicle;
+    private VehicleViewDto vehicleDetails;
     private String uuid;
     private VehicleModelDto vehicleModel;
     private VehicleCategoryDto vehicleCategory;

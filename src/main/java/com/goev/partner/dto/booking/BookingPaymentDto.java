@@ -35,7 +35,7 @@ public class BookingPaymentDto {
     private DateTime expiryTime;
     private String paymentType;
     private String paymentUUID;
-    private BookingViewDto bookingDetails;
+    private BookingViewDto booking;
     private PaymentDto paymentDetails;
 }
 

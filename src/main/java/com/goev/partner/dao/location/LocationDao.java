@@ -12,8 +12,8 @@ import lombok.*;
 public class LocationDao extends BaseDao {
     private String name;
     private String type;
-    private Float latitude;
-    private Float longitude;
+    private Double latitude;
+    private Double longitude;
     private Integer locationDetailsId;
 }
 

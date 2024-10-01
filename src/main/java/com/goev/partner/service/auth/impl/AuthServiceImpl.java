@@ -103,8 +103,12 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public AuthCredentialDto initiateSession(String phoneNumber) {
+    public AuthCredentialDto initiateSession(String phoneNumber, Boolean resend, String resendType) {
         String url = ApplicationConstants.AUTH_URL + "/api/v1/session-management/sessions/credential-types/" + ApplicationConstants.CREDENTIAL_TYPE_UUID + "?phoneNumber=" + phoneNumber;
+
+        if(Boolean.TRUE.equals(resend) &&  resendType!=null){
+            url +="&resend=true&resendType="+resendType;
+        }
         HttpHeaders header = new HttpHeaders();
         header.set(HttpHeaders.AUTHORIZATION, "Basic " + Base64.encodeAsString((ApplicationConstants.CLIENT_ID + ":" + ApplicationConstants.CLIENT_SECRET).getBytes(StandardCharsets.UTF_8)));
         String response = restClient.get(url, header, String.class, true);

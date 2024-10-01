@@ -14,5 +14,5 @@ public interface SessionService {
 
     Boolean deleteSession(String sessionUUID);
 
-    OtpCredentialsDto getSessions(String phoneNumber);
+    OtpCredentialsDto getSessions(String phoneNumber, Boolean resend, String resendType);
 }

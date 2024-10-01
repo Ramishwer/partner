@@ -20,8 +20,10 @@ public class SessionController {
     private final SessionService sessionService;
 
     @GetMapping("/sessions/otp")
-    public ResponseDto<OtpCredentialsDto> getSessionOtp(@RequestParam("phoneNumber") String phoneNumber) {
-        return new ResponseDto<>(StatusDto.builder().message("SUCCESS").build(), 200, sessionService.getSessions(phoneNumber));
+    public ResponseDto<OtpCredentialsDto> getSessionOtp(@RequestParam("phoneNumber") String phoneNumber,
+                                                        @RequestParam(value = "resend",required = false) Boolean resend,
+                                                        @RequestParam(value = "resendType",required = false) String resendType) {
+        return new ResponseDto<>(StatusDto.builder().message("SUCCESS").build(), 200, sessionService.getSessions(phoneNumber,resend,resendType));
     }
 
     @PostMapping("/sessions")

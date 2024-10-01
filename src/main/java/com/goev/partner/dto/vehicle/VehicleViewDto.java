@@ -49,6 +49,9 @@ public class VehicleViewDto {
             return null;
         VehicleViewDto result = ApplicationConstants.GSON.fromJson(vehicleDao.getViewInfo(), VehicleViewDto.class);
         result.setUuid(vehicleDao.getUuid());
+        result.setStats(ApplicationConstants.GSON.fromJson(vehicleDao.getStats(), VehicleStatsDto.class));
+        result.setHomeLocation(ApplicationConstants.GSON.fromJson(vehicleDao.getHomeLocationDetails(), LocationDto.class));
+        result.setState(vehicleDao.getOnboardingStatus());
         return result;
     }
 

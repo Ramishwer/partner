@@ -39,5 +39,5 @@ public class VehicleDto {
     private String locationStatus;
     private LocationDto locationDetails;
     private String onboardingStatus;
-    private VehicleViewDto vehicle;
+    private VehicleViewDto vehicleDetails;
 }

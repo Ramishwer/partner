@@ -36,7 +36,7 @@ public class PartnerShiftDto {
     @JsonSerialize(using = DateTimeSerializer.class)
     @JsonDeserialize(using = DateTimeDeserializer.class)
     private DateTime estimatedEndTime;
-    private PartnerViewDto partner;
+    private PartnerViewDto partnerDetails;
     private String day;
     private ShiftDto shift;
     private ShiftConfigurationDto shiftConfig;

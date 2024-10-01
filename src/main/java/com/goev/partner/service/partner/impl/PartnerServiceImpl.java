@@ -4,6 +4,7 @@ import com.goev.lib.dto.LatLongDto;
 import com.goev.lib.dto.StatsDto;
 import com.goev.lib.exceptions.ResponseException;
 import com.goev.lib.utilities.ApplicationContext;
+import com.goev.lib.utilities.DistanceUtils;
 import com.goev.partner.constant.ApplicationConstants;
 import com.goev.partner.dao.booking.BookingDao;
 import com.goev.partner.dao.location.LocationDao;
@@ -13,6 +14,7 @@ import com.goev.partner.dao.partner.duty.PartnerDutyDao;
 import com.goev.partner.dao.partner.duty.PartnerShiftDao;
 import com.goev.partner.dao.vehicle.detail.VehicleDao;
 import com.goev.partner.dto.booking.BookingViewDto;
+import com.goev.partner.dto.common.QrValueDto;
 import com.goev.partner.dto.location.LocationDto;
 import com.goev.partner.dto.partner.PartnerViewDto;
 import com.goev.partner.dto.partner.detail.PartnerDetailDto;
@@ -87,7 +89,7 @@ public class PartnerServiceImpl implements PartnerService {
         partnerDto.setFirstName(partnerDetails.getFirstName());
         partnerDto.setLastName(partnerDetails.getLastName());
 
-        result.setPartner(partnerDto);
+        result.setPartnerDetails(partnerDto);
         result.setProfileUrl(partnerDetails.getProfileUrl());
         result.setJoiningDate(partnerDetails.getJoiningDate());
         result.setDlNumber(partnerDetails.getDlNumber());
@@ -139,7 +141,7 @@ public class PartnerServiceImpl implements PartnerService {
         PartnerDao partner = partnerRepository.findByAuthUUID(ApplicationContext.getAuthUUID());
         if (partner == null)
             throw new ResponseException("No partner found for Id :" + partnerUUID);
-        log.info("Action By Partner : {} {}",partner.getPunchId(),ApplicationConstants.GSON.toJson(actionDto));
+        log.info("Action By Partner : {} {}", partner.getPunchId(), ApplicationConstants.GSON.toJson(actionDto));
         switch (actionDto.getAction()) {
             case CHECK_IN -> {
                 partner = checkin(partner, actionDto);
@@ -202,8 +204,9 @@ public class PartnerServiceImpl implements PartnerService {
         if (PartnerStatus.VEHICLE_ASSIGNED.name().equals(partner.getStatus()))
             partner.setSubStatus(PartnerSubStatus.WAITING_FOR_ONLINE.name());
 
-        if (PartnerStatus.RETURN_CHECKLIST.name().equals(partner.getStatus()))
+        if (PartnerStatus.RETURN_CHECKLIST.name().equals(partner.getStatus())) {
             partner.setSubStatus(PartnerSubStatus.CHECKLIST_PENDING.name());
+        }
 
 
         VehicleDao vehicle = vehicleRepository.findById(partner.getVehicleId());
@@ -213,6 +216,8 @@ public class PartnerServiceImpl implements PartnerService {
         }
         stats.setSoc(StatsDto.builder()
                 .manual(actionDto.getSoc())
+                .calculated(actionDto.getSoc())
+                .calculatedTimestamp(DateTime.now().getMillis())
                 .timestamp(DateTime.now().getMillis())
                 .build());
         vehicle.setStats(ApplicationConstants.GSON.toJson(stats));
@@ -224,6 +229,17 @@ public class PartnerServiceImpl implements PartnerService {
             partner.setVehicleDetails(ApplicationConstants.GSON.toJson(viewDto));
         }
 
+        if (PartnerStatus.RETURN_CHECKLIST.name().equals(partner.getStatus())) {
+            if (partner.getVehicleId() != null) {
+                vehicle = vehicleRepository.findById(partner.getVehicleId());
+                vehicle.setStatus(VehicleStatus.AVAILABLE.name());
+                vehicleRepository.update(vehicle);
+            }
+            partner.setStatus(PartnerStatus.ON_DUTY.name());
+            partner.setSubStatus(PartnerSubStatus.VEHICLE_NOT_ALLOTTED.name());
+            partner.setVehicleDetails(null);
+            partner.setVehicleId(null);
+        }
         partner = partnerRepository.update(partner);
         return partner;
     }
@@ -255,6 +271,22 @@ public class PartnerServiceImpl implements PartnerService {
     }
 
     private PartnerDao checkOut(PartnerDao partner, ActionDto actionDto) {
+        PartnerShiftDao partnerShiftDao = partnerShiftRepository.findById(partner.getPartnerShiftId());
+        if (partnerShiftDao == null)
+            throw new ResponseException("Invalid action: Shift Details Incorrect");
+
+        if (partnerShiftDao.getEstimatedEndTime() != null && partnerShiftDao.getEstimatedEndTime().isAfter(DateTime.now().plusMinutes(15)))
+            throw new ResponseException("Checkout is allowed only 15 minutes from shift end");
+        if (partnerShiftDao.getOutLocationId() == null)
+            throw new ResponseException("Invalid action: Shift Details Incorrect No Location present");
+        LocationDao expectedOutLocation = locationRepository.findById(partnerShiftDao.getOutLocationId());
+        if (expectedOutLocation == null)
+            throw new ResponseException("Invalid action: Shift Details Incorrect No Location present");
+
+        validateLocationQr(actionDto.getQrString(), expectedOutLocation);
+        validateLocationGps(actionDto.getLocation(), expectedOutLocation);
+
+
         PartnerDutyDao currentDuty = partnerDutyRepository.findById(partner.getPartnerDutyId());
         if (currentDuty != null) {
             PartnerShiftDao shiftDao = partnerShiftRepository.findById(currentDuty.getPartnerShiftId());
@@ -291,7 +323,7 @@ public class PartnerServiceImpl implements PartnerService {
 
     private PartnerDao goOffline(PartnerDao partner, ActionDto actionDto) {
 
-        if(!PartnerStatus.ONLINE.name().equals(partner.getStatus()))
+        if (!PartnerStatus.ONLINE.name().equals(partner.getStatus()))
             throw new ResponseException("Partner Is not online yet");
         partner.setStatus(PartnerStatus.VEHICLE_ASSIGNED.name());
         partner.setSubStatus(PartnerSubStatus.WAITING_FOR_ONLINE.name());
@@ -438,8 +470,10 @@ public class PartnerServiceImpl implements PartnerService {
     }
 
     private PartnerDao selectVehicle(PartnerDao partner, ActionDto actionDto) {
-        partner.setStatus(PartnerStatus.CHECKLIST.name());
-        partner.setSubStatus(PartnerSubStatus.CHECKLIST_PENDING.name());
+//        partner.setStatus(PartnerStatus.CHECKLIST.name());
+//        partner.setSubStatus(PartnerSubStatus.CHECKLIST_PENDING.name());
+        partner.setStatus(PartnerStatus.VEHICLE_ASSIGNED.name());
+        partner.setSubStatus(PartnerSubStatus.SOC_ENTRY.name());
         partner = partnerRepository.update(partner);
         return partner;
     }
@@ -458,12 +492,17 @@ public class PartnerServiceImpl implements PartnerService {
         if (partnerShiftDao == null)
             throw new ResponseException("Invalid action: Shift Details Incorrect");
 
-//        LocationDao expectedInLocation = locationRepository.findById(partnerShiftDao.getInLocationId());
-//        if (partnerShiftDao.getInLocationDetails() == null)
-//            throw new ResponseException("Invalid action: Shift Details Incorrect No Location present");
+        if (partnerShiftDao.getEstimatedStartTime() != null && partnerShiftDao.getEstimatedStartTime().isAfter(DateTime.now().plusMinutes(15)))
+            throw new ResponseException("Checkin is allowed only 15 minutes from shift start");
+        if (partnerShiftDao.getInLocationDetails() == null)
+            throw new ResponseException("Invalid action: Shift Details Incorrect No Location present");
+        LocationDao expectedInLocation = locationRepository.findById(partnerShiftDao.getInLocationId());
+        if (expectedInLocation == null)
+            throw new ResponseException("Invalid action: Shift Details Incorrect No Location present");
 
-//        validateLocationQr(actionDto.getQrString(),expectedInLocation);
-//        validateLocationGps(actionDto.getLocation(),expectedInLocation);
+        validateLocationQr(actionDto.getQrString(), expectedInLocation);
+        validateLocationGps(actionDto.getLocation(), expectedInLocation);
+
 
         PartnerDutyDao newDuty = new PartnerDutyDao();
 
@@ -499,5 +538,29 @@ public class PartnerServiceImpl implements PartnerService {
         partnerShiftRepository.update(partnerShiftDao);
 
         return partner;
+    }
+
+    private void validateLocationGps(LatLongDto location, LocationDao expectedInLocation) {
+        if (location.getLongitude() == null || location.getLatitude() == null)
+            throw new ResponseException("Invalid Location.Please turn on your gps.");
+        double distance = DistanceUtils.calculateDistance(location, LatLongDto.builder().latitude(expectedInLocation.getLatitude()).longitude(expectedInLocation.getLongitude()).build());
+        if (distance > 500.0)
+            throw new ResponseException("Invalid Location.You are far way from station.");
+    }
+
+    private void validateLocationQr(String qrString, LocationDao expectedInLocation) {
+        try {
+            QrValueDto valueDto = ApplicationConstants.GSON.fromJson(qrString, QrValueDto.class);
+            if (valueDto == null) {
+                throw new ResponseException("Invalid QR Code.");
+            }
+            if (!valueDto.getUuid().equals(expectedInLocation.getUuid()))
+                throw new ResponseException("Invalid QR Code.Please scan qr of correct hub");
+        } catch (ResponseException e) {
+            throw e;
+        } catch (Exception e) {
+            log.info("Error in parsing qr", e);
+            throw new ResponseException("Invalid QR Code.");
+        }
     }
 }

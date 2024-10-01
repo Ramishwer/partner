@@ -14,6 +14,6 @@ import lombok.*;
 public class PartnerActionDto {
     private String actionDetails;
     private String action;
-    private PartnerViewDto partner;
+    private PartnerViewDto partnerDetails;
     private String status;
 }
