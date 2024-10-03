@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.joda.deser.DateTimeDeserializer;
 import com.fasterxml.jackson.datatype.joda.ser.DateTimeSerializer;
+import com.goev.partner.constant.ApplicationConstants;
+import com.goev.partner.dao.partner.duty.PartnerShiftDao;
 import com.goev.partner.dto.location.LocationDto;
 import com.goev.partner.dto.partner.PartnerViewDto;
 import com.goev.partner.dto.shift.ShiftConfigurationDto;
@@ -52,5 +54,27 @@ public class PartnerShiftDto {
     @JsonSerialize(using = DateTimeSerializer.class)
     @JsonDeserialize(using = DateTimeDeserializer.class)
     private DateTime dutyDate;
+
+    public static PartnerShiftDto fromDao(PartnerShiftDao shift, PartnerViewDto partner){
+        if(shift == null)
+            return null;
+        return PartnerShiftDto.builder()
+                .shiftStart(shift.getShiftStart())
+                .shiftEnd(shift.getShiftEnd())
+                .estimatedStartTime(shift.getEstimatedStartTime())
+                .estimatedEndTime(shift.getEstimatedEndTime())
+                .shiftConfig(ApplicationConstants.GSON.fromJson(shift.getShiftConfig(), ShiftConfigurationDto.class))
+                .type(shift.getType())
+                .inLocationDetails(ApplicationConstants.GSON.fromJson(shift.getInLocationDetails(), LocationDto.class))
+                .outLocationDetails(ApplicationConstants.GSON.fromJson(shift.getOutLocationDetails(), LocationDto.class))
+                .onlineLocationDetails(ApplicationConstants.GSON.fromJson(shift.getOnlineLocationDetails(), LocationDto.class))
+                .offlineLocationDetails(ApplicationConstants.GSON.fromJson(shift.getOfflineLocationDetails(), LocationDto.class))
+                .assignableVehicleCategoryDetails(ApplicationConstants.GSON.fromJson(shift.getAssignableVehicleCategoryDetails(), VehicleCategoryDto.class))
+                .dutyDate(shift.getDutyDate())
+                .partnerDetails(partner)
+                .status(shift.getStatus())
+                .subStatus(shift.getSubStatus())
+                .build();
+    }
 
 }

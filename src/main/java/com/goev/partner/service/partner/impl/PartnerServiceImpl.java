@@ -20,6 +20,7 @@ import com.goev.partner.dto.partner.PartnerViewDto;
 import com.goev.partner.dto.partner.detail.PartnerDetailDto;
 import com.goev.partner.dto.partner.detail.PartnerDto;
 import com.goev.partner.dto.partner.duty.PartnerDutyDto;
+import com.goev.partner.dto.partner.duty.PartnerDutyVehicleDetailsDto;
 import com.goev.partner.dto.partner.status.ActionDto;
 import com.goev.partner.dto.vehicle.VehicleStatsDto;
 import com.goev.partner.dto.vehicle.VehicleViewDto;
@@ -36,10 +37,15 @@ import com.goev.partner.repository.partner.duty.PartnerShiftRepository;
 import com.goev.partner.repository.vehicle.detail.VehicleRepository;
 import com.goev.partner.service.partner.PartnerService;
 import com.goev.partner.utilities.S3Utils;
+import com.google.gson.reflect.TypeToken;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
+import java.lang.reflect.Type;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -231,6 +237,7 @@ public class PartnerServiceImpl implements PartnerService {
         }
 
         if (PartnerStatus.RETURN_CHECKLIST.name().equals(partner.getStatus())) {
+            String plateNumber = vehicle.getPlateNumber();
             if (partner.getVehicleId() != null) {
                 vehicle = vehicleRepository.findById(partner.getVehicleId());
                 vehicle.setStatus(VehicleStatus.AVAILABLE.name());
@@ -240,6 +247,24 @@ public class PartnerServiceImpl implements PartnerService {
             partner.setSubStatus(PartnerSubStatus.VEHICLE_NOT_ALLOTTED.name());
             partner.setVehicleDetails(null);
             partner.setVehicleId(null);
+
+            if(partner.getPartnerDutyId()!=null){
+                PartnerDutyDao partnerDutyDao = partnerDutyRepository.findById(partner.getPartnerDutyId());
+                if(partnerDutyDao.getVehicles()!=null){
+                    Type t = new TypeToken<List<PartnerDutyVehicleDetailsDto>>(){}.getType();
+                    List<PartnerDutyVehicleDetailsDto> vehicles  = ApplicationConstants.GSON.fromJson(partnerDutyDao.getVehicles(),t);
+                    if(!CollectionUtils.isEmpty(vehicles)){
+                        vehicles = vehicles.stream().peek(vehicleDetailsDto->{
+                            if(vehicleDetailsDto.getReleaseTime()==null && vehicleDetailsDto.getPlateNumber().equals(plateNumber)){
+                                vehicleDetailsDto.setReleaseTime(DateTime.now());
+                                vehicleDetailsDto.setStatus(PartnerDutyVehicleStatus.RELEASED.name());
+                            }
+                        }).toList();
+                        partnerDutyDao.setVehicles(ApplicationConstants.GSON.toJson(vehicles));
+                        partnerDutyRepository.update(partnerDutyDao);
+                    }
+                }
+            }
         }
         partner = partnerRepository.update(partner);
         return partner;

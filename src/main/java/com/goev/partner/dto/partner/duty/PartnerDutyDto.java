@@ -12,8 +12,12 @@ import com.goev.partner.dto.location.LocationDto;
 import com.goev.partner.dto.partner.PartnerViewDto;
 import com.goev.partner.dto.shift.ShiftConfigurationDto;
 import com.goev.partner.dto.vehicle.detail.VehicleCategoryDto;
+import com.google.gson.reflect.TypeToken;
 import lombok.*;
 import org.joda.time.DateTime;
+
+import java.lang.reflect.Type;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -47,9 +51,12 @@ public class PartnerDutyDto {
     private Long actualTotalOnlineTimeInMillis;
     private Long actualTotalPauseTimeInMillis;
     private String status;
+    private List<PartnerDutyVehicleDetailsDto> vehicles;
 
     public static PartnerDutyDto fromDao(PartnerDutyDao dutyDao, PartnerViewDto partner, PartnerShiftDao shift) {
 
+        if(dutyDao==null)
+            return null;
 
         PartnerDutyDto result = PartnerDutyDto.builder()
                 .uuid(dutyDao.getUuid())
@@ -65,23 +72,18 @@ public class PartnerDutyDto {
                 .actualDutyStartTime(dutyDao.getActualDutyStartTime())
                 .actualDutyEndTime(dutyDao.getActualDutyEndTime())
                 .actualDutyStartLocationDetails(ApplicationConstants.GSON.fromJson(dutyDao.getActualDutyStartLocationDetails(), LocationDto.class))
+                .actualDutyEndLocationDetails(ApplicationConstants.GSON.fromJson(dutyDao.getActualDutyEndLocationDetails(), LocationDto.class))
                 .build();
 
         if (shift != null) {
-            PartnerShiftDto shiftDto = PartnerShiftDto.builder()
-                    .shiftStart(shift.getShiftStart())
-                    .shiftEnd(shift.getShiftEnd())
-                    .estimatedStartTime(shift.getEstimatedStartTime())
-                    .estimatedEndTime(shift.getEstimatedEndTime())
-                    .shiftConfig(ApplicationConstants.GSON.fromJson(shift.getShiftConfig(), ShiftConfigurationDto.class))
-                    .type(shift.getType())
-                    .inLocationDetails(ApplicationConstants.GSON.fromJson(shift.getInLocationDetails(), LocationDto.class))
-                    .outLocationDetails(ApplicationConstants.GSON.fromJson(shift.getOutLocationDetails(), LocationDto.class))
-                    .onlineLocationDetails(ApplicationConstants.GSON.fromJson(shift.getOnlineLocationDetails(), LocationDto.class))
-                    .assignableVehicleCategoryDetails(ApplicationConstants.GSON.fromJson(shift.getAssignableVehicleCategoryDetails(), VehicleCategoryDto.class))
-                    .dutyDate(shift.getDutyDate())
-                    .build();
+            PartnerShiftDto shiftDto = PartnerShiftDto.fromDao(shift,partner);
             result.setShiftDetails(shiftDto);
+        }
+
+        if (dutyDao.getVehicles() != null) {
+            Type t= new TypeToken<List<PartnerDutyVehicleDetailsDto>>(){}.getRawType();
+            List<PartnerDutyVehicleDetailsDto> vehicles = ApplicationConstants.GSON.fromJson(dutyDao.getVehicles(),t);
+            result.setVehicles(vehicles);
         }
 
         return result;
