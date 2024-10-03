@@ -34,27 +34,31 @@ public class PartnerPayoutDto {
     @JsonDeserialize(using = DateTimeDeserializer.class)
     private DateTime finalizationDate;
     private PartnerPayoutSummaryDto payoutSummary;
+    private Integer totalWorkingDays;
+    private Integer totalPayableDays;
     private Integer payoutTotalBookingAmount;
     private Integer payoutTotalAmount;
     private Integer payoutTotalDeductionAmount;
     private Integer payoutTotalCreditAmount;
     private Integer payoutTotalDebitAmount;
 
-
-    public static PartnerPayoutDto fromDao(PartnerPayoutDao partnerPayoutDao, PartnerViewDto partnerViewDto) {
+    public static PartnerPayoutDto fromDao(PartnerPayoutDao payoutDao, PartnerViewDto partnerViewDto) {
+        if(payoutDao == null)
+            return null;
         return PartnerPayoutDto.builder()
+                .totalPayableDays(payoutDao.getTotalPayableDays())
+                .totalWorkingDays(payoutDao.getTotalWorkingDays())
                 .partnerDetails(partnerViewDto)
-                .uuid(partnerPayoutDao.getUuid())
-                .payoutStartDate(partnerPayoutDao.getPayoutStartDate())
-                .payoutEndDate(partnerPayoutDao.getPayoutEndDate())
-                .status(partnerPayoutDao.getStatus())
-                .finalizationDate(partnerPayoutDao.getPayoutEndDate())
-                .payoutSummary(ApplicationConstants.GSON.fromJson(partnerPayoutDao.getPayoutSummary(), PartnerPayoutSummaryDto.class))
-                .payoutTotalBookingAmount(partnerPayoutDao.getPayoutTotalBookingAmount())
-                .payoutTotalAmount(partnerPayoutDao.getPayoutTotalAmount())
-                .payoutTotalDeductionAmount(partnerPayoutDao.getPayoutTotalDeductionAmount())
-                .payoutTotalCreditAmount(partnerPayoutDao.getPayoutTotalCreditAmount())
-                .payoutTotalDebitAmount(partnerPayoutDao.getPayoutTotalDebitAmount())
+                .payoutStartDate(payoutDao.getPayoutStartDate())
+                .payoutEndDate(payoutDao.getPayoutEndDate())
+                .payoutTotalAmount(payoutDao.getPayoutTotalAmount())
+                .payoutTotalBookingAmount(payoutDao.getPayoutTotalBookingAmount())
+                .payoutTotalDeductionAmount(payoutDao.getPayoutTotalDeductionAmount())
+                .payoutTotalCreditAmount(payoutDao.getPayoutTotalCreditAmount())
+                .finalizationDate(payoutDao.getFinalizationDate())
+                .status(payoutDao.getStatus())
+                .payoutSummary(ApplicationConstants.GSON.fromJson(payoutDao.getPayoutSummary(),PartnerPayoutSummaryDto.class))
+                .uuid(payoutDao.getUuid())
                 .build();
     }
 
