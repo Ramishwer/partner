@@ -208,54 +208,53 @@ public class PartnerServiceImpl implements PartnerService {
     }
 
     private PartnerDao socEntry(PartnerDao partner, ActionDto actionDto) {
-        if (PartnerStatus.VEHICLE_ASSIGNED.name().equals(partner.getStatus()))
-            partner.setSubStatus(PartnerSubStatus.WAITING_FOR_ONLINE.name());
+
+        VehicleDao vehicle = null;
+        if (partner.getVehicleId() != null) {
+            vehicle = vehicleRepository.findById(partner.getVehicleId());
+            VehicleStatsDto stats = VehicleStatsDto.builder().build();
+            if (vehicle.getStats() != null) {
+                stats = ApplicationConstants.GSON.fromJson(vehicle.getStats(), VehicleStatsDto.class);
+            }
+            stats.setSoc(StatsDto.builder()
+                    .manual(actionDto.getSoc())
+                    .calculated(actionDto.getSoc())
+                    .calculatedTimestamp(DateTime.now().getMillis())
+                    .timestamp(DateTime.now().getMillis())
+                    .build());
+            vehicle.setStats(ApplicationConstants.GSON.toJson(stats));
+            VehicleViewDto viewDto = VehicleViewDto.fromDao(vehicle);
+            if (viewDto != null) {
+                viewDto.setStats(stats);
+                partner.setVehicleDetails(ApplicationConstants.GSON.toJson(viewDto));
+            }
+        }
 
         if (PartnerStatus.RETURN_CHECKLIST.name().equals(partner.getStatus())) {
             partner.setSubStatus(PartnerSubStatus.CHECKLIST_PENDING.name());
-        }
-
-
-        VehicleDao vehicle = vehicleRepository.findById(partner.getVehicleId());
-        VehicleStatsDto stats = VehicleStatsDto.builder().build();
-        if (vehicle.getStats() != null) {
-            stats = ApplicationConstants.GSON.fromJson(vehicle.getStats(), VehicleStatsDto.class);
-        }
-        stats.setSoc(StatsDto.builder()
-                .manual(actionDto.getSoc())
-                .calculated(actionDto.getSoc())
-                .calculatedTimestamp(DateTime.now().getMillis())
-                .timestamp(DateTime.now().getMillis())
-                .build());
-        vehicle.setStats(ApplicationConstants.GSON.toJson(stats));
-        vehicleRepository.update(vehicle);
-
-        VehicleViewDto viewDto = VehicleViewDto.fromDao(vehicle);
-        if (viewDto != null) {
-            viewDto.setStats(stats);
-            partner.setVehicleDetails(ApplicationConstants.GSON.toJson(viewDto));
-        }
-
-        if (PartnerStatus.RETURN_CHECKLIST.name().equals(partner.getStatus())) {
-            String plateNumber = vehicle.getPlateNumber();
-            if (partner.getVehicleId() != null) {
+            String plateNumber;
+            if (vehicle!=null) {
+                plateNumber= vehicle.getPlateNumber();
                 vehicle = vehicleRepository.findById(partner.getVehicleId());
                 vehicle.setStatus(VehicleStatus.AVAILABLE.name());
                 vehicleRepository.update(vehicle);
+            } else {
+                plateNumber = null;
             }
             partner.setStatus(PartnerStatus.ON_DUTY.name());
             partner.setSubStatus(PartnerSubStatus.VEHICLE_NOT_ALLOTTED.name());
             partner.setVehicleDetails(null);
             partner.setVehicleId(null);
 
-            if(partner.getPartnerDutyId()!=null){
+            if (partner.getPartnerDutyId() != null) {
                 PartnerDutyDao partnerDutyDao = partnerDutyRepository.findById(partner.getPartnerDutyId());
-                if(partnerDutyDao.getVehicles()!=null){
-                    Type t = new TypeToken<List<PartnerDutyVehicleDetailsDto>>(){}.getType();
-                    List<PartnerDutyVehicleDetailsDto> vehicles  = ApplicationConstants.GSON.fromJson(partnerDutyDao.getVehicles(),t);
-                    if(!CollectionUtils.isEmpty(vehicles)){
-                        vehicles = vehicles.stream().peek(vehicleDetailsDto->{
-                            if(vehicleDetailsDto.getReleaseTime()==null && vehicleDetailsDto.getPlateNumber().equals(plateNumber)){
+                if (partnerDutyDao.getVehicles() != null) {
+                    Type t = new TypeToken<List<PartnerDutyVehicleDetailsDto>>() {
+                    }.getType();
+                    List<PartnerDutyVehicleDetailsDto> vehicles = ApplicationConstants.GSON.fromJson(partnerDutyDao.getVehicles(), t);
+                    if (!CollectionUtils.isEmpty(vehicles) && plateNumber!=null) {
+                        vehicles = vehicles.stream().peek(vehicleDetailsDto -> {
+                            if (vehicleDetailsDto.getReleaseTime() == null && vehicleDetailsDto.getPlateNumber().equals(plateNumber)) {
                                 vehicleDetailsDto.setReleaseTime(DateTime.now());
                                 vehicleDetailsDto.setStatus(PartnerDutyVehicleStatus.RELEASED.name());
                             }
@@ -265,7 +264,14 @@ public class PartnerServiceImpl implements PartnerService {
                     }
                 }
             }
+            partner = partnerRepository.update(partner);
+            return partner;
         }
+
+        if (PartnerStatus.VEHICLE_ASSIGNED.name().equals(partner.getStatus()))
+            partner.setSubStatus(PartnerSubStatus.WAITING_FOR_ONLINE.name());
+
+        vehicleRepository.update(vehicle);
         partner = partnerRepository.update(partner);
         return partner;
     }
@@ -320,7 +326,7 @@ public class PartnerServiceImpl implements PartnerService {
         if (partner.getVehicleId() != null) {
             vehicle = vehicleRepository.findById(partner.getVehicleId());
             vehicle.setStatus(VehicleStatus.AVAILABLE.name());
-            vehicle =vehicleRepository.update(vehicle);
+            vehicle = vehicleRepository.update(vehicle);
 
         }
         PartnerDutyDao currentDuty = partnerDutyRepository.findById(partner.getPartnerDutyId());
@@ -330,13 +336,14 @@ public class PartnerServiceImpl implements PartnerService {
                 currentDuty.setActualDutyEndLocationDetails(shiftDao.getOutLocationDetails());
             currentDuty.setStatus(PartnerDutyStatus.COMPLETED.name());
             currentDuty.setActualDutyEndTime(DateTime.now());
-            if(currentDuty.getVehicles()!=null){
-                Type t = new TypeToken<List<PartnerDutyVehicleDetailsDto>>(){}.getType();
-                List<PartnerDutyVehicleDetailsDto> vehicles  = ApplicationConstants.GSON.fromJson(currentDuty.getVehicles(),t);
-                if(!CollectionUtils.isEmpty(vehicles) && vehicle !=null){
+            if (currentDuty.getVehicles() != null) {
+                Type t = new TypeToken<List<PartnerDutyVehicleDetailsDto>>() {
+                }.getType();
+                List<PartnerDutyVehicleDetailsDto> vehicles = ApplicationConstants.GSON.fromJson(currentDuty.getVehicles(), t);
+                if (!CollectionUtils.isEmpty(vehicles) && vehicle != null) {
                     String plateNumber = vehicle.getPlateNumber();
-                    vehicles = vehicles.stream().peek(vehicleDetailsDto->{
-                        if(vehicleDetailsDto.getReleaseTime()==null && vehicleDetailsDto.getPlateNumber().equals(plateNumber)){
+                    vehicles = vehicles.stream().peek(vehicleDetailsDto -> {
+                        if (vehicleDetailsDto.getReleaseTime() == null && vehicleDetailsDto.getPlateNumber().equals(plateNumber)) {
                             vehicleDetailsDto.setReleaseTime(DateTime.now());
                             vehicleDetailsDto.setStatus(PartnerDutyVehicleStatus.RELEASED.name());
                         }
@@ -544,29 +551,36 @@ public class PartnerServiceImpl implements PartnerService {
         validateLocationGps(actionDto.getLocation(), expectedInLocation);
 
 
-        PartnerDutyDao newDuty = new PartnerDutyDao();
+        PartnerDutyDao newDuty = null;
+        if (partner.getPartnerDutyId() != null) {
+            PartnerDutyDao existingDuty = partnerDutyRepository.findById(partner.getPartnerDutyId());
+            if (existingDuty != null && existingDuty.getPartnerShiftId().equals(partner.getPartnerShiftId()))
+                newDuty = existingDuty;
+        }
 
-        newDuty.setPartnerId(partner.getId());
-        newDuty.setStatus(PartnerDutyStatus.IN_PROGRESS.name());
-        newDuty.setPartnerShiftId(partnerShiftDao.getId());
+        if (newDuty == null) {
+            newDuty = new PartnerDutyDao();
+            newDuty.setPartnerId(partner.getId());
+            newDuty.setStatus(PartnerDutyStatus.IN_PROGRESS.name());
+            newDuty.setPartnerShiftId(partnerShiftDao.getId());
 
-        newDuty.setActualDutyStartTime(DateTime.now());
-        newDuty.setActualDutyStartLocationDetails(partnerShiftDao.getInLocationDetails());
+            newDuty.setActualDutyStartTime(DateTime.now());
+            newDuty.setActualDutyStartLocationDetails(partnerShiftDao.getInLocationDetails());
 
-        newDuty.setPlannedDutyStartTime(partnerShiftDao.getEstimatedStartTime());
-        newDuty.setPlannedOnlineTime(partnerShiftDao.getEstimatedOnlineTime());
-        newDuty.setPlannedDutyEndTime(partnerShiftDao.getEstimatedEndTime());
+            newDuty.setPlannedDutyStartTime(partnerShiftDao.getEstimatedStartTime());
+            newDuty.setPlannedOnlineTime(partnerShiftDao.getEstimatedOnlineTime());
+            newDuty.setPlannedDutyEndTime(partnerShiftDao.getEstimatedEndTime());
 
-        newDuty.setPlannedDutyStartLocationDetails(partnerShiftDao.getInLocationDetails());
-        newDuty.setPlannedOnlineLocationDetails(partnerShiftDao.getOnlineLocationDetails());
-        newDuty.setPlannedDutyEndLocationDetails(partnerShiftDao.getOutLocationDetails());
+            newDuty.setPlannedDutyStartLocationDetails(partnerShiftDao.getInLocationDetails());
+            newDuty.setPlannedOnlineLocationDetails(partnerShiftDao.getOnlineLocationDetails());
+            newDuty.setPlannedDutyEndLocationDetails(partnerShiftDao.getOutLocationDetails());
 
-        newDuty.setPlannedDutyStartLocationId(partnerShiftDao.getInLocationId());
-        newDuty.setPlannedOnlineLocationId(partnerShiftDao.getOnlineLocationId());
-        newDuty.setPlannedDutyEndLocationId(partnerShiftDao.getOutLocationId());
-        newDuty.setMaxOvertimeCalculationTime(partnerShiftDao.getEstimatedEndTime());
-        newDuty = partnerDutyRepository.save(newDuty);
-
+            newDuty.setPlannedDutyStartLocationId(partnerShiftDao.getInLocationId());
+            newDuty.setPlannedOnlineLocationId(partnerShiftDao.getOnlineLocationId());
+            newDuty.setPlannedDutyEndLocationId(partnerShiftDao.getOutLocationId());
+            newDuty.setMaxOvertimeCalculationTime(partnerShiftDao.getEstimatedEndTime());
+            newDuty = partnerDutyRepository.save(newDuty);
+        }
         partner.setLocationDetails(partnerShiftDao.getInLocationDetails());
         partner.setDutyDetails(ApplicationConstants.GSON.toJson(PartnerDutyDto.fromDao(newDuty, PartnerViewDto.fromDao(partner), partnerShiftDao)));
         partner.setPartnerDutyId(newDuty.getId());
