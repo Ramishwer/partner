@@ -221,6 +221,7 @@ public class PartnerServiceImpl implements PartnerService {
             stats.setSoc(StatsDto.builder()
                     .manual(actionDto.getSoc())
                     .calculated(actionDto.getSoc())
+                    .manualTimestamp(DateTime.now().getMillis())
                     .calculatedTimestamp(DateTime.now().getMillis())
                     .timestamp(DateTime.now().getMillis())
                     .build());
@@ -230,6 +231,7 @@ public class PartnerServiceImpl implements PartnerService {
                         .manual(actionDto.getSoc() * stats.getKmRange()*10)
                         .calculated(actionDto.getSoc()* stats.getKmRange()*10)
                         .calculatedTimestamp(DateTime.now().getMillis())
+                        .manualTimestamp(DateTime.now().getMillis())
                         .timestamp(DateTime.now().getMillis())
                         .build());
             }
