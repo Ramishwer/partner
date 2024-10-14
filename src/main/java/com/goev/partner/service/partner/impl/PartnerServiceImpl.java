@@ -209,6 +209,8 @@ public class PartnerServiceImpl implements PartnerService {
 
     private PartnerDao socEntry(PartnerDao partner, ActionDto actionDto) {
 
+        if(actionDto.getSoc()== null || actionDto.getSoc() > 100)
+            throw new ResponseException("Invalid Soc Value.It must be in range 0-100");
         VehicleDao vehicle = null;
         if (partner.getVehicleId() != null) {
             vehicle = vehicleRepository.findById(partner.getVehicleId());
@@ -222,6 +224,15 @@ public class PartnerServiceImpl implements PartnerService {
                     .calculatedTimestamp(DateTime.now().getMillis())
                     .timestamp(DateTime.now().getMillis())
                     .build());
+
+            if(stats.getKmRange()!=null){
+                stats.setDte(StatsDto.builder()
+                        .manual(actionDto.getSoc() * stats.getKmRange()*10)
+                        .calculated(actionDto.getSoc()* stats.getKmRange()*10)
+                        .calculatedTimestamp(DateTime.now().getMillis())
+                        .timestamp(DateTime.now().getMillis())
+                        .build());
+            }
             vehicle.setStats(ApplicationConstants.GSON.toJson(stats));
             VehicleViewDto viewDto = VehicleViewDto.fromDao(vehicle);
             if (viewDto != null) {
@@ -395,7 +406,7 @@ public class PartnerServiceImpl implements PartnerService {
 
     private PartnerDao end(PartnerDao partner, ActionDto actionDto) {
         partner.setStatus(PartnerStatus.ONLINE.name());
-        partner.setSubStatus(PartnerSubStatus.NO_BOOKING.name());
+        partner.setSubStatus(PartnerSubStatus.SOC_ENTRY.name());
         if (partner.getBookingId() != null) {
             BookingDao bookingDao = bookingRepository.findById(partner.getBookingId());
             bookingDao.setStatus(BookingStatus.COMPLETED.name());

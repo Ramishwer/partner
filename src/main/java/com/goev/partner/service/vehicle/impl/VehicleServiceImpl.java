@@ -24,10 +24,6 @@ public class VehicleServiceImpl implements VehicleService {
         VehicleDao vehicle = vehicleRepository.findByUUID(vehicleUUID);
         if (vehicle == null)
             throw new ResponseException("No vehicle found for uuid:" + vehicleUUID);
-        VehicleViewDto viewDto = VehicleViewDto.fromDao(vehicle);
-        if (viewDto != null)
-            viewDto.setStats(null);
-        return viewDto;
-
+        return  VehicleViewDto.fromDao(vehicle);
     }
 }
