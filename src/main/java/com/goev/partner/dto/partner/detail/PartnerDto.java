@@ -9,12 +9,16 @@ import com.fasterxml.jackson.datatype.joda.ser.DateTimeSerializer;
 import com.goev.partner.constant.ApplicationConstants;
 import com.goev.partner.dao.partner.detail.PartnerDao;
 import com.goev.partner.dto.booking.BookingViewDto;
-import com.goev.partner.dto.common.FileDto;
+-import com.goev.partner.dto.common.FileDto;
 import com.goev.partner.dto.location.LocationDto;
 import com.goev.partner.dto.partner.duty.PartnerDutyDto;
 import com.goev.partner.dto.vehicle.VehicleViewDto;
+import com.google.gson.reflect.TypeToken;
 import lombok.*;
 import org.joda.time.DateTime;
+
+import java.lang.reflect.Type;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -43,12 +47,12 @@ public class PartnerDto {
     private PartnerDutyDto dutyDetails;
     private String locationStatus;
     private String onboardingStatus;
-
+    private List<PartnerSegmentDto> segments;
 
     public static PartnerDto fromDao(PartnerDao partner) {
         if (partner == null)
             return null;
-        return PartnerDto.builder()
+        PartnerDto result = PartnerDto.builder()
                 .uuid(partner.getUuid())
                 .punchId(partner.getPunchId())
                 .phoneNumber(partner.getPhoneNumber())
@@ -62,6 +66,12 @@ public class PartnerDto {
                 .locationStatus(partner.getLocationStatus())
                 .onboardingStatus(partner.getOnboardingStatus())
                 .build();
+        if (partner.getSegments() != null) {
+            Type t = new TypeToken<List<PartnerSegmentDto>>() {
+            }.getRawType();
+            result.setSegments(ApplicationConstants.GSON.fromJson(partner.getSegments(), t));
+        }
+        return result;
 
     }
 
