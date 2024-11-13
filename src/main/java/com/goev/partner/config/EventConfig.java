@@ -8,6 +8,8 @@ import com.goev.partner.event.events.asset.update.AssetTypeUpdateEvent;
 import com.goev.partner.event.events.asset.update.AssetUpdateEvent;
 import com.goev.partner.event.events.booking.BookingSaveEvent;
 import com.goev.partner.event.events.booking.BookingUpdateEvent;
+import com.goev.partner.event.events.earning.save.EarningRuleSaveEvent;
+import com.goev.partner.event.events.earning.update.EarningRuleUpdateEvent;
 import com.goev.partner.event.events.location.save.LocationSaveEvent;
 import com.goev.partner.event.events.location.update.LocationUpdateEvent;
 import com.goev.partner.event.events.partner.PartnerOnboardingStatusCheckEvent;
@@ -21,6 +23,8 @@ import com.goev.partner.event.handlers.asset.update.AssetTypeUpdateEventHandler;
 import com.goev.partner.event.handlers.asset.update.AssetUpdateEventHandler;
 import com.goev.partner.event.handlers.booking.save.BookingSaveEventHandler;
 import com.goev.partner.event.handlers.booking.update.BookingUpdateEventHandler;
+import com.goev.partner.event.handlers.earning.save.EarningRuleSaveEventHandler;
+import com.goev.partner.event.handlers.earning.update.EarningRuleUpdateEventHandler;
 import com.goev.partner.event.handlers.location.save.LocationSaveEventHandler;
 import com.goev.partner.event.handlers.location.update.LocationUpdateEventHandler;
 import com.goev.partner.event.handlers.partner.save.*;
@@ -78,7 +82,9 @@ public class EventConfig {
             VehicleAssetTransferDetailSaveEventHandler vehicleAssetTransferDetailSaveEventHandler,
             VehicleAssetMappingSaveEventHandler vehicleAssetMappingSaveEventHandler,
             BookingSaveEventHandler bookingSaveEventHandler,
-            LocationSaveEventHandler locationSaveEventHandler
+            LocationSaveEventHandler locationSaveEventHandler,
+            EarningRuleSaveEventHandler earningRuleSaveEventHandler,
+            EarningRuleUpdateEventHandler earningRuleUpdateEventHandler
 
 
     ) {
@@ -125,6 +131,8 @@ public class EventConfig {
         eventProcessor.registerEventHandlers(new VehicleAssetMappingUpdateEvent(), vehicleAssetMappingUpdateEventHandler);
         eventProcessor.registerEventHandlers(new BookingUpdateEvent(), bookingUpdateEventHandler);
         eventProcessor.registerEventHandlers(new LocationUpdateEvent(), locationUpdateEventHandler);
+        eventProcessor.registerEventHandlers(new EarningRuleSaveEvent(), earningRuleSaveEventHandler);
+        eventProcessor.registerEventHandlers(new EarningRuleUpdateEvent(), earningRuleUpdateEventHandler);
 
 
         eventProcessor.registerEvents(new AssetSaveEvent());
@@ -145,6 +153,8 @@ public class EventConfig {
         eventProcessor.registerEvents(new VehicleAssetMappingSaveEvent());
         eventProcessor.registerEvents(new BookingSaveEvent());
         eventProcessor.registerEvents(new LocationSaveEvent());
+        eventProcessor.registerEvents(new EarningRuleSaveEvent());
+        eventProcessor.registerEvents(new EarningRuleUpdateEvent());
 
 
         eventProcessor.registerEventHandlers(new AssetSaveEvent(), assetSaveEventHandler);
