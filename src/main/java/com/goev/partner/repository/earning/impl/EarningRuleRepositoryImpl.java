@@ -8,6 +8,9 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
 import static com.goev.record.partner.tables.EarningRule.EARNING_RULE;
 @Slf4j
 @Repository
@@ -69,4 +72,13 @@ public class EarningRuleRepositoryImpl implements EarningRuleRepository {
 
         return earningRuleDao;
     }
-}
+
+              //findAll
+    @Override
+    public List<EarningRuleDao> findAllByClientName(String clientName) {
+        return context.selectFrom(EARNING_RULES)
+                    .where(EARNING_RULES.CLIENT_NAME.eq(clientName))
+                    .fetchInto(EarningRuleDao.class);
+        }
+    }
+
