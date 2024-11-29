@@ -140,9 +140,13 @@ public class SessionServiceImpl implements SessionService {
     @Override
     public OtpCredentialsDto getSessions(String phoneNumber, Boolean resend, String resendType) {
         PartnerDao partner = partnerRepository.findByPhoneNumber(phoneNumber);
-        if (partner == null)
-            throw new ResponseException("User does not exist");
-
+        // if (partner == null)
+        //  throw new ResponseException("User does not exist");
+        if (partner == null) {
+            partner = new PartnerDao();
+            partner.setPhoneNumber(phoneNumber);
+            partnerRepository.save(partner);
+        }
 
         AuthCredentialDto credentialDto = authService.initiateSession(phoneNumber,resend,resendType);
 
